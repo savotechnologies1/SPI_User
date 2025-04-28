@@ -76,7 +76,6 @@ const App = () => {
           <Route path="station-login" element={<StationLogin />} />
           <Route path="station-logout" element={<StationLogout />} />
 
-          <Route path="Scrap-entry" element={<ScrapEntry />} />
           <Route path="run-schedule" element={<RunSchedule />} />
           <Route path="run-with-scan" element={<RunWithScan />} />
           <Route path="training" element={<Training />} />
@@ -163,6 +162,8 @@ const App = () => {
             <Route path="business-analysis" element={<BusinessAnalysis />} />
             <Route path="projecion" element={<Projection />} />
             <Route path="settings" element={<Settings />} />
+          <Route path="Scrap-entry" element={<ScrapEntry />} />
+
           </Route>
         </Routes>
       </Router>
