@@ -65,7 +65,7 @@ import BusinessIntelligence from "./pages/business-intelligence/BusinessIntellig
 const App = () => {
   return (
     <PartProvider>
-      <Router>
+      <Router basename="/user">
         <Routes>
           {/* Routes without the layout */}
           <Route path="sign-in" element={<SignIn />} />
@@ -88,7 +88,7 @@ const App = () => {
               localStorage.getItem("loggedIn") === "true" ? (
                 <Layout />
               ) : (
-                <Navigate to="user/sign-in" />
+                <Navigate to="/sign-in" />
               )
             }
           >
