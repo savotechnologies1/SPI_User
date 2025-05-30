@@ -124,18 +124,15 @@ const sections = [
           {
             key: "SupplierInformationList",
             label: "Supplier Information List",
+              path: "/all-supplier",
             hasSubmenu: true,
             submenu: [
+             
               {
                 key: "newSupplier",
                 label: "Enter new supplier",
                 path: "/new-supplier",
-              },
-              {
-                key: "editSupplier",
-                label: "Edit supplier",
-                path: "/edit-supplier",
-              },
+              }
             ],
           },
           {
@@ -348,7 +345,7 @@ const sections = [
         key: "Logout",
         label: "Logout",
         icon: logout,
-        path: "/logout",
+        path: "/sign-in",
       },
     ],
   },
@@ -370,7 +367,7 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("loggedIn"); // Clear the loggedIn flag from localStorage
+    // localStorage.removeItem("loggedIn"); // Clear the loggedIn flag from localStorage
     navigate("/sign-in"); // Redirect to the sign-in page
   };
 
@@ -418,8 +415,8 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                         <Link
                           to={item.path || "#"}
                           onClick={() => {
+                            handleLogout();
                             if (item.key === "Logout") {
-                              handleLogout();
                             } else if (item.hasSubmenu) {
                               toggleSubmenu(item.key);
                             }

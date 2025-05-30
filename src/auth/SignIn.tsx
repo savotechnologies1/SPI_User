@@ -5,13 +5,13 @@ import signin from "../assets/signin.png";
 import password from "../assets/password_icon'.png";
 import visible from "../assets/visible_icon.png";
 import { useState } from "react";
+// import { useAuth } from "../context/AuthContext";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error] = useState("");
   const navigate = useNavigate();
-
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
@@ -22,25 +22,21 @@ const SignIn = () => {
     formState: { errors },
   } = useForm<{ email: string; password: string }>();
 
-  const onSubmit = async (data: { email: string; password: string }) => {
-    setIsLoading(true);
-    setError("");
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      if (data.email === "user123@gmail.com" && data.password === "user123") {
-        localStorage.setItem("loggedIn", "true");
-        navigate("/");
-      } else {
-        setError("Invalid email or password");
-      }
-    } catch (err) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+  const onSubmit = async () => {
+    navigate("/", { replace: true });
+    setIsLoading(false);
+    // setError("");
+    // try {
+    //   const response = await loginApi(data);
+    //   console.log("responseresponse", response);
+    //   if (response.status === 200) {
+    //     console.log("login page redirect");
+    //     login(response.data.token);
+    //     navigate("/", { replace: true });
+    //   }
+    // } catch (error: unknown) {
+    //   toast.error(error.response.message);
+    // }
   };
 
   return (
@@ -151,7 +147,10 @@ const SignIn = () => {
             </div>
 
             {/* Forgot Password Link */}
-            <div className="text-right">
+            <div className="flex justify-between">
+              <Link to="/" className="text-sm text-[#F2451C] hover:underline">
+                Go to Dashboard
+              </Link>
               <Link
                 to="/forget-password"
                 className="text-sm text-[#F2451C] hover:underline"

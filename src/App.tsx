@@ -2,7 +2,6 @@ import {
   Route,
   Routes,
   BrowserRouter as Router,
-  Navigate,
 } from "react-router-dom";
 import Layout from "./components/Layout";
 import SignIn from "./auth/SignIn";
@@ -55,16 +54,21 @@ import EditWorkInstrcution from "./pages/Work_Instrcution.tsx/EditWorkInstructio
 import ApplyWorkInstruction from "./pages/Work_Instrcution.tsx/ApplyWorkInstruction";
 import OperationPerformance from "./pages/Operation_performance/OperationPerformance";
 import CustomerRelation from "./pages/Customer_Relation/CustomerRelation";
-
 import Projection from "./pages/projection/Projection";
 import ContinuousImprovement from "./pages/Continuous_Improvement/ContinuousImprovement";
 import QualityPerformance from "./pages/qualityPerformance/QualityPerformance";
 import BusinessAnalysis from "./pages/business-analysis/BusinessAnalysis";
 import BusinessIntelligence from "./pages/business-intelligence/BusinessIntelligence";
+import { ToastContainer } from "react-toastify";
+import { useAuth } from "./context/AuthContext";
+import SupplierList from "./pages/supplier_chain/supplierList";
 
 const App = () => {
+   const { token } = useAuth();
+   console.log('tokentokentoken',token)
   return (
     <PartProvider>
+      <ToastContainer />
       <Router basename="/user">
         <Routes>
           {/* Routes without the layout */}
@@ -82,17 +86,9 @@ const App = () => {
 
           {/* Routes with the layout */}
 
-          <Route
-            path="/"
-            element={
-              localStorage.getItem("loggedIn") === "true" ? (
-                <Layout />
-              ) : (
-                <Navigate to="/sign-in" />
-              )
-            }
-          >
-            <Route index element={<DashboardDetails />} /> Default Route
+          {/* <Route path="/" element={token  ? <Layout /> : <SignIn />}> */}
+          <Route path="/" element={<Layout />}>
+            <Route index element={<DashboardDetails />} />
             <Route path="dashboardDetailes" element={<DashboardDetails />} />
             <Route path="new-supplier" element={<AddSuppliers />} />
             <Route path="stock-order" element={<StockOrder />} />
@@ -110,7 +106,8 @@ const App = () => {
             <Route path="labor-forecast" element={<LaborForecast />} />
             <Route path="inventory-status" element={<InventoryStatus />} />
             <Route path="capacity-status" element={<CapacityStatus />} />
-            <Route path="edit-supplier" element={<EditSuppliers />} />
+            <Route path="all-supplier" element={<SupplierList />} />
+            <Route path="edit-supplier/:id" element={<EditSuppliers />} />
             <Route path="supplier-order" element={<SupplierOrders />} />
             <Route path="supplier-inventory" element={<SupplierInventory />} />
             <Route path="supplier-list" element={<SupplierPartList />} />
