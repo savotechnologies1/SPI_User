@@ -213,7 +213,7 @@ interface SupplierFormData {
               type="submit"
               className="bg-brand text-white px-6 py-3 rounded-lg"
             >
-              Update
+              Save Supplier
             </button>
             <div
               onClick={handleDelete}

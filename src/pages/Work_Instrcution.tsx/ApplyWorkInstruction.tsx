@@ -30,7 +30,7 @@ const ApplyWorkInstruction = () => {
     <div className="p-4 sm:p-6">
       <div>
         <h1 className="font-bold text-xl sm:text-2xl text-black">
-          Add Work Instruction
+        Apply Work Instruction
         </h1>
       </div>
       
@@ -144,7 +144,7 @@ const ApplyWorkInstruction = () => {
         {/* Submit Button */}
         <button
           onClick={handleSubmit}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg transition-colors"
+          className="bg-brand text-white px-5 py-3 rounded-lg transition-colors"
         >
           Add Work Instruction
         </button>

@@ -94,7 +94,7 @@ const SupplierList: React.FC = () => {
 
   const navigate = useNavigate ();
 const handleEdit = () =>{
-  navigate("/edit-work-instruction");
+  navigate("/edit-supplier/:id");
 }
 
   return (
