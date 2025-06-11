@@ -146,7 +146,7 @@ const ApplyWorkInstruction = () => {
           onClick={handleSubmit}
           className="bg-brand text-white px-5 py-3 rounded-lg transition-colors"
         >
-          Add Work Instruction
+          Apply Work Instruction
         </button>
       </div>
     </div>

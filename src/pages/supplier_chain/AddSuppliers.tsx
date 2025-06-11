@@ -140,7 +140,7 @@ const AddSuppliers = () => {
             type="submit"
             className="bg-brand text-white px-5 py-3 rounded-lg"
           >
-            Add Supplier
+            Add / Edit Supplier
           </button>
         </div>
       </div>

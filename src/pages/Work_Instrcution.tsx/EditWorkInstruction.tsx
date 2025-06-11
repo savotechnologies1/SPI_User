@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaCircle } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import delete_img from "../../assets/delete_1.png";
 
 const EditWorkInstruction = () => {
   const [formData, setFormData] = useState({
@@ -8,17 +9,24 @@ const EditWorkInstruction = () => {
     stepNumber: "",
     workInstruction: "",
     imageFile: null as File | null,
-    videoFile: null as File | null
+    videoFile: null as File | null,
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: 'imageFile' | 'videoFile') => {
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: "imageFile" | "videoFile"
+  ) => {
     if (e.target.files && e.target.files[0]) {
-      setFormData(prev => ({ ...prev, [field]: e.target.files![0] }));
+      setFormData((prev) => ({ ...prev, [field]: e.target.files![0] }));
     }
   };
 
@@ -30,7 +38,7 @@ const EditWorkInstruction = () => {
   const breadcrumbs = [
     { path: "/dashboardDetailes", label: "Dashboard" },
     { label: "Work Instruction" },
-    { label: "Add Work Instruction" }
+    { label: "Add Work Instruction" },
   ];
 
   return (
@@ -40,14 +48,14 @@ const EditWorkInstruction = () => {
           Edit Work Instruction
         </h1>
       </div>
-      
+
       {/* Breadcrumbs */}
       <div className="flex items-center mt-2 gap-2">
         {breadcrumbs.map((item, index) => (
           <div key={index} className="flex items-center gap-2">
             {item.path ? (
-              <NavLink 
-                to={item.path} 
+              <NavLink
+                to={item.path}
                 className="text-xs sm:text-sm text-black hover:underline"
               >
                 {item.label}
@@ -79,7 +87,7 @@ const EditWorkInstruction = () => {
               className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">Select Part</option>
-              {[1, 2, 3].map(num => (
+              {[1, 2, 3].map((num) => (
                 <option key={num} value={`Part ${num}`}>
                   Part {num}
                 </option>
@@ -128,7 +136,7 @@ const EditWorkInstruction = () => {
               type="file"
               id="imageFile"
               accept="image/*"
-              onChange={(e) => handleFileChange(e, 'imageFile')}
+              onChange={(e) => handleFileChange(e, "imageFile")}
               className="w-full p-3 border rounded-md file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
           </div>
@@ -141,7 +149,7 @@ const EditWorkInstruction = () => {
               type="file"
               id="videoFile"
               accept="video/mp4,video/mkv,video/mpeg4"
-              onChange={(e) => handleFileChange(e, 'videoFile')}
+              onChange={(e) => handleFileChange(e, "videoFile")}
               className="w-full p-3 border rounded-md file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
             <small className="text-red-700 mt-2 block">
@@ -150,13 +158,20 @@ const EditWorkInstruction = () => {
           </div>
         </div>
 
-        {/* Save Button */}
-        <button
-          onClick={handleSaveInstruction}
-          className="bg-brand text-white px-5 py-3 rounded-lg transition-colors"
-        >
-          Save  Work Instruction
-        </button>
+       <div className="flex justify-between items-end mt-6">
+            <button
+            onClick={handleSaveInstruction}
+              type="submit"
+              className="bg-brand text-white px-6 py-3 rounded-lg"
+            >
+              Save 
+            </button>
+            <div
+              className="bg-[#FF5630] rounded-full p-2 cursor-pointer"
+            >
+              <img className="w-[20px]" src={delete_img} alt="delete" />
+            </div>
+          </div>
       </div>
     </div>
   );

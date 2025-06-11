@@ -159,7 +159,7 @@ const AddWorkInstruction = () => {
           onClick={handleSaveInstruction}
           className="bg-brand text-white px-5 py-3 rounded-lg"
         >
-          Add Work Instruction
+          Add/Edit Work Instruction
         </button>
 
        

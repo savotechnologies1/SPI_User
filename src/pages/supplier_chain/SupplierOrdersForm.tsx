@@ -162,9 +162,9 @@ const SupplierOrdersForm = () => {
           <div>
             <label className="font-semibold">
               Select Part{" "}
-              <span className="text-  text-gray-400 text-[10px]">
+              {/* <span className="text-  text-gray-400 text-[10px]">
                 (you can select multiple)
-              </span>{" "}
+              </span>{" "} */}
             </label>
             <select
               {...register("Process1")}
