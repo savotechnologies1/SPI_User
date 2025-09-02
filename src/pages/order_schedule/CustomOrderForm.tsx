@@ -1,482 +1,579 @@
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import Select from "react-select";
-import del_img from "../../assets/delete_1.png";
+import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
+import { toast, ToastContainer } from "react-toastify";
+import { customOrderValidation } from "../../utils/validation.tsx";
+import { FaTrash } from "react-icons/fa";
+import {
+  CustomerInterface,
+  ProductNumberInterface,
+  PartNumberInterface,
+  processInterface,
+} from "./../../utils/Interfaces.tsx";
+import {
+  addCustomOrder,
+  selectCustomer,
+  selectProductNumber,
+  selectPartNumber,
+  selectProcess,
+} from "./https/schedulingApis";
 
+// ========================================================================
+// MOCK DATA & INTERFACES (Replace with your actual imports and API calls)
+// ========================================================================
 
-const options = [
-  { value: "cortez-herring", label: "Cortez Herring" },
-  { value: "john-doe", label: "John Doe" },
-  { value: "jane-smith", label: "Jane Smith" },
-];
+// --- Interfaces ---
+interface CustomerInterface {
+  id: string;
+  name: string;
+  email: string;
+  customerPhone: string;
+}
+interface ProductNumberInterface {
+  productId: string;
+  partNumber: string;
+  cost: number;
+}
+interface PartNumberInterface {
+  part_id: string;
+  partNumber: string;
+}
+interface processInterface {
+  id: string;
+  name: string;
+}
 
-// const partOption = [
-//   { value: "cortez-herring", label: "Cortez Herring" },
-//   { value: "john-doe", label: "John Doe" },
-//   { value: "jane-smith", label: "Jane Smith" },
-// ];
-const processOption = [
-  { value: "cortez-herring", label: "Cortez Herring" },
-  { value: "john-doe", label: "John Doe" },
-  { value: "jane-smith", label: "Jane Smith" },
-];
-const assignOption = [
-  { value: "cortez-herring", label: "Cortez Herring" },
-  { value: "john-doe", label: "John Doe" },
-  { value: "jane-smith", label: "Jane Smith" },
-];
+const generateNewOrderNumber = () => Date.now().toString();
+
+const initialProcess = { totalTime: "", processId: "", part: "" };
 
 const CustomOrderForm = () => {
-  // const [formData, setFormData] = useState({
-  //   orderNumber: "",
-  //   orderDate: "2025-02-26",
-  //   shipDate: "2025-02-26",
-  //   customer: "Cortez Herring",
-  //   customerName: "",
-  //   customerEmail: "",
-  //   customerPhone: "",
-  //   productNumber: "",
-  //   cost: "",
-  //   quantity: "",
-  //   description: "",
-  //   file: null,
-  //   partFamily: "Cortez Herring",
-  //   partNumber: "",
-  //   partDesc: "",
-  //   partQuantity: "",
-  //   partCost: "",
-  //   time: "09:33 AM",
-  //   process: "Cortez Herring",
-  //   assignTo: "Cortez Herring",
-  // });
+  const [customerList, setCustomerList] = useState<CustomerInterface[]>([]);
+  const [productList, setProductList] = useState<ProductNumberInterface[]>([]);
+  const [partList, setPartList] = useState<PartNumberInterface[]>([]);
+  const [processList, setProcessList] = useState<processInterface[]>([]);
 
-   const [showFields, setShowFields] = useState(false);
-    // const [showPart, setShowPart] = useState(false);
-  
-    const handleClick = () => {
-      setShowFields(true); // Show fields when clicking the Add button
-    };
-  //    const handleClick2 = () => {
-  //   setShowPart(true); // Show fields when clicking the Add button
-  // };
-  const [orderNumber, setOrderNumber] = useState("");
-  const cost = 3466;
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(
+    null
+  );
 
+  const [singleUnitCost, setSingleUnitCost] = useState<number | null>(null);
 
-  const { register, handleSubmit, setValue } = useForm<FormData>();
-
-useEffect(() => {
-   const randomOrder = Math.floor(10000 + Math.random() * 90000);
-   setOrderNumber(randomOrder.toString());
-}, []);
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    setValue("Cost", cost), [cost, setValue];
-  });
+    fetchCustomers();
+    fetchProducts();
+    fetchPartNumber();
+    fetchProcess();
+  }, []);
 
-  interface FormData {
-    orderNumber: number;
-    OrderDate: string;
-    ShipDate: string;
-    Name?: string;
-    email?: string;
-    mobile?: string;
-    productNumber?: number;
-    Cost?: number;
-    ProductQuantity?: number;
-    ProductDescription?: string;
-    ProductDrawing?: File | null;
-    partNumber?: number;
-    PartDesc?: string;
-    PartQuantity?: string;
-    PartCost?: string;
-    Time?: string;
-    customerName1?: string;
-    customerEmail1?: string;
-    customerPhone1?: string;
-    partNumber1?: number;
-    partDesc1?: string;
-    partQuantity1?: string;
-    partCost1?: string;
-  }
+  const fetchCustomers = async () => {
+    try {
+      const response = await selectCustomer();
+      setCustomerList(response || []);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+      toast.error("Failed to fetch customers.");
+    }
+  };
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form Data:", data);
+  const fetchProducts = async () => {
+    try {
+      const response = await selectProductNumber();
+      setProductList(response || []);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      toast.error("Failed to fetch products.");
+    }
+  };
+
+  const fetchPartNumber = async () => {
+    try {
+      const response = await selectPartNumber();
+      setPartList(response || []);
+    } catch (error) {
+      console.error("Error fetching part numbers:", error);
+      toast.error("Failed to fetch part numbers.");
+    }
+  };
+
+  const fetchProcess = async () => {
+    try {
+      const response = await selectProcess();
+      setProcessList(response || []);
+    } catch (error) {
+      console.error("Error fetching processes:", error);
+      toast.error("Failed to fetch processes.");
+    }
+  };
+
+  const initialFormValues = {
+    orderNumber: generateNewOrderNumber(),
+    orderDate: new Date().toISOString().split("T")[0],
+    shipDate: "",
+    customerId: "",
+    customerName: "",
+    customerEmail: "",
+    customerPhone: "",
+    productId: "",
+    part_id: "",
+    cost: "",
+    totalCost: "",
+    productQuantity: "",
+    newParts: [initialProcess],
   };
 
   return (
-    <div className="p-4 bg-white rounded-2xl border shadow-md">
-      <form onSubmit={handleSubmit(onSubmit)} className="">
-        {/* Channel & Platform */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-6 ">
-          <div>
-            <label className="font-semibold">Order Number</label>
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+      />
+      <div className="p-4 bg-white rounded-2xl border shadow-md">
+        <Formik
+          initialValues={initialFormValues}
+          validationSchema={customOrderValidation}
+          onSubmit={async (values, { setSubmitting, resetForm }) => {
+            try {
+              await addCustomOrder(values);
+              toast.success("Custom order created successfully!");
+              resetForm({
+                values: {
+                  ...initialFormValues,
+                  orderNumber: generateNewOrderNumber(),
+                },
+              });
+              setSelectedCustomerId(null);
+              setSingleUnitCost(null);
+            } catch (error) {
+              console.error("Submission error:", error);
+              toast.error("Failed to create order. Please try again.");
+            } finally {
+              setSubmitting(false);
+            }
+          }}
+        >
+          {({ values, setFieldValue, errors, touched, isSubmitting }) => {
+            const handleCustomerSelectChange = (
+              e: React.ChangeEvent<HTMLSelectElement>
+            ) => {
+              const value = e.target.value;
+              if (value === "new") {
+                const tempId = crypto.randomUUID();
+                setFieldValue("customerId", tempId);
+                setSelectedCustomerId(null);
+                setFieldValue("customerName", "");
+                setFieldValue("customerEmail", "");
+                setFieldValue("customerPhone", "");
+              } else if (value) {
+                const selected = customerList.find((c) => c.id === value);
+                if (selected) {
+                  setFieldValue("customerId", selected.id);
+                  setSelectedCustomerId(selected.id);
+                  setFieldValue("customerName", selected.name);
+                  setFieldValue("customerEmail", selected.email);
+                  setFieldValue("customerPhone", selected.customerPhone);
+                }
+              } else {
+                setFieldValue("customerId", "");
+                setSelectedCustomerId(null);
+                setFieldValue("customerName", "");
+                setFieldValue("customerEmail", "");
+                setFieldValue("customerPhone", "");
+              }
+            };
 
-            <p
-              {...register("orderNumber", {
-                required: "Order Number required",
-              })}
-              className="border py-3 px-4 rounded-md w-full  placeholder-gray-600 bg-gray-100"
-            >
-              {orderNumber}
-            </p>
-          </div>
-          <div>
-            <label className="font-semibold">Order Date</label>
-            <input
-              {...register("OrderDate", { required: "Order Date is required" })}
-              type="date"
-              placeholder=""
-              className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-            />
-          </div>
-          <div>
-            <label className="font-semibold">Ship Date </label>
-            <input
-              {...register("ShipDate", { required: "Ship Date  is required" })}
-              type="date"
-              placeholder=""
-              className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-            />
-          </div>
-        </div>
+            const handleProductSelectChange = (
+              e: React.ChangeEvent<HTMLSelectElement>
+            ) => {
+              const selectedProductId = e.target.value;
+              setFieldValue("productId", selectedProductId);
+              if (selectedProductId) {
+                const selected = productList.find(
+                  (p) => p.productId === selectedProductId
+                );
+                if (selected) {
+                  const unitCost = selected.cost;
+                  const quantity = 1; // Default quantity to 1
+                  setSingleUnitCost(unitCost);
+                  setFieldValue("cost", unitCost.toFixed(2));
+                  setFieldValue("productQuantity", quantity);
+                  setFieldValue("totalCost", (unitCost * quantity).toFixed(2));
+                }
+              } else {
+                setSingleUnitCost(null);
+                setFieldValue("cost", "");
+                setFieldValue("productQuantity", "");
+                setFieldValue("totalCost", "");
+              }
+            };
 
-        {/* Personal Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  gap-4 mt-4 bg-white px-6 ">
-          <div>
-            <label className="font-semibold">Select Customer</label>
-            <Select
-              isMulti
-              options={options}
-              className="w-full "
-              placeholder="Select People"
-            />
-          </div>
+            const handlePartSelectChange = (
+              e: React.ChangeEvent<HTMLSelectElement>
+            ) => {
+              setFieldValue("part_id", e.target.value);
+            };
 
-          <div>
-            <label className="font-semibold">Customer Name</label>
-            <input
-              {...register("Name")}
-              type="text"
-              placeholder="Enter Customer Name "
-              className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-            />
-          </div>
-          <div className="col-span-">
-            <label className="font-semibold">Customer Email</label>
-            <input
-              {...register("email")}
-              type="email"
-              placeholder="Enter Customer Email"
-              className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-            />
-          </div>
-          <div className="col-span-">
-            <label className="font-semibold">Customer Phone</label>
-            <input
-              {...register("mobile")}
-              type="number"
-              placeholder="Enter Customer Phone  "
-              className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-            />
-          </div>
-            <div className=" flex  justify-start gap-2">
-            <span
-              className="text-blue-500 text-sm flex items-center gap-1 cursor-pointer"
-              onClick={handleClick}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              Add New supplier
-            </span>
-          </div>
-        </div>
+            const handleQuantityChange = (
+              e: React.ChangeEvent<HTMLInputElement>
+            ) => {
+              const quantityStr = e.target.value;
+              setFieldValue("productQuantity", quantityStr);
+              const newQuantity = Number(quantityStr);
+              if (singleUnitCost !== null && newQuantity >= 1) {
+                const totalCost = singleUnitCost * newQuantity;
+                setFieldValue("totalCost", totalCost.toFixed(2));
+              } else {
+                setFieldValue("totalCost", "");
+              }
+            };
 
-         {/* Render Fields When Clicked */}
-        {showFields && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4  bg-white p-4  ">
-            <div>
-              <label className="font-semibold">Customer Name</label>
-              <input
-                {...register("customerName1", {
-                  required: "Customer name required",
-                })}
-                type="text"
-                placeholder="Enter Customer Name"
-                className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-              />
-            </div>
-            <div>
-              <label className="font-semibold">Customer Email</label>
-              <input
-                {...register("customerEmail1", {
-                  required: "Customer Email  required",
-                })}
-                type="email"
-                placeholder="Enter Customer Email"
-                className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-              />
-            </div>
-            <div className="flex items-center gap-4">
-              <div>
-                <label className="font-semibold">Customer Phone</label>
-                <input
-                  {...register("customerPhone1", {
-                    required: "Customer number  required",
-                  })}
-                  type="number"
-                  placeholder="Enter Customer Phone"
-                  className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-                />
-              </div>
-              <div
-                onClick={() => setShowFields(false)}
-                className="bg-red-600 p-2 rounded-full cursor-pointer"
-              >
-                <img src={del_img} alt="" />
-              </div>
-            </div>
-          </div>
-        )}
+            return (
+              <Form>
+                {/* Order Details */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-6 ">
+                  <div>
+                    <label className="font-semibold">Order Number</label>
+                    <Field
+                      name="orderNumber"
+                      type="text"
+                      readOnly
+                      className="border py-3 px-4 rounded-md w-full bg-gray-100"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-semibold">Order Date</label>
+                    <Field
+                      name="orderDate"
+                      type="date"
+                      className="border py-3 px-4 rounded-md w-full"
+                    />
+                    <ErrorMessage
+                      name="orderDate"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-semibold">Ship Date</label>
+                    <Field
+                      name="shipDate"
+                      type="date"
+                      className={`border py-3 px-4 rounded-md w-full ${
+                        touched.shipDate && errors.shipDate
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    />
+                    <ErrorMessage
+                      name="shipDate"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+                </div>
 
-        {/* Codes & Dates */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 bg-white px-6 ">
-          <div>
-            <label className="font-semibold">Product Number</label>
-            <input
-              {...register("productNumber")}
-              type="number"
-              placeholder="Enter Product No..."
-              className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-            />
-          </div>
-          <div>
-            <label className="font-semibold">Cost</label>
-            <p 
-             {...register("Cost")}
-              
-              className="border py-3 px-4 rounded-md w-full  placeholder-gray-600 bg-gray-100">
-                {cost}
-              </p>
-          </div>
+                {/* Customer Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 bg-white px-6">
+                  <div>
+                    <label className="font-semibold">Select Customer</label>
+                    <select
+                      name="customerId"
+                      value={
+                        customerList.some((c) => c.id === values.customerId)
+                          ? values.customerId
+                          : ""
+                      }
+                      onChange={handleCustomerSelectChange}
+                      className={`border px-2 py-3 rounded-md w-full ${
+                        touched.customerId && errors.customerId
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    >
+                      <option value="">Select a customer</option>
+                      <option value="new">➕ Add New Customer</option>
+                      {customerList.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                    <ErrorMessage
+                      name="customerId"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-semibold">Customer Name</label>
+                    <Field
+                      name="customerName"
+                      readOnly={selectedCustomerId !== null}
+                      placeholder="Enter Customer Name"
+                      className={`border py-3 px-4 rounded-md w-full ${
+                        selectedCustomerId !== null ? "bg-gray-100" : ""
+                      } ${
+                        touched.customerName && errors.customerName
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    />
+                    <ErrorMessage
+                      name="customerName"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-semibold">Customer Email</label>
+                    <Field
+                      name="customerEmail"
+                      type="email"
+                      readOnly={selectedCustomerId !== null}
+                      placeholder="Enter Customer Email"
+                      className={`border py-3 px-4 rounded-md w-full ${
+                        selectedCustomerId !== null ? "bg-gray-100" : ""
+                      } ${
+                        touched.customerEmail && errors.customerEmail
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    />
+                    <ErrorMessage
+                      name="customerEmail"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-semibold">Customer Phone</label>
+                    <Field
+                      name="customerPhone"
+                      readOnly={selectedCustomerId !== null}
+                      placeholder="Enter Customer Phone"
+                      className={`border py-3 px-4 rounded-md w-full ${
+                        selectedCustomerId !== null ? "bg-gray-100" : ""
+                      } ${
+                        touched.customerPhone && errors.customerPhone
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    />
+                    <ErrorMessage
+                      name="customerPhone"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+                </div>
 
-          <div>
-            <label className="font-semibold">Product Quantity</label>
-            <input
-              {...register("ProductQuantity", {})}
-              type="number"
-              placeholder="Enter Quantity"
-              className="border py-3 px-4 rounded-md w-full  text-gray-600"
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 bg-white px-6 ">
-          <div className="col-span-2">
-            <label className="font-semibold">Product Description</label>
-            <input
-              {...register("ProductDescription")}
-              type="text"
-              placeholder="Product Description"
-              className="border py-6 px-4 rounded-md w-full  placeholder-gray-600"
-            />
-          </div>
+                {/* Product Details */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 bg-white px-6 ">
+                  <div>
+                    <label className="font-semibold">Product Number</label>
+                    <select
+                      name="productId"
+                      value={values.productId}
+                      onChange={handleProductSelectChange}
+                      className={`border px-2 py-3 rounded-md w-full ${
+                        touched.productId && errors.productId
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    >
+                      <option value="">Select a product</option>
+                      {productList.map((p) => (
+                        <option key={p.productId} value={p.productId}>
+                          {p.partNumber}
+                        </option>
+                      ))}
+                    </select>
+                    <ErrorMessage
+                      name="productId"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-semibold">Unit Cost</label>
+                    <p className="border py-3 px-4 rounded-md w-full bg-gray-100 min-h-[48px] flex items-center">
+                      {singleUnitCost !== null
+                        ? `$${singleUnitCost.toFixed(2)}`
+                        : ""}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="font-semibold">Product Quantity</label>
+                    <Field
+                      name="productQuantity"
+                      type="number"
+                      placeholder="Quantity"
+                      onChange={handleQuantityChange}
+                      min="1"
+                      className={`border py-3 px-4 rounded-md w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                        touched.productQuantity && errors.productQuantity
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    />
+                    <ErrorMessage
+                      name="productQuantity"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-semibold">Total Cost</label>
+                    <Field
+                      name="totalCost"
+                      readOnly
+                      placeholder="Total Cost"
+                      className="border py-3 px-4 rounded-md w-full bg-gray-100"
+                    />
+                    <ErrorMessage
+                      name="totalCost"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+                </div>
 
-        </div>
+                {/* Part Number Field */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 bg-white px-6">
+                  <div className="col-span-1">
+                    <label className="font-semibold">Part Number</label>
+                    <select
+                      name="part_id"
+                      value={values.part_id}
+                      onChange={handlePartSelectChange}
+                      className={`border px-2 py-3 rounded-md w-full ${
+                        touched.part_id && errors.part_id
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    >
+                      <option value="">Select a part number</option>
+                      {partList.map((p) => (
+                        <option key={p.part_id} value={p.part_id}>
+                          {p.partNumber}
+                        </option>
+                      ))}
+                    </select>
+                    <ErrorMessage
+                      name="part_id"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+                </div>
 
-        {/* Bank Details */}
-        {/* <div className="bg-white px-6 ">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 mt-4 gap-4">
-            <div>
-              <label className="font-semibold">Select Part Family</label>
-              <Select
-                isMulti
-                options={partOption}
-                className="w-full "
-                placeholder="Select part"
-              ></Select>
-            </div>
+                {/* --- Process Details --- */}
+                <div className="bg-white px-6 mt-4">
+                  <h3 className="text-lg font-semibold mb-2 border-b pb-2">
+                    Order Processes
+                  </h3>
+                  <FieldArray name="newParts">
+                    {({ push, remove }) => (
+                      <div>
+                        {values.newParts.map((_, index) => (
+                          <div
+                            key={index}
+                            className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center mb-4 p-4 border rounded-md relative"
+                          >
+                            <div className="md:col-span-1">
+                              <label className="font-semibold">
+                                Total Time (minutes)
+                              </label>
+                              <Field
+                                name={`newParts[${index}].totalTime`}
+                                min="1"
+                                type="number"
+                                placeholder="e.g., 65"
+                                className="border py-3 px-4 rounded-md w-full"
+                              />
+                              <ErrorMessage
+                                name={`newParts[${index}].totalTime`}
+                                component="div"
+                                className="text-red-500 text-sm"
+                              />
+                            </div>
+                            <div className="md:col-span-1">
+                              <label className="font-semibold">
+                                Select Process
+                              </label>
+                              <Field
+                                as="select"
+                                name={`newParts[${index}].processId`}
+                                className="border px-2 py-3 rounded-md w-full"
+                              >
+                                <option value="">Select Process</option>
+                                {processList.map((p) => (
+                                  <option key={p.id} value={p.id}>
+                                    {p.name}
+                                  </option>
+                                ))}
+                              </Field>
+                              <ErrorMessage
+                                name={`newParts[${index}].processId`}
+                                component="div"
+                                className="text-red-500 text-sm"
+                              />
+                            </div>
+                            <div className="md:col-span-1">
+                              <label className="font-semibold">
+                                Assign To Part Number
+                              </label>
+                              <Field
+                                name={`newParts[${index}].part`}
+                                type="text"
+                                placeholder="Enter Part Number"
+                                className="border py-3 px-4 rounded-md w-full"
+                              />
+                              <ErrorMessage
+                                name={`newParts[${index}].part`}
+                                component="div"
+                                className="text-red-500 text-sm"
+                              />
+                            </div>
+                            <div className="md:col-span-1 flex justify-end items-start pt-2 h-full">
+                              {values.newParts.length > 1 && (
+                                <FaTrash
+                                  onClick={() => remove(index)}
+                                  className="text-red-500 cursor-pointer hover:text-red-700 text-xl"
+                                  title="Remove Process"
+                                />
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => push(initialProcess)}
+                          className="bg-brand text-white p-2 text-sm rounded-md hover:bg-blue-800"
+                        >
+                          + Add
+                        </button>
+                      </div>
+                    )}
+                  </FieldArray>
+                </div>
 
-            <div>
-              <label className="font-semibold">Part Number</label>
-
-              <input
-                {...register("partNumber")}
-                type="number"
-                placeholder="Enter part Number"
-                className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-              />
-            </div>
-
-            <div>
-              <label className="font-semibold">Part Desc</label>
-
-              <input
-                {...register("PartDesc")}
-                type="text"
-                placeholder="Enter part desc"
-                className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-              />
-            </div>
-
-            <div>
-              <label className="font-semibold">Part Quantity</label>
-              <input
-                {...register("PartQuantity")}
-                type="text"
-                placeholder="Enter part Quantity"
-                className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-              />
-            </div>
-
-            <div>
-              <label className="font-semibold">Part Cost</label>
-              <input
-                {...register("PartCost")}
-                type="text"
-                placeholder="Enter part Cost"
-                className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-              />
-            </div>
-          </div>
-
-            <div className=" flex  justify-start gap-2">
-            <span
-              className="text-blue-500 text-sm flex items-center gap-1 cursor-pointer"
-              onClick={handleClick2}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              Add Another Part
-            </span>
-          </div>
-        </div> */}
-
-          {/* Render Fields When Clicked */}
-        {/* {showPart && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4  bg-white p-4  ">
-            <div>
-              <label className="font-semibold">Part Number</label>
-
-              <input
-                {...register("partNumber1")}
-                type="number"
-                placeholder="Enter part Number"
-                className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-              />
-            </div>
-
-            <div>
-              <label className="font-semibold">Part Desc</label>
-
-              <input
-                {...register("partDesc1")}
-                type="text"
-                placeholder="Enter part desc"
-                className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-              />
-            </div>
-
-            <div>
-              <label className="font-semibold">Part Quantity</label>
-              <input
-                {...register("partQuantity1")}
-                type="text"
-                placeholder="Enter part Quantity"
-                className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-              />
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div>
-                <label className="font-semibold">Part cost</label>
-                <input
-                  {...register("partCost1")}
-                  type="text"
-                  placeholder="Enter part cost"
-                  className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-                />
-              </div>
-              <div
-                onClick={() => setShowPart(false)}
-                className="bg-red-600 p-2 rounded-full cursor-pointer"
-              >
-                <img src={del_img} alt="" />
-              </div>
-            </div>
-          </div>
-        )} */}
-        <div className="bg-white px-6 ">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 mt-4 gap-4 items-center">
-            <div>
-              <label className="font-semibold">Total Time</label>
-              <input
-                {...register("Time")}
-                type="text"
-                placeholder="65 min"
-                className="border py-3 px-4 rounded-md w-full  placeholder-gray-600"
-              />
-            </div>
-            <div>
-              <label className="font-semibold">Select Process</label>
-              <Select
-                isMulti
-                options={processOption}
-                className="w-full "
-                placeholder="Select part"
-              ></Select>
-            </div>
-            <div className="flex gap-4 items-end ">
-              {" "}
-              <div className="">
-                <label className="font-semibold">Assign To </label>
-                <Select
-                  isMulti
-                  options={assignOption}
-                  className="w-full "
-                  placeholder="Select part"
-                ></Select>
-              </div>
-              <div className="items-center justify-center  ">
-                <p className="bg-brand text-white p-2  text-sm rounded-sm">
-                  Add
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className=" mt-6">
-          <button className="px-6 py-2 bg-brand text-white text-md  hover:bg-[#1a2e57] transition ml-6 ">
-            Create Custom Order
-          </button>
-        </div>
-      </form>
-    </div>
+                {/* Submit Button */}
+                <div className="mt-6 p-6">
+                  <button
+                    type="submit"
+                    className="px-6 py-2 bg-brand text-white text-md font-semibold rounded-md hover:bg-green-700 transition disabled:bg-gray-400"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Creating..." : "Create Custom Order"}
+                  </button>
+                </div>
+              </Form>
+            );
+          }}
+        </Formik>
+      </div>
+    </>
   );
 };
 

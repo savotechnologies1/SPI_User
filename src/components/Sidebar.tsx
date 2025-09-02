@@ -369,7 +369,6 @@ interface SubMenuItem extends BaseMenuItem {
 
 interface SimpleMenuItem extends BaseMenuItem {
   hasSubmenu?: false;
-  
 }
 
 type MenuItem = SubMenuItem | SimpleMenuItem;
@@ -442,7 +441,7 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
               path: "/station-login",
             },
           ],
-        } ,
+        },
 
         {
           category: "INSIGHT",
@@ -502,7 +501,7 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
               path: "/sign-in",
             },
           ],
-        } ,
+        },
       ]
     : [
         {
@@ -551,6 +550,11 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                       key: "Stock Order Schedule",
                       label: "Stock Order Schedule",
                       path: "/stock-order-schedule",
+                    },
+                    {
+                      key: "Order Schedule List",
+                      label: "Order Schedule List",
+                      path: "/stock-order-schedule-list",
                     },
                     {
                       key: "Custom Order Schedule",
@@ -607,7 +611,7 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                     {
                       key: "newSupplier",
                       label: "Add & Edit supplier",
-                      path: "/new-supplier",
+                      path: "/add-supplier",
                     },
                   ],
                 },
@@ -676,23 +680,29 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
               key: "Work Instruction ",
               label: "Work Instruction ",
               icon: work,
-              hasSubmenu: true as true,
+              hasSubmenu: true,
               submenu: [
                 {
                   key: "All work Instruction",
                   label: "All work Instruction",
-                  path: "/all-work-instruction",
+                  path: "work-instructions-list",
                 },
-                {
-                  key: "select process & product",
-                  label: "select process & product",
-                  path: "/work-instruction",
-                },
+                // {
+                //   key: "select process & product",
+                //   label: "select process & product",
+                //   path: "/work-instruction",
+                // },
                 {
                   key: "Add & Edit work Instruction",
                   label: "Add & Edit work Instruction ",
                   path: "/add-work-instruction",
                 },
+                // {
+                //   key: "Edit work Instruction",
+                //   label: "Edit work Instruction",
+                //   path: "/edit-work-instruction",
+                // },
+
                 {
                   key: "Apply work instruction to diffrent product/process",
                   label: " Apply work instruction to diffrent product/process ",
@@ -767,7 +777,7 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
               path: "/sign-in",
             },
           ],
-        } ,
+        },
       ];
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
@@ -779,7 +789,7 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
   };
 
   // const handleLogout = () => {
-  //   navigate("/sign-in"); 
+  //   navigate("/sign-in");
   // };
 
   const hasSubmenu = (

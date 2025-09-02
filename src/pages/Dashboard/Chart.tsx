@@ -33,13 +33,16 @@ const Chart = () => {
       "50k",
       "55k",
       "60k",
-    ], // X-axis labels
+    ],
     datasets: [
       {
         label: "Production Overview",
-        data: [20,30, 40, 50,30, 45, 90, 35, 45, 48, 60, 21, 24, 41, 70, 45, 60, 56,69, 70, 67, 80, 45, 60, 65, 75, 80], // Data points
-        borderColor: "#052C89", 
-        fill: true, 
+        data: [
+          20, 30, 40, 50, 30, 45, 90, 35, 45, 48, 60, 21, 24, 41, 70, 45, 60,
+          56, 69, 70, 67, 80, 45, 60, 65, 75, 80,
+        ], // Data points
+        borderColor: "#052C89",
+        fill: true,
         _backgroundColor: "rgba(0, 51, 204, 0.1)", // Shaded area
         get backgroundColor() {
           return this._backgroundColor;
@@ -56,52 +59,53 @@ const Chart = () => {
 
   const options = {
     responsive: true,
-    maintainAspectRatio: false, 
+    maintainAspectRatio: false,
     plugins: {
-        tooltip: {
-            callbacks: {
-                label: (context : any) => `${context.raw}`,
-            },
+      tooltip: {
+        callbacks: {
+          label: (context: any) => `${context.raw}`,
         },
+      },
 
-        legend: {
-          display: false,   // Hide the "Sales Details" label
+      legend: {
+        display: false, // Hide the "Sales Details" label
       },
     },
     scales: {
-        y: {
-            beginAtZero: false,
-            min: 20,
-            max: 100,
-            ticks: {
-                stepSize: 20,
-                callback: (value :any) => `${value}%`,
-            },
+      y: {
+        beginAtZero: false,
+        min: 20,
+        max: 100,
+        ticks: {
+          stepSize: 20,
+          callback: (value: any) => `${value}%`,
         },
-        // x: {
-        //     title: {
-        //         display: true,
-        //         text: "Sales ($)",
-        //     },
-        // },
+      },
+      // x: {
+      //     title: {
+      //         display: true,
+      //         text: "Sales ($)",
+      //     },
+      // },
     },
     elements: {
-        line: {
-            tension: 0.3,             // Reduce curve smoothness
-            borderWidth: 2,           // Thinner line
-        },
-        point: {
-            radius: 2,                // Smaller points
-            hoverRadius: 4,           // Slightly larger on hover
-        }
+      line: {
+        tension: 0.3, // Reduce curve smoothness
+        borderWidth: 2, // Thinner line
+      },
+      point: {
+        radius: 2, // Smaller points
+        hoverRadius: 4, // Slightly larger on hover
+      },
     },
-};
-
+  };
 
   return (
     <div className="p-4 bg-white h-[px] shadow-md rounded-lg w-full  ">
       <h2 className="text-xl font-semibold mb-4 ">Production Overview</h2>
-      <div className="w-full h-64 md:h-80 lg:h-96"> {/* Responsive height */}
+      <div className="w-full h-64 md:h-80 lg:h-96">
+        {" "}
+        {/* Responsive height */}
         <Line data={data} options={options} />
       </div>
     </div>

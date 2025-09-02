@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { FiEdit2 } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { FaCircle } from "react-icons/fa";
+import { FaCircle, FaTrash } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
-
+import edit from "../../assets/edit_icon.png";
 interface WorkInstructionItem {
   id: string;
   imageUrl: string;
@@ -12,7 +12,7 @@ interface WorkInstructionItem {
   stepNumber: string;
   description: string;
   submitDate: string;
-  statusColor: string; 
+  statusColor: string;
 }
 
 const mockData: WorkInstructionItem[] = [
@@ -68,13 +68,11 @@ const mockData: WorkInstructionItem[] = [
   },
 ];
 
-
-
 const AllWorkInstruction: React.FC = () => {
   const [openOptionsIndex, setOpenOptionsIndex] = useState<number | null>(null);
   const rowsPerPage = 4;
   const currentPage = 2;
-
+  const [showConfirm, setShowConfirm] = useState(false);
   const toggleOptions = (index: number) => {
     setOpenOptionsIndex((prev) => (prev === index ? null : index));
   };
@@ -92,10 +90,10 @@ const AllWorkInstruction: React.FC = () => {
     }
   };
 
-  const navigate = useNavigate ();
-const handleEdit = () =>{
-  navigate("/edit-work-instruction");
-}
+  const navigate = useNavigate();
+  const handleEdit = () => {
+    navigate("/edit-work-instruction");
+  };
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -159,27 +157,55 @@ const handleEdit = () =>{
                     </span>
                   </td>
                   <td className="px-4 py-3 relative flex items-center gap-4">
-                    <FiEdit2
-                        onClick={handleEdit}
-
-                      className="cursor-pointer text-lg"
-                      title="Quick edit"
-                    />
+                    <button className="text-brand hover:underline">
+                      <img
+                        src={edit}
+                        alt="Edit"
+                        className="w-4 h-4 md:w-5 md:h-5"
+                      />
+                    </button>
+                    <button className="text-brand hover:underline">
+                      <FaTrash
+                        className="text-red-500 cursor-pointer h-7"
+                        onClick={() => setShowConfirm(true)}
+                      />
+                      {showConfirm && (
+                        <div
+                          className="fixed inset-0 bg-opacity-50 backdrop-blur-sm
+                                    flex items-center justify-center z-50"
+                        >
+                          <div className="bg-white p-6 rounded-xl shadow-lg">
+                            <h2 className="text-lg font-semibold mb-4">
+                              Are you sure?
+                            </h2>
+                            <p className="mb-4">
+                              Do you really want to delete this work instruction
+                              ?
+                            </p>
+                            <div className="flex justify-end space-x-3">
+                              <button
+                                className="px-4 py-2 bg-gray-300 rounded"
+                                onClick={() => setShowConfirm(false)}
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                className="px-4 py-2 bg-red-500 text-white rounded"
+                                onClick={() => {
+                                  setShowConfirm(false);
+                                }}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </button>
                     <BsThreeDotsVertical
                       className="cursor-pointer text-lg"
                       onClick={() => toggleOptions(index)}
                     />
-                    {openOptionsIndex === index && (
-                      <div className="absolute right-0 mt-8 w-32 bg-white border border-gray-200 rounded shadow-md z-10">
-                        <button 
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Edit
-                        </button>
-                        <button className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">
-                          Delete
-                        </button>
-                      </div>
-                    )}
                   </td>
                 </tr>
               ))}
@@ -190,7 +216,8 @@ const handleEdit = () =>{
         <div className="flex justify-between items-center mt-4 text-sm">
           <span>Rows per page: 5</span>
           <span>
-            {rowsPerPage * (currentPage - 1) + 1} - {rowsPerPage * currentPage} of 11
+            {rowsPerPage * (currentPage - 1) + 1} - {rowsPerPage * currentPage}{" "}
+            of 11
           </span>
         </div>
       </div>
