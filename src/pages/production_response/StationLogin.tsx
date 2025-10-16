@@ -127,7 +127,7 @@
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { FaChevronRight } from "react-icons/fa";
+import { FaArrowLeft, FaChevronRight } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -215,7 +215,14 @@ const StationLogin = () => {
   return (
     <div className="bg-[#F5F6FA]">
       <div className="justify-between flex flex-row items-center px-4 py-2">
-        {/* ... (código del header sin cambios) ... */}
+        <button
+          type="button"
+          onClick={() => navigate(-1)} // Go back one page
+          className="w-full flex items-center justify-start ml-7 py-2 rounded-md hover:bg-gray-100 transition font-bold"
+        >
+          <FaArrowLeft className="mr-2" />
+          Back
+        </button>
       </div>
       <div className="min-h-screen flex items-center justify-center">
         <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
