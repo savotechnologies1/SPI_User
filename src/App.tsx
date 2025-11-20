@@ -302,7 +302,7 @@ const App = () => {
             />
             <Route path="stock-order" element={<StockOrder />} />
             <Route
-              path="stock-order-schedule-list"
+              path="order-schedule-list"
               element={<StockOrderScheduleList />}
             />
             <Route path="custom-order" element={<CustomOrder />} />

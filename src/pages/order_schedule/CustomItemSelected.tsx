@@ -717,7 +717,6 @@ const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
       toast.info(`Order ${itemToAdd.orderNumber} updated in the schedule.`);
     } else {
       setSelectedItems((prev) => [...prev, itemToAdd]);
-      toast.success(`Order ${itemToAdd.orderNumber} added to the schedule.`);
     }
   };
 
@@ -867,7 +866,7 @@ const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
       console.log("Payload for CUSTOM orders:", payloads);
       const response = await scheduleCustomOrder(payloads);
       if (response.status === 201) {
-        navigate("/stock-order-schedule-list");
+        navigate("/order-schedule-list");
       }
     } catch (error) {
       console.error("Failed to schedule custom items:", error);

@@ -623,7 +623,7 @@ const StockOrderForm = () => {
   };
 
   return (
-    <div className="p-4 bg-white rounded-2xl border shadow-md">
+    <div className=" bg-white rounded-2xl border shadow-md p-2 mt-5">
       <Formik
         initialValues={{
           orderNumber: generateNewOrderNumber(),
@@ -687,7 +687,8 @@ const StockOrderForm = () => {
           ) => {
             const value = e.target.value;
             if (value === "new") {
-              const newCustomerId = crypto.randomUUID();
+              const newCustomerId = uuidv4();
+              // const newCustomerId = crypto.randomUUID();
               setFieldValue("customerId", newCustomerId);
               setSelectedCustomerId(null);
               setFieldValue("customerName", "");
@@ -1013,5 +1014,4 @@ const StockOrderForm = () => {
     </div>
   );
 };
-
 export default StockOrderForm;

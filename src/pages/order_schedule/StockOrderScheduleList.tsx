@@ -140,12 +140,11 @@ const StockOrderScheduleList: React.FC = () => {
   const handlePreviousPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
+  const handleDelete = async (id: string, orderId: string) => {
+    if (!id || !orderId) return;
 
-  const handleDelete = async (id: string) => {
-    if (!id) return;
     try {
-      await deleteScheduleOrder(id);
-      // Refetch data for the current page after deletion
+      await deleteScheduleOrder(id, { orderId });
       fetchScheduleList(currentPage, selectedType, debouncedSearchVal);
     } catch (error) {
       console.error("Failed to delete:", error);
@@ -201,7 +200,7 @@ const StockOrderScheduleList: React.FC = () => {
           </select>
           <input
             type="text"
-            placeholder="Search by Order #, Part #, or Status..."
+            placeholder="Search by Order , Part or Status..."
             className="border w-full md:w-2/3 px-3 py-2 rounded-md"
             value={searchVal}
             onChange={handleSearchChange}
@@ -263,7 +262,8 @@ const StockOrderScheduleList: React.FC = () => {
                       : item.completed_by}
                   </td>
                   <td className="px-4 py-3">
-                    {item?.employee?.firstName} {item?.employee?.lastName}
+                    {item?.completedByEmployee?.firstName}{" "}
+                    {item?.completedByEmployee?.lastName}
                   </td>
                   <td className="px-4 py-3">
                     <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
@@ -298,7 +298,7 @@ const StockOrderScheduleList: React.FC = () => {
                             <button
                               className="px-4 py-2 bg-red-500 text-white rounded"
                               onClick={() => {
-                                handleDelete(selectedId);
+                                handleDelete(selectedId, item.order_id);
                                 setSelectedId(null);
                               }}
                             >
