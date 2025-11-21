@@ -618,7 +618,7 @@ const Settings = () => {
                 <Controller
                   name="country"
                   control={control}
-                  rules={{ required: "Country is required" }}
+                  // rules={{ required: "Country is required" }}
                   render={({ field }) => (
                     <Select
                       {...field}
@@ -637,7 +637,7 @@ const Settings = () => {
                 <Controller
                   name="state"
                   control={control}
-                  rules={{ required: "State is required" }}
+                  // rules={{ required: "State is required" }}
                   render={({ field }) => (
                     <Select
                       {...field}

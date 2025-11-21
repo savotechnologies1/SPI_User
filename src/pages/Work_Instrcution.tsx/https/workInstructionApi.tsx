@@ -38,7 +38,9 @@ export const addWorkinstructionInfo = async (data: object) => {
     );
 
     if (response.data?.success) {
-      toast.success(response.data.message);
+      toast.success(
+        response.data.message || "Work instruction created successfully!"
+      );
     } else {
       toast.error(response.data?.message || "Something went wrong");
     }

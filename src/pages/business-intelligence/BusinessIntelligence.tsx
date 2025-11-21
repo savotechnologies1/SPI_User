@@ -13,13 +13,29 @@ const BusinessIntelligence = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case "Production":
-        return <p><Production/></p>;
+        return (
+          <p>
+            <Production />
+          </p>
+        );
       case "Costing":
-        return <p><Costing/></p>;
+        return (
+          <p>
+            <Costing />
+          </p>
+        );
       case "Fixed Cost":
-        return <p><FixedCost/></p>;
+        return (
+          <p>
+            <FixedCost />
+          </p>
+        );
       case "Inventory":
-        return <p><Inventory/></p>;
+        return (
+          <p>
+            <Inventory />
+          </p>
+        );
       default:
         return null;
     }

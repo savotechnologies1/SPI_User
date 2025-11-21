@@ -5,7 +5,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from "recharts";
 
 const data = [
@@ -20,48 +20,52 @@ const data = [
   { time: "01:30", value: 59 },
   { time: "02:00", value: 73 },
   { time: "02:12", value: 15 },
-  { time: "03:10", value: 74 }
+  { time: "03:10", value: 74 },
 ];
 
 const OperatorCycleTime = () => {
   return (
     <div className="p-2 md:p-4 bg-white rounded-xl shadow-md w-full">
-      <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-[#00230F]">Operator Cycle Time</h2>
+      <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-[#00230F]">
+        Operator Cycle Time
+      </h2>
       <div className="w-full h-[250px] sm:h-[300px]">
-      <ResponsiveContainer width="100%" height='100%'>
-        <LineChart data={data}
-         margin={{
-          top: 5,
-          right: 10,
-          left: 0,
-          bottom: 5,
-        }}>
-          <CartesianGrid stroke="#f5f5f5" />
-          <XAxis dataKey="time" 
-             tick={{ fontSize: 12 }}
-             tickMargin={10}
-             interval={window.innerWidth < 768 ? 2 : 0}/>
-          <YAxis 
-           tick={{ fontSize: 12 }}
-           tickMargin={10}/>
-          <Tooltip 
-            contentStyle={{
-              fontSize: '12px',
-              borderRadius: '8px',
-              padding: '8px'
-            }}/>
-          <Line
-            type="monotone"
-            dataKey="value"
-            stroke="#6366F1"
-            strokeWidth={2}
-            dot={{ r: 4, stroke: "#6366F1", strokeWidth: 2 }}
-            activeDot={{ r: 6 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-      
-    </div>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={data}
+            margin={{
+              top: 5,
+              right: 10,
+              left: 0,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid stroke="#f5f5f5" />
+            <XAxis
+              dataKey="time"
+              tick={{ fontSize: 12 }}
+              tickMargin={10}
+              interval={window.innerWidth < 768 ? 2 : 0}
+            />
+            <YAxis tick={{ fontSize: 12 }} tickMargin={10} />
+            <Tooltip
+              contentStyle={{
+                fontSize: "12px",
+                borderRadius: "8px",
+                padding: "8px",
+              }}
+            />
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke="#6366F1"
+              strokeWidth={2}
+              dot={{ r: 4, stroke: "#6366F1", strokeWidth: 2 }}
+              activeDot={{ r: 6 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

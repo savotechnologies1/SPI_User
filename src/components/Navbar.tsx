@@ -371,6 +371,7 @@ import Account from "./Account";
 import { useSelector } from "react-redux";
 import { getProfile } from "../pages/settings/https/profileApi";
 import profile from "../assets/profile.png";
+import { FaBell } from "react-icons/fa";
 interface Profile {
   profileImg: string;
   // ... other profile properties
@@ -483,22 +484,34 @@ const Navbar = () => {
             />
           </div> */}
           <div className="flex space-x-4 relative">
-            {" "}
-            {/* Added relative for positioning the badge */}
-            <img
-              src={notification}
-              alt="notification"
-              className="w-10 cursor-pointer"
+            <FaBell
+              size={27}
+              color="#1e40af45" // bell color (blue). Change as needed.
+              className="cursor-pointer"
               onClick={() => {
                 isNotificationOpen(true);
-                fetchUnreadNotificationCount(); // Refresh count when opening
+                fetchUnreadNotificationCount();
               }}
             />
-            {unreadCount > 0 && ( // Conditionally render the badge
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+
+            {/* Notification Count Badge */}
+            {unreadCount > 0 && (
+              <span
+                className="
+        absolute -top-2 -right-2 
+        bg-red-600 text-white text-xs 
+        w-5 h-5 flex items-center justify-center 
+        rounded-full shadow-md
+      "
+              >
                 {unreadCount}
               </span>
             )}
+            {/* {unreadCount > 0 && ( // Conditionally render the badge
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )} */}
           </div>
           <div className="flex space-x-4">
             <img

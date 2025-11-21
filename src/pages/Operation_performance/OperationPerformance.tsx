@@ -1,39 +1,36 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { FaCircle } from "react-icons/fa";
 import Machine from "./Machine";
 import HourByHour from "./HourByHour";
 import Dive from "./Dive";
 import Monitor from "./Monitor";
+import DatePicker from "react-datepicker";
 
-const tabs = ["Machine", "Hour by Hour", "Monitor", "Dive"];
+const tabs = ["Hour by Hour", "Dive"];
 
 const OperationPerformance = () => {
-  const [activeTab, setActiveTab] = useState("Machine");
-
+  const [activeTab, setActiveTab] = useState("Hour by Hour");
+  const [startDate, setStartDate] = useState(new Date("2024-08-25"));
+  const [endDate, setEndDate] = useState(new Date("2025-11-25"));
   const renderTabContent = () => {
     switch (activeTab) {
-      case "Machine":
-        return (
-          <p>
-           <Machine/>
-          </p>
-        );
+      // case "Machine":
+      //   return (
+      //     <p>
+      //      <Machine/>
+      //     </p>
+      //   );
       case "Hour by Hour":
         return (
           <p>
-          <HourByHour/>
+            <HourByHour />
           </p>
         );
-      case "Monitor":
-        return (
-          <p>
-       <Monitor/>
-          </p>
-        );
+
       case "Dive":
         return (
           <p>
-            <Dive/>
+            <Dive />
           </p>
         );
       default:
@@ -45,7 +42,7 @@ const OperationPerformance = () => {
       <div className="p-4 md:p-7">
         {" "}
         <h1 className="font-bold text-[20px] md:text-[24px] text-black">
-          Operational Performance
+          Operational Performance1
         </h1>
         <div className="flex justify-between mt-2 items-center">
           <div className="flex gap-4 items-center ">
@@ -53,9 +50,9 @@ const OperationPerformance = () => {
               Operational Performance:
             </span>
 
-            <span className="text-xs sm:text-[16px] hover:cursor-pointer">
+            {/* <span className="text-xs sm:text-[16px] hover:cursor-pointer">
               25/11/2025 (3:19 PM)
-            </span>
+            </span> */}
           </div>
         </div>
         <div className="flex justify-between mt-2 items-center">
@@ -88,9 +85,7 @@ const OperationPerformance = () => {
             ))}
           </div>
 
-          <div className="mt-6 text-gray-700 ">
-            {renderTabContent()}
-          </div>
+          <div className="mt-6 text-gray-700 ">{renderTabContent()}</div>
         </div>
       </div>
     </div>

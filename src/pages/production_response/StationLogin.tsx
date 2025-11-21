@@ -135,29 +135,32 @@ import {
   selecEmployeeProcessApi,
   stationLogin,
 } from "./https/productionResponseApi";
+import { useAuth } from "../../context/AuthContext";
 
 type SubmitType = "run_schedule" | "run_with_scan" | "training";
 
 const StationLogin = () => {
   const navigate = useNavigate();
-  const [emoloyeeProcess, setEmployeeProcess] = useState<any | null>(null);
+  const [employeeProcess, setEmployeeProcess] = useState<any | null>(null);
   const submitTypeRef = useRef<SubmitType>("run_schedule");
+
+  const { user } = useAuth();
 
   const formik = useFormik({
     initialValues: {
       processId: "",
-      stationUserId: "", // Se llenará automáticamente desde la API
+      stationUserId: "", // Will be set automatically from API
     },
     validationSchema: Yup.object({
       processId: Yup.string().required("Station/Process is required"),
-      stationUserId: Yup.string().required("User ID is missing"), // Validación interna, no para el usuario
+      stationUserId: Yup.string().required("User ID is missing"),
     }),
     onSubmit: async (values) => {
       const type = submitTypeRef.current;
       const data = {
         processId: values.processId,
         stationUserId: values.stationUserId,
-        type: type,
+        type,
       };
 
       try {
@@ -192,11 +195,13 @@ const StationLogin = () => {
       const response = await selecEmployeeProcessApi();
       if (response) {
         setEmployeeProcess(response);
-        // ***** CAMBIO 1: Acceder al primer usuario del array 'stationUsers' *****
-        // La API ahora siempre devuelve un array, incluso si es para un solo usuario.
-        if (response.stationUsers && response.stationUsers.length > 0) {
-          const user = response.stationUsers[0]; // Tomamos el primer (y único) usuario
-          formik.setFieldValue("stationUserId", user.id);
+
+        // Set stationUserId for logged-in user
+        const currentUser = response.stationUsers?.find(
+          (u: any) => u?.id === user?.id
+        );
+        if (currentUser) {
+          formik.setFieldValue("stationUserId", currentUser.id);
         }
       } else {
         setEmployeeProcess(null);
@@ -209,27 +214,33 @@ const StationLogin = () => {
 
   useEffect(() => {
     fetchEmployeeProcess();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const currentStationUser = employeeProcess?.stationUsers?.find(
+    (u: any) => u?.id === user?.id
+  );
+
   return (
-    <div className="bg-[#F5F6FA]">
-      <div className="justify-between flex flex-row items-center px-4 py-2">
+    <div className="bg-[#F5F6FA] min-h-screen">
+      <div className="flex items-center justify-start px-4 py-2">
         <button
           type="button"
-          onClick={() => navigate(-1)} // Go back one page
-          className="w-full flex items-center justify-start ml-7 py-2 rounded-md hover:bg-gray-100 transition font-bold"
+          onClick={() => navigate(-1)}
+          className="flex items-center justify-start ml-7 py-2 rounded-md hover:bg-gray-100 transition font-bold"
         >
           <FaArrowLeft className="mr-2" />
           Back
         </button>
       </div>
-      <div className="min-h-screen flex items-center justify-center">
+
+      <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
         <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
           <h1 className="text-2xl font-bold text-center mb-6">
             Station / Process Login
           </h1>
+
           <form onSubmit={formik.handleSubmit} className="space-y-4">
+            {/* Station / Process Select */}
             <div>
               <label className="block text-gray-700 font-medium">Station</label>
               <select
@@ -244,18 +255,11 @@ const StationLogin = () => {
                 }`}
               >
                 <option value="">Select Process Name</option>
-                {/* Esta parte ya estaba correcta */}
-                {emoloyeeProcess && emoloyeeProcess.processOverviews ? (
-                  emoloyeeProcess.processOverviews.map((process: any) => (
-                    <option key={process.processId} value={process.processId}>
-                      {`${process.processName}`}
-                    </option>
-                  ))
-                ) : (
-                  <option value="" disabled>
-                    Loading...
+                {employeeProcess?.processOverviews?.map((process: any) => (
+                  <option key={process.processId} value={process.processId}>
+                    {process.processName}
                   </option>
-                )}
+                ))}
               </select>
               {formik.touched.processId && formik.errors.processId && (
                 <p className="text-red-500 text-sm mt-1">
@@ -264,15 +268,14 @@ const StationLogin = () => {
               )}
             </div>
 
+            {/* Logged-in User Display */}
             <div>
               <label className="block text-gray-700 font-medium">Name</label>
-
               <input
                 type="text"
-                // Usamos encadenamiento opcional (?.) para evitar errores si los datos aún no han llegado.
                 value={
-                  emoloyeeProcess?.stationUsers?.[0]
-                    ? `${emoloyeeProcess.stationUsers[0].name} (${emoloyeeProcess.stationUsers[0].email})`
+                  currentStationUser
+                    ? `${currentStationUser.name} (${currentStationUser.email})`
                     : "Loading..."
                 }
                 disabled
@@ -280,6 +283,7 @@ const StationLogin = () => {
               />
             </div>
 
+            {/* Action Buttons */}
             <div className="flex flex-col gap-3 pt-4">
               <button
                 type="submit"
@@ -322,5 +326,4 @@ const StationLogin = () => {
     </div>
   );
 };
-
 export default StationLogin;

@@ -5,7 +5,7 @@
 
 // const CustomOrderSchedule = () => {
 //   return (
-//     <div className="p-4">
+//     <div className="p-4 mt-5">
 //       <div className="flex flex-col sm:flex-row justify-between gap-2 mb-4 md:mb-0  ">
 //         <div>
 //           {" "}
@@ -52,7 +52,7 @@
 
 // export default CustomOrderSchedule;
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import ItemSelected from "./ItemSelected";
 import { searchCustomOrder, searchStockOrder } from "./https/schedulingApis";
@@ -66,6 +66,21 @@ import CustomItemSelected from "./CustomItemSelected";
 const CustomOrderSchedule = () => {
   const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    const loadInitialData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await searchCustomOrder({});
+        setSearchResults(response.data || []);
+      } catch (error) {
+        console.error("Initial load failed:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadInitialData();
+  }, []);
 
   const handleSearchSubmit = async (
     values: StockOrderScheduleInterface,

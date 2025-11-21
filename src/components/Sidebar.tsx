@@ -621,6 +621,11 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                   path: "/supplier-order",
                 },
                 {
+                  key: "SupplierOrder",
+                  label: "Supplier Order List",
+                  path: "/supplier-order-list",
+                },
+                {
                   key: "SupplierInventory",
                   label: "Supplier inventory",
                   path: "/supplier-inventory",

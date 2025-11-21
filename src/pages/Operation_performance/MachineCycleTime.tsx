@@ -5,7 +5,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from "recharts";
 
 const data = [
@@ -20,7 +20,7 @@ const data = [
   { time: "01:30", value: 59 },
   { time: "02:00", value: 73 },
   { time: "02:12", value: 15 },
-  { time: "03:10", value: 74 }
+  { time: "03:10", value: 74 },
 ];
 
 const MachineCycleTime = () => {
@@ -40,22 +40,19 @@ const MachineCycleTime = () => {
               bottom: 5,
             }}
           >
-            <CartesianGrid stroke="#f5f5f5"  />
-            <XAxis 
-              dataKey="time" 
+            <CartesianGrid stroke="#f5f5f5" />
+            <XAxis
+              dataKey="time"
               tick={{ fontSize: 12 }}
               tickMargin={10}
               interval={window.innerWidth < 768 ? 2 : 0} // Show fewer ticks on mobile
             />
-            <YAxis 
-              tick={{ fontSize: 12 }}
-              tickMargin={10}
-            />
-            <Tooltip 
+            <YAxis tick={{ fontSize: 12 }} tickMargin={10} />
+            <Tooltip
               contentStyle={{
-                fontSize: '12px',
-                borderRadius: '8px',
-                padding: '8px'
+                fontSize: "12px",
+                borderRadius: "8px",
+                padding: "8px",
               }}
             />
             <Line

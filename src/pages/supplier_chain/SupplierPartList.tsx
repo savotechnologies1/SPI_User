@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { FaCircle } from "react-icons/fa";
 import { FiEdit2 } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import more from "../../assets/more.png"; // Adjust import path accordingly
+import more from "../../assets/more.png";
 
 type SupplierPart = {
   id: number;
@@ -113,8 +113,7 @@ const SupplierPartList: React.FC = () => {
   );
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      {/* Breadcrumb */}
+    <div className="p-6 bg-gray-100 min-h-screen mt-5">
       <div className="flex items-center text-sm text-gray-500 mb-4" />
       <h1 className="font-semibold text-[20px] md:text-[24px] text-black">
         Suppliers
@@ -132,7 +131,6 @@ const SupplierPartList: React.FC = () => {
         </div>
       </div>
 
-      {/* Filters */}
       <div className="bg-white p-4 mt-6">
         <div className="flex flex-col md:flex-row justify-between gap-4 items-end">
           <div className="w-full md:w-1/2">
@@ -161,7 +159,6 @@ const SupplierPartList: React.FC = () => {
         </div>
       </div>
 
-      {/* Table */}
       <div className="bg-white overflow-x-auto mt-6">
         <table className="w-full border-collapse">
           <thead>
@@ -202,11 +199,16 @@ const SupplierPartList: React.FC = () => {
 
                   {editingRow === actualIndex && (
                     <tr className="bg-gray-50">
-                      <td colSpan={3} className="p-3 font-semibold text-gray-600">
+                      <td
+                        colSpan={3}
+                        className="p-3 font-semibold text-gray-600"
+                      >
                         {item.desc}
                       </td>
                       <td className="p-3">
-                        <label className="text-xs font-semibold">Qty Avail</label>
+                        <label className="text-xs font-semibold">
+                          Qty Avail
+                        </label>
                         <input
                           type="number"
                           name="qty"
@@ -216,7 +218,9 @@ const SupplierPartList: React.FC = () => {
                         />
                       </td>
                       <td className="p-3">
-                        <label className="text-xs font-semibold">Safety Stock</label>
+                        <label className="text-xs font-semibold">
+                          Safety Stock
+                        </label>
                         <input
                           type="number"
                           name="stock"
@@ -226,7 +230,9 @@ const SupplierPartList: React.FC = () => {
                         />
                       </td>
                       <td className="p-3">
-                        <label className="text-xs font-semibold">Current Cost</label>
+                        <label className="text-xs font-semibold">
+                          Current Cost
+                        </label>
                         <input
                           type="number"
                           name="cost"
@@ -251,7 +257,6 @@ const SupplierPartList: React.FC = () => {
           </tbody>
         </table>
 
-        {/* Pagination */}
         <div className="flex justify-between items-center mt-4 p-2">
           <button
             onClick={goToPreviousPage}
