@@ -175,7 +175,7 @@ const StockOrderScheduleForm = () => {
   ) => {
     setIsLoading(true);
     try {
-      const response = await searchStockOrder(values); // Filtered search
+      const response = await searchStockOrder(values);
       setSearchResults(response.data || []);
     } catch (error) {
       console.error("Failed to search stock orders:", error);
@@ -218,7 +218,6 @@ const StockOrderScheduleForm = () => {
                   />
                 </div>
 
-                {/* Ship Date */}
                 <div>
                   <label className="font-semibold">Ship Date</label>
                   <Field
@@ -233,7 +232,6 @@ const StockOrderScheduleForm = () => {
                   />
                 </div>
 
-                {/* Product Number */}
                 <div>
                   <label className="font-semibold">Product Number</label>
                   <Field
@@ -245,7 +243,6 @@ const StockOrderScheduleForm = () => {
                 </div>
               </div>
 
-              {/* Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 mt-4 bg-white px-6 justify-between items-center">
                 <button
                   type="submit"
