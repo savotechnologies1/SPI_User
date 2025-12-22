@@ -1,4 +1,3 @@
-
 const data = [
   { hr: "23:00", target: 17, actual: 10, scrap: 5 },
   { hr: "18:00", target: 16, actual: 5, scrap: 4 },
@@ -8,7 +7,6 @@ const data = [
   { hr: "06:00", target: 13, actual: 3, scrap: 11 },
 ];
 
-// Calculate total row
 const total = data.reduce(
   (acc, curr) => {
     acc.target += curr.target;
@@ -22,7 +20,9 @@ const total = data.reduce(
 const Thermoforming = () => {
   return (
     <div className=" p-2 rounded-lg   mx-auto">
-      <h2 className=" font-semibold mb-4 text-center text-[#1C252E]">Thermoforming</h2>
+      <h2 className=" font-semibold mb-4 text-center text-[#1C252E]">
+        Thermoforming
+      </h2>
 
       <table className="w-full border-collapse">
         <thead>
@@ -42,7 +42,6 @@ const Thermoforming = () => {
               <td className="py-1 px-2 text-xs border">{item.scrap}</td>
             </tr>
           ))}
-          {/* Total row */}
           <tr className=" font-semibold">
             <td className="py-1 px-2 text-xs border">Total</td>
             <td className="py-1 px-2 text-xs border">{total.target}</td>
