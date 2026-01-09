@@ -12,7 +12,7 @@ import {
 } from "../../utils/Interfaces";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
+import { v4 as uuidv4 } from "uuid";
 // const generateNewOrderNumber = () => Date.now().toString();
 
 // const StockOrderForm = () => {
@@ -623,7 +623,7 @@ const StockOrderForm = () => {
   };
 
   return (
-    <div className=" bg-white rounded-2xl border shadow-md p-2 mt-5">
+    <div className="p-4 bg-white rounded-2xl border shadow-md">
       <Formik
         initialValues={{
           orderNumber: generateNewOrderNumber(),
@@ -643,10 +643,8 @@ const StockOrderForm = () => {
         validationSchema={stockOrderValidation}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           try {
-            console.log("Submitting values:", values);
             const response = await addStockOrder(values);
             if (response.status === 201) {
-              // toast.success("Stock order created successfully!");
               navigate("/stock-order-schedule");
             }
             resetForm({
@@ -1014,4 +1012,5 @@ const StockOrderForm = () => {
     </div>
   );
 };
+
 export default StockOrderForm;

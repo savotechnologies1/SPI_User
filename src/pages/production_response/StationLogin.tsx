@@ -225,7 +225,7 @@ const StationLogin = () => {
       <div className="flex items-center justify-start px-4 py-2">
         <button
           type="button"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/dashboardDetailes")}
           className="flex items-center justify-start ml-7 py-2 rounded-md hover:bg-gray-100 transition font-bold"
         >
           <FaArrowLeft className="mr-2" />
@@ -240,7 +240,6 @@ const StationLogin = () => {
           </h1>
 
           <form onSubmit={formik.handleSubmit} className="space-y-4">
-            {/* Station / Process Select */}
             <div>
               <label className="block text-gray-700 font-medium">Station</label>
               <select
@@ -257,7 +256,7 @@ const StationLogin = () => {
                 <option value="">Select Process Name</option>
                 {employeeProcess?.processOverviews?.map((process: any) => (
                   <option key={process.processId} value={process.processId}>
-                    {process.processName}
+                    {`${process.processName}`} ({`${process.machineName}`})
                   </option>
                 ))}
               </select>
@@ -267,8 +266,6 @@ const StationLogin = () => {
                 </p>
               )}
             </div>
-
-            {/* Logged-in User Display */}
             <div>
               <label className="block text-gray-700 font-medium">Name</label>
               <input

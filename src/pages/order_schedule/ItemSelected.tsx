@@ -13,6 +13,7 @@ import { scheduleStockOrder } from "./https/schedulingApis";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import send from "../../assets/Send.png";
+import { useNavigate } from "react-router-dom";
 const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
   const [selectedItems, setSelectedItems] = useState<ScheduledItem[]>([]);
   const [itemInputs, setItemInputs] = useState<ItemInputState>({});
@@ -59,7 +60,26 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
       selectedItems.filter((item) => item.id !== itemIdToRemove)
     );
   };
+  const flattenBOM = (components, parentQty) => {
+    let flatList = [];
+    components?.forEach((comp) => {
+      // Current component ki total required quantity calculate karein
+      const currentTotalQty = parentQty * (comp.partQuantity || 1);
 
+      // Is component ko list mein add karein
+      flatList.push({
+        ...comp,
+        calculatedQty: currentTotalQty,
+      });
+
+      // Agar ye part khud ek product hai, toh iske andar ke parts bhi nikaalein (Recursion)
+      if (comp.part?.type === "product" && comp.part.components?.length > 0) {
+        const subComponents = flattenBOM(comp.part.components, currentTotalQty);
+        flatList = [...flatList, ...subComponents];
+      }
+    });
+    return flatList;
+  };
   const updateScheduledDate = (itemId: string, date: Date) => {
     setSelectedItems(
       selectedItems.map((item) =>
@@ -67,9 +87,11 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
       )
     );
   };
+  const navigate = useNavigate();
   const scheduleAllData = async () => {
     try {
       const payloads = selectedItems.flatMap((item) => {
+        // 1. Main Product ka payload
         const productPayload = {
           order_id: item.id,
           orderDate: item.orderDate,
@@ -80,35 +102,39 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
           quantity: item.scheduledQty,
           product_id: item.part.part_id,
           part_id: item.part.part_id,
-          // type: item.part.type,
           type: "part",
         };
 
-        const componentPayloads = item.part.components.map((comp) => ({
+        // 2. Saare nested components ko flatten karke payload mein convert karein
+        const allNestedParts = flattenBOM(
+          item.part.components,
+          item.scheduledQty
+        );
+
+        const componentPayloads = allNestedParts.map((comp) => ({
           order_id: item.id,
           orderDate: item.orderDate,
           delivery_date: item.deliveryDate,
           submitted_date: new Date(),
           customersId: item.customer.id,
           status: "new",
-          quantity: item.scheduledQty,
+          quantity: comp.calculatedQty, // Sahi calculated qty
           product_id: item.part.part_id,
           part_id: comp?.part?.part_id,
-          type: "product",
+          type: comp?.part?.type === "product" ? "product" : "part",
         }));
 
         return [productPayload, ...componentPayloads];
       });
 
-      console.log("Submitting all scheduled items with payload:", payloads);
-      await scheduleStockOrder(payloads);
+      const response = await scheduleStockOrder(payloads);
+      navigate("/order-schedule-list");
+      toast.success(response?.data.message);
       setSelectedItems([]);
       setItemInputs({});
     } catch (error) {
       console.error("Failed to schedule all items:", error);
-      toast.error(
-        "An error occurred while scheduling the items. Please try again."
-      );
+      toast.error("An error occurred while scheduling.");
     }
   };
   console.log("selectedItemsselectedItems", selectedItems);
@@ -373,9 +399,10 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
                         </thead>
 
                         <tbody>
+                          {/* Main Item Row */}
                           <tr className="bg-gray-50 font-semibold border-b">
                             <td className="px-4 py-2">
-                              part {item.part.partNumber}
+                              {item.part.partNumber}
                             </td>
                             <td className="px-4 py-2">
                               {item.part.partDescription}
@@ -384,22 +411,35 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
                               {item.scheduledQty || "-"}
                             </td>
                           </tr>
-                          {item.part.components
-                            .filter((data) => data?.part) // keep only those with part info
-                            .map((data) => (
+
+                          {/* Recursive Flattened Components Rows */}
+                          {flattenBOM(
+                            item.part.components,
+                            item.scheduledQty || 0
+                          )
+                            .filter((data) => data?.part)
+                            .map((data, idx) => (
                               <tr
-                                key={data.part.partNumber}
+                                key={`${data.part.partNumber}-${idx}`}
                                 className="border-b hover:bg-gray-50"
                               >
                                 <td className="px-4 py-2">
-                                  {data.part.partNumber}
+                                  {/* Agar nested hai toh indentation (padding) de sakte hain */}
+                                  <span
+                                    className={
+                                      data.part.type === "product"
+                                        ? "font-medium"
+                                        : ""
+                                    }
+                                  >
+                                    {data.part.partNumber}
+                                  </span>
                                 </td>
                                 <td className="px-4 py-2">
                                   {data.part.partDescription}
                                 </td>
                                 <td className="px-4 py-2 font-medium">
-                                  {(item?.scheduledQty || 0) *
-                                    (data.part.minStock || 0)}
+                                  {data.calculatedQty}
                                 </td>
                               </tr>
                             ))}
