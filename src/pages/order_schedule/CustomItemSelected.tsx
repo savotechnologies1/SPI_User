@@ -667,34 +667,461 @@ interface CustomItemSelectedProps {
   isLoading: boolean;
 }
 
+// const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
+//   const [availableItems, setAvailableItems] = useState<ItemForUI[]>([]);
+//   const [selectedItems, setSelectedItems] = useState<ItemForUI[]>([]);
+//   let processName;
+//   const navigate = useNavigate();
+//   useEffect(() => {
+//     if (!items) return;
+
+//     setAvailableItems((prevAvailableItems) => {
+//       const prevItemsMap = new Map(
+//         prevAvailableItems.map((item) => [item.id, item])
+//       );
+
+//       const newTransformedItems = items.map((apiItem) => {
+//         const existingItem = prevItemsMap.get(apiItem.id);
+//         const mainProduct =
+//           apiItem.productFamily?.find((p) => p.isParent) ||
+//           apiItem.productFamily?.[0];
+//         processName =
+//           mainProduct?.process?.processName || "No Process Specified";
+
+//         return {
+//           id: apiItem.id,
+//           img1: "https://via.placeholder.com/150",
+//           orderNumber: apiItem.orderNumber,
+//           text1: mainProduct?.partDescription || "Custom Assembly",
+//           qty: apiItem.productQuantity,
+//           originalData: apiItem,
+//           processName: processName,
+//         };
+//       });
+//       return newTransformedItems;
+//     });
+//   }, [items]);
+
+//   // `addToSelected` aur `removeItem` mein koi badlav ki zaroorat nahi hai
+//   const addToSelected = (itemToAdd: ItemForUI) => {
+//     const existingItemIndex = selectedItems.findIndex(
+//       (item) => item.id === itemToAdd.id
+//     );
+//     if (existingItemIndex > -1) {
+//       const updatedSelectedItems = [...selectedItems];
+//       updatedSelectedItems[existingItemIndex] = itemToAdd;
+//       setSelectedItems(updatedSelectedItems);
+//       // toast.info(`Order ${itemToAdd.orderNumber} updated in the schedule.`);
+//     } else {
+//       setSelectedItems((prev) => [...prev, itemToAdd]);
+//       toast.success(`Order ${itemToAdd.orderNumber} added to the schedule.`);
+//     }
+//   };
+
+//   const removeItem = (itemToRemove: ItemForUI) => {
+//     setSelectedItems((prev) => prev.filter((i) => i.id !== itemToRemove.id));
+//     toast.warn(`Order ${itemToRemove.orderNumber} removed from schedule.`);
+//   };
+
+//   const scheduleAllData = async () => {
+//     if (selectedItems.length === 0) {
+//       toast.warn("There are no items selected to schedule.");
+//       return;
+//     }
+
+//     // ✅ Step 1: Check for components with invalid minStock
+//     const invalidMinStockItems = selectedItems.filter((item) =>
+//       item.originalData.productFamily?.some(
+//         (part) =>
+//           part.type === "product" &&
+//           (part.minStock === 0 || part.minStock === undefined)
+//       )
+//     );
+
+//     if (invalidMinStockItems.length > 0) {
+//       toast.error(
+//         "Some components have minimum quantity set to 0. Please set it to at least 1 before scheduling."
+//       );
+//       return;
+//     }
+
+//     // ✅ Step 2: Check for any item that would result in totalQty = 0
+//     const itemsWithZeroQty = selectedItems.filter((item) =>
+//       item.originalData.productFamily?.some((part) => {
+//         const isProduct = part.type === "product";
+//         const multiplier = isProduct ? part.quantityRequired : part.minStock;
+//         const totalQty = item.originalData.productQuantity * (multiplier || 0);
+//         return totalQty === 0;
+//       })
+//     );
+
+//     // if (itemsWithZeroQty.length > 0) {
+//     //   toast.error(
+//     //     "One or more items have total quantity 0. Please fix the quantities before scheduling."
+//     //   );
+//     //   return;
+//     // }
+
+//     // ✅ Step 3: Proceed to schedule
+//     try {
+//       const payloads = selectedItems.flatMap((item) => {
+//         const parentProduct = item.originalData.productFamily?.find(
+//           (p) => p.isParent
+//         );
+//         if (!parentProduct) return [];
+
+//         return item.originalData.productFamily.map((partInFamily) => ({
+//           order_id: item.originalData.id,
+//           orderDate: item.originalData.orderDate,
+//           delivery_date: item.originalData.shipDate,
+//           submitted_date: new Date(),
+//           customersId: item.originalData.customer.id,
+//           status: "new",
+//           quantity: item.originalData.productQuantity,
+//           product_id: parentProduct.part_id,
+//           part_id: partInFamily.part_id,
+//           type: partInFamily.type,
+//         }));
+//       });
+
+//       console.log("Payload for CUSTOM orders:", payloads);
+//       const response = await scheduleCustomOrder(payloads);
+//       if (response.status === 201) {
+//         navigate("/order-schedule-list");
+//       }
+//     } catch (error) {
+//       console.error("Failed to schedule custom items:", error);
+//       toast.error("An error occurred while scheduling. Please try again.");
+//     }
+//   };
+
+//   const handleQuantityChange = (index: number, newQty: number) => {
+//     if (newQty < 1) return;
+//     setAvailableItems((prev) => {
+//       const newItems = [...prev];
+//       const originalData = {
+//         ...newItems[index].originalData,
+//         productQuantity: newQty,
+//       };
+//       newItems[index] = { ...newItems[index], originalData, qty: newQty };
+//       return newItems;
+//     });
+//   };
+
+//   const renderAvailableItemCard = (item: ItemForUI, index: number) => (
+//     <div
+//       key={item.id}
+//       className="flex items-center justify-between bg-white px-4 py-6 rounded-lg shadow-md"
+//     >
+//       {/* <img
+//         src={item.img1 || "/placeholder.png"}
+//         alt="Product"
+//         className="w-12 h-12 rounded"
+//       /> */}
+//       <div className="flex-1 px-4">
+//         <p className="text-sm 2xl:text-base font-bold">{item.orderNumber}</p>
+//         <div className="flex items-center text-xs text-gray-600 mt-2 space-x-2">
+//           <span className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full font-medium">
+//             {item.processName}
+//           </span>
+//         </div>
+//       </div>
+//       <div className="flex items-center space-x-2">
+//         <button
+//           onClick={() => handleQuantityChange(index, item.qty - 1)}
+//           className="px-2 py-1 border rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200"
+//         >
+//           -
+//         </button>
+//         <span className="w-10 text-center font-semibold">{item.qty}</span>
+//         <button
+//           onClick={() => handleQuantityChange(index, item.qty + 1)}
+//           className="px-2 py-1 border rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200"
+//         >
+//           +
+//         </button>
+//       </div>
+//       <div className="text-blue-500 hover:text-blue-600 cursor-pointer ml-4">
+//         <FaCartPlus
+//           size={24}
+//           onClick={() => addToSelected(item)}
+//           title="Add/Update in Schedule"
+//         />
+//       </div>
+//     </div>
+//   );
+
+//   if (isLoading) {
+//     return (
+//       <div className="text-center p-10">
+//         <p>Loading available orders...</p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="p-4 mt-5">
+//       <div className="flex justify-end mb-6">
+//         <button
+//           className="px-6 py-2 bg-blue-800 text-white font-semibold rounded-md hover:bg-blue-900 transition-colors shadow-lg"
+//           onClick={scheduleAllData}
+//         >
+//           Schedule All ({selectedItems.length})
+//         </button>
+//       </div>
+//       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+//         <div>
+//           <h2 className="font-semibold mb-4 bg-[#CBCBCB] text-center p-2 rounded-md">
+//             Custom orders available to be scheduled
+//           </h2>
+//           <div className="space-y-4">
+//             {availableItems.length === 0 && !isLoading ? (
+//               <p className="text-center text-gray-500 p-4 bg-white rounded-xl shadow">
+//                 No items available to schedule.
+//               </p>
+//             ) : (
+//               availableItems.map((item, index) =>
+//                 renderAvailableItemCard(item, index)
+//               )
+//             )}
+//           </div>
+//         </div>
+//         <div>
+//           <h2 className="font-semibold mb-4 bg-[#CBCBCB] text-center p-2 rounded-md">
+//             Custom orders selected to be scheduled
+//           </h2>
+//           {/* <div className="space-y-4">
+//             {selectedItems.length === 0 ? (
+//               <p className="text-center text-gray-500 p-4 bg-white rounded-xl shadow">
+//                 No items selected yet.
+//               </p>
+//             ) : (
+//               selectedItems.map((item) => (
+//                 <div
+//                   key={item.id}
+//                   className="p-4 bg-white shadow-md rounded-lg"
+//                 >
+//                   <div className="flex justify-between items-start mb-4">
+//                     <div>
+//                       <p className="font-semibold">{item.orderNumber}</p>
+//                       <p className="text-sm text-gray-500">
+//                         {item.originalData.customer.firstName}
+//                         {item.originalData.customer.lastName}
+//                       </p>
+//                     </div>
+//                     <button
+//                       className="p-3 bg-red-100 rounded-full cursor-pointer hover:bg-red-200"
+//                       onClick={() => removeItem(item)}
+//                       title="Remove from Schedule"
+//                     >
+//                       <FaTrashAlt className="text-red-500" />
+//                     </button>
+//                   </div>
+//                   <div className="overflow-x-auto border rounded-md">
+//                     <table className="min-w-full text-sm text-left">
+//                       <thead className="bg-gray-200">
+//                         <tr>
+//                           <th className="px-4 py-2 font-medium text-gray-700">
+//                             Part / Component
+//                           </th>
+//                           <th className="px-4 py-2 font-medium text-gray-700">
+//                             Description
+//                           </th>
+//                           <th className="px-4 py-2 font-medium text-gray-700">
+//                             Total Qty
+//                           </th>
+//                         </tr>
+//                       </thead>
+//                       <tbody>
+//                         {item.originalData.productFamily?.map((part) => (
+//                           <tr
+//                             key={part.part_id}
+//                             className={
+//                               part.isParent
+//                                 ? "bg-gray-100 font-semibold"
+//                                 : "border-b hover:bg-gray-50"
+//                             }
+//                           >
+//                             <td className="px-4 py-2">{part.partNumber}</td>
+//                             <td className="px-4 py-2">
+//                               {part.partDescription || "No Description"}
+//                             </td>
+//                             <td className="px-4 py-2">
+//                               {part.type === "product"
+//                                 ? item.originalData.productQuantity *
+//                                   part.quantityRequired
+//                                 : item.originalData.productQuantity *
+//                                   part.minStock}
+//                             </td>
+//                           </tr>
+//                         ))}
+//                       </tbody>
+//                     </table>
+//                   </div>
+//                 </div>
+//               ))
+//             )}
+//           </div> */}
+//           <div className="space-y-4">
+//             {selectedItems.length === 0 ? (
+//               <p className="text-center text-gray-500 p-4 bg-white rounded-xl shadow">
+//                 No items selected yet.
+//               </p>
+//             ) : (
+//               selectedItems.map((item) => {
+//                 // 1. MERGING LOGIC: Create a combined list
+//                 // Pehle saare standard parts le lete hain
+//                 let mergedParts = [...(item.originalData.productFamily || [])];
+
+//                 // Ab custom parts ko check karte hain
+//                 item.originalData.customPart?.forEach((customItem) => {
+//                   // Check karte hain agar ye part pehle se mergedList mein hai (Matching by PartNumber or Part_ID)
+//                   const existingIndex = mergedParts.findIndex(
+//                     (p) => p.partNumber === customItem.partNumber // Ya phir: p.part_id === customItem.part_id
+//                   );
+
+//                   if (existingIndex > -1) {
+//                     // REPLACE: Agar match mila, toh us index par customItem daal do (Flagging it as custom)
+//                     mergedParts[existingIndex] = {
+//                       ...customItem,
+//                       isCustomSource: true,
+//                     };
+//                   } else {
+//                     // ADD: Agar match nahi mila, toh list mein add kar do
+//                     mergedParts.push({ ...customItem, isCustomSource: true });
+//                   }
+//                 });
+
+//                 return (
+//                   <div
+//                     key={item.id}
+//                     className="p-4 bg-white shadow-md rounded-lg"
+//                   >
+//                     <div className="flex justify-between items-start mb-4">
+//                       <div>
+//                         <p className="font-semibold">{item.orderNumber}</p>
+//                         <p className="text-sm text-gray-500">
+//                           {item.originalData.customer.firstName}{" "}
+//                           {item.originalData.customer.lastName}
+//                         </p>
+//                       </div>
+//                       <button
+//                         className="p-3 bg-red-100 rounded-full cursor-pointer hover:bg-red-200"
+//                         onClick={() => removeItem(item)}
+//                         title="Remove from Schedule"
+//                       >
+//                         <FaTrashAlt className="text-red-500" />
+//                       </button>
+//                     </div>
+
+//                     <div className="overflow-x-auto border rounded-md">
+//                       <table className="min-w-full text-sm text-left">
+//                         <thead className="bg-gray-100 border-b">
+//                           <tr>
+//                             <th className="px-4 py-2 font-bold text-gray-700">
+//                               Part / Component
+//                             </th>
+//                             <th className="px-4 py-2 font-bold text-gray-700">
+//                               Description / Process
+//                             </th>
+//                             <th className="px-4 py-2 font-bold text-gray-700">
+//                               Total Qty
+//                             </th>
+//                           </tr>
+//                         </thead>
+//                         <tbody className="divide-y divide-gray-100">
+//                           {mergedParts.length === 0 ? (
+//                             <tr>
+//                               <td
+//                                 colSpan={3}
+//                                 className="px-4 py-4 text-center text-gray-400 italic"
+//                               >
+//                                 No parts details found.
+//                               </td>
+//                             </tr>
+//                           ) : (
+//                             mergedParts.map((part, idx) => {
+//                               // Logic to determine Quantity per unit based on source
+//                               // Standard parts use 'quantityRequired' or 'minStock'
+//                               // Custom parts usually use 'quantity'
+//                               const qtyPerUnit = part.isCustomSource
+//                                 ? part.quantity
+//                                 : part.type === "product"
+//                                 ? part.quantityRequired
+//                                 : part.minStock;
+
+//                               const finalTotalQty =
+//                                 item.originalData.productQuantity *
+//                                 (qtyPerUnit || 1);
+
+//                               return (
+//                                 <tr
+//                                   key={part.part_id || part.id || idx} // Fallback key if IDs are messy
+//                                   className={
+//                                     part.isParent
+//                                       ? "bg-blue-50 font-semibold text-blue-800"
+//                                       : part.isCustomSource
+//                                       ? "hover:bg-gray-50" // Highlight replaced/custom parts
+//                                       : "hover:bg-gray-50"
+//                                   }
+//                                 >
+//                                   <td className="px-4 py-2 flex items-center gap-2">
+//                                     {part.partNumber}
+//                                   </td>
+//                                   <td className="px-4 py-2">
+//                                     {part.partDescription ||
+//                                       part.process?.processName ||
+//                                       part.processName ||
+//                                       "-"}
+//                                   </td>
+//                                   <td className="px-4 py-2 font-medium">
+//                                     {finalTotalQty}
+//                                   </td>
+//                                 </tr>
+//                               );
+//                             })
+//                           )}
+//                         </tbody>
+//                       </table>
+//                     </div>
+//                   </div>
+//                 );
+//               })
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default CustomItemSelected;
+
 const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
   const [availableItems, setAvailableItems] = useState<ItemForUI[]>([]);
   const [selectedItems, setSelectedItems] = useState<ItemForUI[]>([]);
-  let processName;
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!items) return;
 
     setAvailableItems((prevAvailableItems) => {
       const prevItemsMap = new Map(
-        prevAvailableItems.map((item) => [item.id, item])
+        prevAvailableItems.map((item) => [item.id, item]),
       );
 
       const newTransformedItems = items.map((apiItem) => {
-        const existingItem = prevItemsMap.get(apiItem.id);
-        const mainProduct =
-          apiItem.productFamily?.find((p) => p.isParent) ||
-          apiItem.productFamily?.[0];
-        processName =
-          mainProduct?.process?.processName || "No Process Specified";
-
+        // Backend se aayi hui bomList se main process uthana
+        const processName =
+          apiItem.bomList?.[0]?.processName || "No Process Specified";
+        console.log("apiItemapiItem", apiItem);
         return {
           id: apiItem.id,
           img1: "https://via.placeholder.com/150",
           orderNumber: apiItem.orderNumber,
-          text1: mainProduct?.partDescription || "Custom Assembly",
+          text1: apiItem.product?.partDescription || "Custom Assembly",
           qty: apiItem.productQuantity,
-          originalData: apiItem,
+          originalData: apiItem, // Full API object with bomList
           processName: processName,
         };
       });
@@ -702,16 +1129,14 @@ const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
     });
   }, [items]);
 
-  // `addToSelected` aur `removeItem` mein koi badlav ki zaroorat nahi hai
   const addToSelected = (itemToAdd: ItemForUI) => {
     const existingItemIndex = selectedItems.findIndex(
-      (item) => item.id === itemToAdd.id
+      (item) => item.id === itemToAdd.id,
     );
     if (existingItemIndex > -1) {
       const updatedSelectedItems = [...selectedItems];
       updatedSelectedItems[existingItemIndex] = itemToAdd;
       setSelectedItems(updatedSelectedItems);
-      // toast.info(`Order ${itemToAdd.orderNumber} updated in the schedule.`);
     } else {
       setSelectedItems((prev) => [...prev, itemToAdd]);
       toast.success(`Order ${itemToAdd.orderNumber} added to the schedule.`);
@@ -729,69 +1154,35 @@ const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
       return;
     }
 
-    // ✅ Step 1: Check for components with invalid minStock
-    const invalidMinStockItems = selectedItems.filter((item) =>
-      item.originalData.productFamily?.some(
-        (part) =>
-          part.type === "product" &&
-          (part.minStock === 0 || part.minStock === undefined)
-      )
-    );
-
-    if (invalidMinStockItems.length > 0) {
-      toast.error(
-        "Some components have minimum quantity set to 0. Please set it to at least 1 before scheduling."
-      );
-      return;
-    }
-
-    // ✅ Step 2: Check for any item that would result in totalQty = 0
-    const itemsWithZeroQty = selectedItems.filter((item) =>
-      item.originalData.productFamily?.some((part) => {
-        const isProduct = part.type === "product";
-        const multiplier = isProduct ? part.quantityRequired : part.minStock;
-        const totalQty = item.originalData.productQuantity * (multiplier || 0);
-        return totalQty === 0;
-      })
-    );
-
-    // if (itemsWithZeroQty.length > 0) {
-    //   toast.error(
-    //     "One or more items have total quantity 0. Please fix the quantities before scheduling."
-    //   );
-    //   return;
-    // }
-
-    // ✅ Step 3: Proceed to schedule
     try {
       const payloads = selectedItems.flatMap((item) => {
-        const parentProduct = item.originalData.productFamily?.find(
-          (p) => p.isParent
-        );
-        if (!parentProduct) return [];
+        // Backend se aayi hui merged bomList (Library + Manual dono hain isme)
+        const bomParts = item.originalData.bomList || [];
 
-        return item.originalData.productFamily.map((partInFamily) => ({
+        return bomParts.map((part: any) => ({
           order_id: item.originalData.id,
-          orderDate: item.originalData.orderDate,
+          customPartId: part.id, // Primary key for either CustomOrderExistingPart or CustomPart
+          part_id: part.source === "Library" ? part.partId : null,
           delivery_date: item.originalData.shipDate,
-          submitted_date: new Date(),
-          customersId: item.originalData.customer.id,
           status: "new",
-          quantity: item.originalData.productQuantity,
-          product_id: parentProduct.part_id,
-          part_id: partInFamily.part_id,
-          type: partInFamily.type,
+          quantity: item.qty * (part.qty || 1), // Order Qty * Component Qty
+          type: part.source === "Library" ? "Existing" : "New",
         }));
       });
 
-      console.log("Payload for CUSTOM orders:", payloads);
+      if (payloads.length === 0) {
+        toast.error("No components found to schedule.");
+        return;
+      }
+
       const response = await scheduleCustomOrder(payloads);
-      if (response.status === 201) {
+      if (response.status === 201 || response.status === 200) {
+        toast.success("Orders scheduled successfully!");
         navigate("/order-schedule-list");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to schedule custom items:", error);
-      toast.error("An error occurred while scheduling. Please try again.");
+      toast.error(error.response?.data?.message || "An error occurred.");
     }
   };
 
@@ -813,11 +1204,6 @@ const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
       key={item.id}
       className="flex items-center justify-between bg-white px-4 py-6 rounded-lg shadow-md"
     >
-      {/* <img
-        src={item.img1 || "/placeholder.png"}
-        alt="Product"
-        className="w-12 h-12 rounded"
-      /> */}
       <div className="flex-1 px-4">
         <p className="text-sm 2xl:text-base font-bold">{item.orderNumber}</p>
         <div className="flex items-center text-xs text-gray-600 mt-2 space-x-2">
@@ -881,7 +1267,7 @@ const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
               </p>
             ) : (
               availableItems.map((item, index) =>
-                renderAvailableItemCard(item, index)
+                renderAvailableItemCard(item, index),
               )
             )}
           </div>
@@ -890,33 +1276,97 @@ const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
           <h2 className="font-semibold mb-4 bg-[#CBCBCB] text-center p-2 rounded-md">
             Custom orders selected to be scheduled
           </h2>
-          {/* <div className="space-y-4">
+          <div className="space-y-4">
             {selectedItems.length === 0 ? (
               <p className="text-center text-gray-500 p-4 bg-white rounded-xl shadow">
                 No items selected yet.
               </p>
             ) : (
+              // selectedItems.map((item) => (
+              //   <div
+              //     key={item.id}
+              //     className="p-4 bg-white shadow-md rounded-lg"
+              //   >
+              //     <div className="flex justify-between items-start mb-4">
+              //       <div>
+              //         <p className="font-semibold">{item.orderNumber}</p>
+              //         <p className="text-sm text-gray-500">
+              //           {item.originalData.customer?.firstName}{" "}
+              //           {item.originalData.customer?.lastName}
+              //         </p>
+              //       </div>
+              //       <button
+              //         className="p-3 bg-red-100 rounded-full cursor-pointer hover:bg-red-200"
+              //         onClick={() => removeItem(item)}
+              //       >
+              //         <FaTrashAlt className="text-red-500" />
+              //       </button>
+              //     </div>
+
+              //     <div className="overflow-x-auto border rounded-md">
+              //       <table className="min-w-full text-sm text-left">
+              //         <thead className="bg-gray-200">
+              //           <tr>
+              //             <th className="px-4 py-2 font-medium text-gray-700">
+              //               Part / Component
+              //             </th>
+              //             <th className="px-4 py-2 font-medium text-gray-700">
+              //               Description
+              //             </th>
+              //             <th className="px-4 py-2 font-medium text-gray-700">
+              //               Total Qty
+              //             </th>
+              //           </tr>
+              //         </thead>
+              //         <tbody>
+              //           {item.originalData.bomList?.map(
+              //             (part: any, idx: number) => (
+              //               <tr
+              //                 key={part.id || idx}
+              //                 className="border-b hover:bg-gray-50"
+              //               >
+              //                 <td className="px-4 py-2">{part.partNumber}</td>
+              //                 <td className="px-4 py-2">
+              //                   {part.partDescription ||
+              //                     part.processName ||
+              //                     "-"}
+              //                 </td>
+              //                 <td className="px-4 py-2 font-medium">
+              //                   {item.qty * (part.qty || 1)}
+              //                 </td>
+              //               </tr>
+              //             ),
+              //           )}
+              //         </tbody>
+              //       </table>
+              //     </div>
+              //   </div>
+              // ))
+
               selectedItems.map((item) => (
                 <div
                   key={item.id}
-                  className="p-4 bg-white shadow-md rounded-lg"
+                  className="p-4 bg-white shadow-md rounded-lg mb-4"
                 >
+                  {/* Header */}
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <p className="font-semibold">{item.orderNumber}</p>
                       <p className="text-sm text-gray-500">
-                        {item.originalData.customer.firstName}
-                        {item.originalData.customer.lastName}
+                        {item.originalData.customer?.firstName}{" "}
+                        {item.originalData.customer?.lastName}
                       </p>
                     </div>
+
                     <button
                       className="p-3 bg-red-100 rounded-full cursor-pointer hover:bg-red-200"
                       onClick={() => removeItem(item)}
-                      title="Remove from Schedule"
                     >
                       <FaTrashAlt className="text-red-500" />
                     </button>
                   </div>
+
+                  {/* Table */}
                   <div className="overflow-x-auto border rounded-md">
                     <table className="min-w-full text-sm text-left">
                       <thead className="bg-gray-200">
@@ -932,161 +1382,45 @@ const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
                           </th>
                         </tr>
                       </thead>
+
                       <tbody>
-                        {item.originalData.productFamily?.map((part) => (
-                          <tr
-                            key={part.part_id}
-                            className={
-                              part.isParent
-                                ? "bg-gray-100 font-semibold"
-                                : "border-b hover:bg-gray-50"
-                            }
-                          >
-                            <td className="px-4 py-2">{part.partNumber}</td>
-                            <td className="px-4 py-2">
-                              {part.partDescription || "No Description"}
+                        {/* MAIN PRODUCT ROW */}
+                        {item.originalData.product && (
+                          <tr className="bg-blue-50 border-b font-semibold">
+                            <td className="px-4 py-2 ">
+                              {item.originalData.product.partNumber}
                             </td>
                             <td className="px-4 py-2">
-                              {part.type === "product"
-                                ? item.originalData.productQuantity *
-                                  part.quantityRequired
-                                : item.originalData.productQuantity *
-                                  part.minStock}
+                              {item.originalData.product.partDescription || "-"}
                             </td>
+                            <td className="px-4 py-2 ">{item.qty}</td>
                           </tr>
-                        ))}
+                        )}
+
+                        {/* BOM COMPONENTS */}
+                        {item.originalData.bomList?.map(
+                          (part: any, idx: number) => (
+                            <tr
+                              key={part.id || idx}
+                              className="border-b hover:bg-gray-50"
+                            >
+                              <td className="px-4 py-2  ">{part.partNumber}</td>
+                              <td className="px-4 py-2 text-gray-600">
+                                {part.partDescription ||
+                                  part.processName ||
+                                  "-"}
+                              </td>
+                              <td className="px-4 py-2 font-medium">
+                                {item.qty * (part.qty || 1)}
+                              </td>
+                            </tr>
+                          ),
+                        )}
                       </tbody>
                     </table>
                   </div>
                 </div>
               ))
-            )}
-          </div> */}
-          <div className="space-y-4">
-            {selectedItems.length === 0 ? (
-              <p className="text-center text-gray-500 p-4 bg-white rounded-xl shadow">
-                No items selected yet.
-              </p>
-            ) : (
-              selectedItems.map((item) => {
-                // 1. MERGING LOGIC: Create a combined list
-                // Pehle saare standard parts le lete hain
-                let mergedParts = [...(item.originalData.productFamily || [])];
-
-                // Ab custom parts ko check karte hain
-                item.originalData.customPart?.forEach((customItem) => {
-                  // Check karte hain agar ye part pehle se mergedList mein hai (Matching by PartNumber or Part_ID)
-                  const existingIndex = mergedParts.findIndex(
-                    (p) => p.partNumber === customItem.partNumber // Ya phir: p.part_id === customItem.part_id
-                  );
-
-                  if (existingIndex > -1) {
-                    // REPLACE: Agar match mila, toh us index par customItem daal do (Flagging it as custom)
-                    mergedParts[existingIndex] = {
-                      ...customItem,
-                      isCustomSource: true,
-                    };
-                  } else {
-                    // ADD: Agar match nahi mila, toh list mein add kar do
-                    mergedParts.push({ ...customItem, isCustomSource: true });
-                  }
-                });
-
-                return (
-                  <div
-                    key={item.id}
-                    className="p-4 bg-white shadow-md rounded-lg"
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <p className="font-semibold">{item.orderNumber}</p>
-                        <p className="text-sm text-gray-500">
-                          {item.originalData.customer.firstName}{" "}
-                          {item.originalData.customer.lastName}
-                        </p>
-                      </div>
-                      <button
-                        className="p-3 bg-red-100 rounded-full cursor-pointer hover:bg-red-200"
-                        onClick={() => removeItem(item)}
-                        title="Remove from Schedule"
-                      >
-                        <FaTrashAlt className="text-red-500" />
-                      </button>
-                    </div>
-
-                    <div className="overflow-x-auto border rounded-md">
-                      <table className="min-w-full text-sm text-left">
-                        <thead className="bg-gray-100 border-b">
-                          <tr>
-                            <th className="px-4 py-2 font-bold text-gray-700">
-                              Part / Component
-                            </th>
-                            <th className="px-4 py-2 font-bold text-gray-700">
-                              Description / Process
-                            </th>
-                            <th className="px-4 py-2 font-bold text-gray-700">
-                              Total Qty
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                          {mergedParts.length === 0 ? (
-                            <tr>
-                              <td
-                                colSpan={3}
-                                className="px-4 py-4 text-center text-gray-400 italic"
-                              >
-                                No parts details found.
-                              </td>
-                            </tr>
-                          ) : (
-                            mergedParts.map((part, idx) => {
-                              // Logic to determine Quantity per unit based on source
-                              // Standard parts use 'quantityRequired' or 'minStock'
-                              // Custom parts usually use 'quantity'
-                              const qtyPerUnit = part.isCustomSource
-                                ? part.quantity
-                                : part.type === "product"
-                                ? part.quantityRequired
-                                : part.minStock;
-
-                              const finalTotalQty =
-                                item.originalData.productQuantity *
-                                (qtyPerUnit || 1);
-
-                              return (
-                                <tr
-                                  key={part.part_id || part.id || idx} // Fallback key if IDs are messy
-                                  className={
-                                    part.isParent
-                                      ? "bg-blue-50 font-semibold text-blue-800"
-                                      : part.isCustomSource
-                                      ? "hover:bg-gray-50" // Highlight replaced/custom parts
-                                      : "hover:bg-gray-50"
-                                  }
-                                >
-                                  <td className="px-4 py-2 flex items-center gap-2">
-                                    {part.partNumber}
-                                  </td>
-                                  <td className="px-4 py-2">
-                                    {part.partDescription ||
-                                      part.process?.processName ||
-                                      part.processName ||
-                                      "-"}
-                                  </td>
-                                  <td className="px-4 py-2 font-medium">
-                                    {finalTotalQty}
-                                  </td>
-                                </tr>
-                              );
-                            })
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                );
-              })
             )}
           </div>
         </div>

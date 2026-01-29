@@ -1,13 +1,3 @@
-import data from "../../components/Data/customerReturnData";
-import client_icon from "../../assets/client.png";
-import date_icon from "../../assets/date.png";
-import pin from "../../assets/pin.png";
-import copy from "../../assets/copy.png";
-import filter from "../../assets/byte_filter.png";
-import fullscren from "../../assets/fullscreen.png";
-import more from "../../assets/more.png";
-import React from "react";
-
 const SupplierReturn = ({ qualityData }) => {
   console.log("qualityData", qualityData);
 
@@ -27,29 +17,22 @@ const SupplierReturn = ({ qualityData }) => {
               <th className="px-4 py-3 text-left font-medium">
                 Part Description
               </th>
-              {/* <th className="px-4 py-3 text-left font-medium">
-                Schedule Quantity
-              </th> */}
               <th className="px-4 py-3 text-left font-medium">
                 Scrap Quantity
               </th>
             </tr>
           </thead>
+
           <tbody>
             {qualityData.map((item, index) => (
-              <tr key={index}>
-                {/* Access process correctly from item.part.process */}
+              <tr key={index} className="border-b">
                 <td className="px-4 py-4 text-sm sm:text-base">
-                  {item.part.process.processName}
+                  {item.processName || "-"} ({item.machineName || "-"})
                 </td>
 
                 <td className="px-4 py-4 text-sm sm:text-base">
-                  {item.part.partDescription}
+                  {item.partDescription || "-"}
                 </td>
-
-                {/* <td className="px-4 py-4 text-sm sm:text-base">
-                  {item.scheduleQuantity}
-                </td> */}
 
                 <td className="px-4 py-4 text-sm sm:text-base">
                   {item.scrapQuantity}

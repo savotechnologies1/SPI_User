@@ -47,7 +47,52 @@ export default function CommentBox({ employeeInfo }) {
   };
 
   return (
-    <div className="flex flex-col md:flex-row items-center gap-3 mb-6">
+    // <div className="flex flex-col gap-4 mb-6">
+    //   {/* Input Row */}
+    //   <div className="flex flex-col md:flex-row items-center gap-3">
+    //     <input
+    //       type="text"
+    //       placeholder="Write your comment..."
+    //       className="w-full border border-gray-300 bg-transparent px-4 py-2 rounded-md text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-brand placeholder-gray-400"
+    //       value={comment}
+    //       onChange={(e) => setComment(e.target.value)}
+    //     />
+
+    //     <div className="flex gap-3 w-full md:w-auto">
+    //       {/* Image Upload */}
+    //       <label className="flex items-center justify-center bg-brand text-white px-4 md:px-6 py-2 rounded-md text-sm md:text-base font-medium cursor-pointer hover:opacity-90 transition w-full md:w-auto">
+    //         Add Picture
+    //         <input
+    //           type="file"
+    //           accept="image/*"
+    //           className="hidden"
+    //           onChange={handleImageChange}
+    //         />
+    //       </label>
+
+    //       {/* Send Button */}
+    //       <button
+    //         className="flex items-center justify-center bg-brand text-white px-5 py-2 rounded-md text-sm md:text-base font-medium hover:opacity-90 transition w-full md:w-auto"
+    //         onClick={handleSend}
+    //       >
+    //         Send
+    //       </button>
+    //     </div>
+    //   </div>
+
+    //   {/* Image Preview */}
+    //   {preview && (
+    //     <div className="flex items-center gap-3">
+    //       <img
+    //         src={preview}
+    //         alt="Preview"
+    //         className="w-20 h-20 object-cover rounded-md border border-gray-300"
+    //       />
+    //       <span className="text-xs text-gray-500">Image preview</span>
+    //     </div>
+    //   )}
+    // </div>
+    <div className="flex flex-col md:flex-row items-center gap-3 mb-6 p-4 border rounded-lg">
       <input
         type="text"
         placeholder="Write your comments"
@@ -57,8 +102,7 @@ export default function CommentBox({ employeeInfo }) {
       />
 
       <div className="flex gap-3 w-full md:w-auto items-center">
-        {/* Image Upload Button */}
-        <label className="bg-brand text-white px-4 md:px-8 py-2 rounded-sm text-sm md:text-base font-semibold cursor-pointer">
+        <label className="bg-brand text-white px-4 md:px-8 py-2 rounded-sm text-sm md:text-base font-semibold cursor-pointer whitespace-nowrap">
           Add Picture
           <input
             type="file"
@@ -68,7 +112,6 @@ export default function CommentBox({ employeeInfo }) {
           />
         </label>
 
-        {/* Send Button */}
         <button
           className="bg-brand text-white px-4 py-2 rounded-sm text-sm md:text-base font-semibold w-full md:w-auto"
           onClick={handleSend}
@@ -77,7 +120,6 @@ export default function CommentBox({ employeeInfo }) {
         </button>
       </div>
 
-      {/* Image Preview */}
       {preview && (
         <div className="mt-3 md:mt-0">
           <img

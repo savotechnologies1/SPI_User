@@ -444,6 +444,7 @@ const Navbar = () => {
     try {
       const response = await getProfile();
       setProfileDetail(response.data);
+      console.log("responseresponse", response);
     } catch (error) {
       console.error("Failed to fetch profile", error);
     }
@@ -452,7 +453,7 @@ const Navbar = () => {
   useEffect(() => {
     getProfileApi();
   }, []);
-
+  console.log("profileDetail?.profileImg", profileDetail);
   return (
     <div className="fixed top-0 right-0 w-full z-30 items-center">
       <div className="flex items-center justify-end bg-white p-4 shadow w-full">
@@ -516,8 +517,10 @@ const Navbar = () => {
           <div className="flex space-x-4">
             <img
               src={
-                profileDetail?.profileImg
-                  ? `${BASE_URL}/uploads/profileImg/${profileDetail.profileImg}`
+                profileDetail?.employeeProfileImg
+                  ? `${BASE_URL}/uploads/employeeProfileImg/${
+                      profileDetail.employeeProfileImg
+                    }`
                   : profile
               }
               alt="Profile"

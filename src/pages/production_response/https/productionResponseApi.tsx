@@ -44,6 +44,21 @@ export const stationProcessDetail = async (
   }
 };
 
+export const traningStatus = async (
+  id: string,
+  stationUserId: string
+) => {
+  console.log("stationUserIdstationUserId11", stationUserId);
+
+  try {
+    const response = await axiosInstance.get(
+      `/get-schedule-process-information/${id}?stationUserId=${stationUserId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 export const stationLogoutApi = async (id: string) => {
   try {
     const response = await axiosInstance.post(`/station-logout/${id}`);

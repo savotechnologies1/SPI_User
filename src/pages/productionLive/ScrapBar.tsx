@@ -204,7 +204,7 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 // const ScrapBar = () => {
@@ -299,6 +299,68 @@ ChartJS.register(
 // };
 
 // export default ScrapBar;
+// const ScrapBar = ({ startDate, endDate, apiData }) => {
+//   const [chartData, setChartData] = useState(null);
+
+//   useEffect(() => {
+//     if (apiData && apiData.length > 0) {
+//       // Aggregate scrap quantity per process
+//       const scrapByProcess = {};
+//       apiData.forEach((item) => {
+//         const name = item.processName || "Unknown";
+//         if (!scrapByProcess[name]) {
+//           scrapByProcess[name] = 0;
+//         }
+//         scrapByProcess[name] += item.scrap || 0;
+//       });
+
+//       const labels = Object.keys(scrapByProcess);
+//       const scrapValues = Object.values(scrapByProcess);
+
+//       setChartData({
+//         labels,
+//         datasets: [
+//           {
+//             label: "Scrap Quantity",
+//             data: scrapValues,
+//             backgroundColor: "rgba(214, 69, 80, 0.8)",
+//             borderColor: "rgba(214, 69, 80, 1)",
+//             borderWidth: 1,
+//             maxBarThickness: 60,
+//           },
+//         ],
+//       });
+//     }
+//   }, [apiData]);
+
+//   const options = {
+//     responsive: true,
+//     maintainAspectRatio: false,
+//     plugins: {
+//       legend: { position: "top", labels: { usePointStyle: true } },
+//     },
+//     scales: {
+//       y: { beginAtZero: true, title: { display: true, text: "Quantity" } },
+//     },
+//   };
+
+//   return (
+//     <div className="w-full p-6">
+//       <h1 className="text-xl font-bold mb-4">Scrap By Process</h1>
+//       <div className="h-[350px]">
+//         {chartData ? (
+//           <Bar data={chartData} options={options} />
+//         ) : (
+//           <p className="text-center pt-20">
+//             No data available for selected range
+//           </p>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+// export default ScrapBar;
+
 const ScrapBar = ({ startDate, endDate, apiData }) => {
   const [chartData, setChartData] = useState(null);
 
