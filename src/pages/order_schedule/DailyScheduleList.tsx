@@ -86,7 +86,7 @@ const DailyScheduleList = () => {
   }, [watchedDate, watchedProcess]);
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md mt-8">
+    <div className="p-4 bg-white rounded-lg shadow-md">
       {/* Filter Form */}
       <div className="flex flex-col md:flex-row gap-3 mb-4">
         <div className="flex flex-col w-full md:w-1/2 gap-2">
