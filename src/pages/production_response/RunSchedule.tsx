@@ -3792,34 +3792,35 @@ const RunSchedule = () => {
   //   }
   // };
 
-  const handleCompleteOrder = async () => {
-    if (!jobData || isCompleting) return;
-    setIsCompleting(true);
-    try {
-      // ... (keep your existing stationLogin logic for products)
+const handleCompleteOrder = async () => {
+  if (!jobData || isCompleting) return;
+  setIsCompleting(true);
+  try {
+    // 1. Define the variables clearly
+    const stationUserId = jobData.employeeInfo?.id;
+    const adminName = "Admin";
+    const currentPartId = jobData.part_id || jobData.customPartId;
+    const parentProductId = jobData.order?.partId || jobData.productId;
 
-      const adminName = "Admin"; // You can replace this with actual logged-in Admin name from context/localStorage
-      const stationUserId = jobData.employeeInfo.id; // The ID of the user assigned to this station
+    // 2. Call the function with arguments in the EXACT order defined in completeOrder
+    await completeOrder(
+      jobData.productionId, // Arg 1: id (This goes into the URL /complete-order/${id})
+      jobData.order_id,     // Arg 2: orderId
+      jobData.order_type,   // Arg 3: order_type
+      currentPartId,        // Arg 4: partId
+      stationUserId,        // Arg 5: employeeId
+      parentProductId,      // Arg 6: productId
+      jobData.partNumber,   // Arg 7: type (Sending the Part Number string here)
+      adminName             // Arg 8: completedBy
+    );
 
-      await completeOrder(
-        jobData.productionId,
-        jobData.order_id,
-        jobData.order_type,
-        jobData.part_id ||jobData.customPartId,
-        jobData.customPartId,
-        stationUserId, // maps to employeeId in backend
-        jobData?.productId || jobData?.order?.productId,
-        jobData.type || "part",
-        adminName, // maps to completedBy in backend
-      );
-
-      fetchJobDetails(id);
-    } catch (error: any) {
-      // ... error handling
-    } finally {
-      setIsCompleting(false);
-    }
-  };
+    fetchJobDetails(id);
+  } catch (error) {
+    console.error("Completion Error:", error);
+  } finally {
+    setIsCompleting(false);
+  }
+};
   const handleScrapOrder = async () => {
     if (!jobData) return;
     try {

@@ -70,7 +70,6 @@ export const stationLogoutApi = async (id: string) => {
     toast.error(error.response.data.message);
   }
 };
-
 export const completeOrder = async (
   id: string,
   orderId: string,
