@@ -405,18 +405,27 @@ const CycleTime = ({ partId }: { partId: string }) => {
       console.error("Error fetching cycle time data:", error);
     }
   };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { position: "top" as const } },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: { display: true, text: "Cycle Time (minutes)" },
-      },
+const options = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { 
+    legend: { position: "top" as const },
+    tooltip: {
+      callbacks: {
+        label: function(context: any) {
+          return `${context.dataset.label}: ${context.parsed.y} min`;
+        }
+      }
+    }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      title: { display: true, text: "Cycle Time (minutes)" },
     },
-  };
+  },
+};
+
 
   return (
     <div className="w-full mx-auto p-3 sm:p-4 md:p-6 bg-white rounded-lg shadow-sm ">
