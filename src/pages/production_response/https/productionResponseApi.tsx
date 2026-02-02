@@ -268,19 +268,19 @@
 //   }
 // };
 
-// export const selectSupplier = async () => {
-//   // eslint-disable-next-line no-useless-catch
-//   try {
-//     const response = await axiosInstance.get(`/select-supplier`);
-//     return response.data;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axiosInstance";
 import { AxiosError } from "axios";
 
+export const selectSupplier = async () => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const response = await axiosInstance.get(`/select-supplier`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 export const selecEmployeeProcessApi = async () => {
   try {
     const response = await axiosInstance.get(
