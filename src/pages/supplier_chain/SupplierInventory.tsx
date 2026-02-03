@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
+import axiosInstance from "../../utils/axiosInstance";
 import { FaTrash, FaSpinner, FaEnvelope } from "react-icons/fa"; // Spinner icon add kiya
 import {
   deleteSupplierInventory,
   sendSupplierEmailApi,
 } from "./https/suppliersApi";
 import { toast } from "react-toastify";
-import axios from "axios";
 
 // const SupplierInventory = () => {
 //   const [data, setData] = useState([]);
@@ -277,10 +276,10 @@ const SupplierInventory = () => {
   const fetchData = async (page) => {
     setLoading(true);
     try {
-     
-      const res = await axios.get(`${BASE_URL}/api/admin/supplier-inventory`, {
+      const res = await axiosInstance.get(`/supplier-inventory`, {
         params: { page, pageSize: rowsPerPage, search, sort },
       });
+
       const mappedData = res.data.data.map((item) => ({
         id: item.part_id,
         partNumber: item.partNumber || "",
