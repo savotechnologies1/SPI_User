@@ -2567,7 +2567,7 @@ const Dive = () => {
           <tbody>
             {productivityTable.map((item, i) => (
               <tr key={i} className="border-b text-center hover:bg-gray-50">
-                <td className="p-2">{item.processName}</td>
+                   <td className="p-2">{item.processName} ({item.machineName})</td>
                 <td className="p-2 font-medium">{item.employeeName}</td>
                 <td className="p-2">{item.CT} min</td>
                 <td className="p-2 font-bold text-blue-600">{item.Qty}</td>

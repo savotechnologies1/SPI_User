@@ -9,7 +9,7 @@ const SupplierReturn = ({ qualityData }) => {
         </div>
       </div>
 
-      <div className="overflow-x-auto py-6">
+      <div className="overflow-x-auto py-6  overflow-y-auto max-h-[300px]">
         <table className="w-full bg-white">
           <thead>
             <tr className="border-b">
