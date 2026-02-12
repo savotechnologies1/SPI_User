@@ -7,6 +7,7 @@ import {
   selectSupplier,
   updateScrapEntry,
 } from "./https/productionResponseApi";
+import { FaArrowLeft } from "react-icons/fa";
 
 const EditPartScrapEntry = () => {
   const [partData, setPartData] = useState([]);
