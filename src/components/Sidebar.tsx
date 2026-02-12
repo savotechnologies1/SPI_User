@@ -17,6 +17,7 @@ import {
   faUser,
   faVectorSquare,
 } from "@fortawesome/free-solid-svg-icons";
+import { FaTrashAlt } from "react-icons/fa";
 
 const dashboard = <FontAwesomeIcon icon={faGaugeSimpleHigh} />;
 const order = <FontAwesomeIcon icon={faChartSimple} />;
@@ -24,6 +25,7 @@ const supply_chain = <FontAwesomeIcon icon={faUser} />;
 const time_clock = <FontAwesomeIcon icon={faUser} />;
 const production_live = <FontAwesomeIcon icon={faVectorSquare} />;
 const production_response = <FontAwesomeIcon icon={faCalendarMinus} />;
+const scrap_entries = <FaTrashAlt className="text-xl" />;
 const setting = <FontAwesomeIcon icon={faGear} />;
 const operation = <FontAwesomeIcon icon={faBagShopping} />;
 const invoice = <FontAwesomeIcon icon={faFileInvoiceDollar} />;
@@ -678,6 +680,11 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                   label: "Current quality performance",
                   path: "/current-quality",
                 },
+                {
+                  key: "currnt-monitor",
+                  label: "Current Monitor",
+                  path: "/current-monitor",
+                },
               ],
             },
 
@@ -721,6 +728,12 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
               label: "Production Response",
               icon: production_response,
               path: "/station-login",
+            },
+            {
+              key: "Scrap Entries",
+              label: "Scrap Entries",
+              icon: scrap_entries,
+              path: "/scrap-entries",
             },
           ],
         },
@@ -798,7 +811,7 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
   // };
 
   const hasSubmenu = (
-    item: any
+    item: any,
   ): item is {
     key: string;
     label: string;
@@ -1037,7 +1050,7 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                                                         </Link>
                                                       </div>
                                                     </li>
-                                                  )
+                                                  ),
                                                 )}
                                               </ul>
                                             )}

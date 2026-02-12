@@ -9,7 +9,8 @@ const Productivity = ({ productivity }) => {
           <thead>
             <tr className="bg-gray-100 text-gray-600 text-sm whitespace-nowrap">
               <th className="py-2 px-4 text-left">Process Name</th>
-              <th className="py-2 px-4 text-left">Employee Name</th>
+              {/* <th className="py-2 px-4 text-left">Employee Name</th> */}
+              <th className="py-2 px-4 text-left">Cost</th>
               <th className="py-2 px-4 text-left">Cycle Time</th>
               <th className="py-2 px-4 text-left">Qty</th>
               <th className="py-2 px-4 text-left">Scrap</th>
@@ -21,11 +22,13 @@ const Productivity = ({ productivity }) => {
             {productivity?.length > 0 ? (
               productivity?.map((item, index) => (
                 <tr key={index} className="border-b">
-                  <td className="py-2 px-4">{item.process} ({item.machineName})</td>
-                  <td className="py-2 px-4">{item.employee}</td>
-                  <td className="py-2 px-4">{item.cycleTime}</td>
+                  <td className="py-2 px-4">
+                    {item.process} ({item.machineName})
+                  </td>
+                  <td className="py-2 px-4">$ {item.completedPartCost}</td>
+                  <td className="py-2 px-4">{item.cycleTime} min</td>
                   <td className="py-2 px-4">{item.totalQty}</td>
-                  <td className="py-2 px-4">{item.scrap}</td>
+                  <td className="py-2 px-4">{item.scrapQuantity}</td>
                   <td className="py-2 px-4">{item.productivity}</td>
                   <td className="py-2 px-4">{item.efficiency}</td>
                 </tr>

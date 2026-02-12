@@ -203,7 +203,6 @@ import Training from "./pages/production_response/Training";
 import ScrapEntry from "./pages/production_response/ScrapEntry";
 import TimeClockList from "./pages/Employee_Information/TimeClockList";
 import AddSuppliers from "./pages/supplier_chain/AddSuppliers";
-
 import OperationPerformance from "./pages/Operation_performance/OperationPerformance";
 import QualityPerformance from "./pages/qualityPerformance/QualityPerformance";
 import ContinuousImprovement from "./pages/Continuous_Improvement/ContinuousImprovement";
@@ -228,6 +227,10 @@ import StockOrderScheduleList from "./pages/order_schedule/StockOrderScheduleLis
 import SupplierOrderList from "./pages/supplier_chain/supplierOrderList";
 import EditSupplierOrder from "./pages/supplier_chain/EditSupplierOrder";
 import WorkInstructionList from "./pages/Work_Instrcution.tsx/WorkInstructionList";
+import MonitorManagement from "./pages/productionLive/MonitorManagement";
+import AllScrapEntries from "./pages/production_response/AllScrapEntries";
+import EditPartScrapEntry from "./pages/production_response/EditPartScrapEntry";
+import EditProductScrapEntry from "./pages/production_response/EditProductScrapEntry";
 
 const App = () => {
   const { isLoading, token } = useAuth();
@@ -276,7 +279,14 @@ const App = () => {
             path="scrap-entry"
             element={token ? <ScrapEntry /> : <Training />}
           />
-
+          <Route
+            path="edit-part-scrap-entry/:id"
+            element={token ? <EditPartScrapEntry /> : <Training />}
+          />
+          <Route
+            path="edit-product-scrap-entry/:id"
+            element={token ? <EditProductScrapEntry /> : <Training />}
+          />
           {/* Protected Routes */}
           {/* <Route
             path="/"
@@ -330,6 +340,7 @@ const App = () => {
             <Route path="live-production" element={<LiveProductionGoal />} />
             <Route path="current-status" element={<CurrentStatus />} />
             <Route path="current-quality" element={<CurrentQuality />} />
+            <Route path="current-monitor" element={<MonitorManagement />} />
             <Route path="partform" element={<PartForm />} />
             <Route path="edit-part/:id" element={<EditPartForm />} />
             <Route path="product-tree" element={<ProductTree />} />
@@ -379,6 +390,7 @@ const App = () => {
             />
             <Route path="business-analysis" element={<BusinessAnalysis />} />
             <Route path="projecion" element={<Projection />} />
+            <Route path="scrap-entries" element={<AllScrapEntries />} />
           </Route>
         </Routes>
       </Router>

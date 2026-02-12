@@ -313,6 +313,7 @@ import pencil from "../../assets/Pencil Icon.png";
 // export default OrderStatus;
 
 import React from "react";
+
 const OrderStatus = ({ orders }) => {
   console.log("ordersorders", orders);
 
@@ -342,7 +343,7 @@ const OrderStatus = ({ orders }) => {
                     <td className="py-2 px-4">
                       {new Date(item.date).toLocaleDateString()}
                     </td>
-                    <td className="py-2 px-4">{item.order}</td>
+                    <td className="py-2 px-4">{item.orderNo}</td>
                     <td className="py-2 px-4">{item.firstName}</td>
                     <td className="py-2 px-4">{item.lastName}</td>
                     <td className="py-2 px-4">{item.product || "-"}</td>
@@ -391,7 +392,7 @@ const OrderStatus = ({ orders }) => {
                     <td className="py-2 px-4">
                       {new Date(item.date).toLocaleDateString()}
                     </td>
-                    <td className="py-2 px-4">{item.order}</td>
+                    <td className="py-2 px-4">{item.orderNo}</td>
                     <td className="py-2 px-4">{item.firstName}</td>
                     <td className="py-2 px-4">{item.lastName}</td>
                     <td className="py-2 px-4">{item.product || "-"}</td>
@@ -412,5 +413,4 @@ const OrderStatus = ({ orders }) => {
     </div>
   );
 };
-
 export default OrderStatus;

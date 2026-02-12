@@ -484,6 +484,128 @@ const getShiftHours = (shift) => {
     ];
   }
 };
+// const HourByHour = () => {
+//   const BASE_URL = import.meta.env.VITE_SERVER_URL;
+
+//   const [overviewData, setOverviewData] = useState({
+//     hourByHour: [],
+//     pieChartData: [],
+//   });
+//   const [processTablesData, setProcessTablesData] = useState([]);
+//   // useEffect(() => {
+//   //   // Fetch overview data
+//   //   fetch("http://localhost:8080/api/admin/production/overview")
+//   //     .then((res) => res.json())
+//   //     .then((data) => setOverviewData(data))
+//   //     .catch((error) => console.error("Error fetching overview:", error));
+
+//   //   // Fetch hourly process data
+//   //   fetch("http://localhost:8080/api/admin/production/processes/hourly")
+//   //     .then((res) => res.json())
+//   //     .then((data) => setProcessTablesData(data))
+//   //     .catch((error) => console.error("Error fetching process data:", error));
+//   // }, []);
+
+//   const [totalData, setTotalData] = useState();
+//   const fetchData = async () => {
+//     const response = await axios.get(
+//       `${BASE_URL}/api/frontLine/production/overview`,
+//     );
+//     console.log("responseresponse", response);
+//   };
+
+//   const fetcHourlyhData = async () => {
+//     const response = await axios.get(
+//       `${BASE_URL}/api/frontLine/production/processes/hourly`,
+//     );
+//     setProcessTablesData(response.data.allProcessData);
+//     setTotalData(response.data.grandTotals);
+//   };
+//   useEffect(() => {
+//     fetchData();
+//     fetcHourlyhData();
+//   }, []);
+
+//   console.log("overviewDataoverviewData", totalData);
+//   const currentHour = new Date().getHours();
+//   let shift = 1;
+//   if (currentHour >= 6 && currentHour < 14) shift = 1;
+//   else if (currentHour >= 14 && currentHour < 22) shift = 2;
+//   else shift = 3;
+
+//   const allowedHours = getShiftHours(shift);
+
+//   // const filteredData = hourlyData.filter((item) =>
+//   //   allowedHours.includes(item.hour)
+//   // );
+//   return (
+//     <div>
+//       <div className="flex flex-col md:flex-row mt-2 gap-4">
+//         {/* Card 1 */}
+//         <div className="flex flex-col justify-between bg-white rounded-md w-full p-2 gap-2 border bg-gradient-to-l from-[#FFF7ED]">
+//           <div className="flex items-center gap-2">
+//             <div>
+//               <img className="w-[40px]" src={scrap_cost} alt="scrap cost" />
+//             </div>
+//             <div>
+//               <p className="text-sm text-gray-600">Total Actual</p>
+//               <p className="font-bold text-xl">{totalData?.actual}</p>
+//             </div>
+//           </div>
+//           <div>
+//             <img src={/* scrap_1 agar chahiye */ ""} alt="" />
+//           </div>
+//         </div>
+
+//         {/* Card 2 */}
+//         <div className="flex flex-col justify-between bg-white rounded-md w-full p-2 gap-2 border bg-gradient-to-l from-[#FFF7ED]">
+//           <div className="flex items-center gap-2">
+//             <div>
+//               <img
+//                 className="w-[40px]"
+//                 src={supplier_return}
+//                 alt="supplier return"
+//               />
+//             </div>
+//             <div>
+//               <p className="text-sm text-gray-600">Total Scrap</p>
+//               <p className="font-bold text-xl">{totalData?.scrap}</p>
+//             </div>
+//           </div>
+//           <div>
+//             <img src={/* scrap_2 agar chahiye */ ""} alt="" />
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* <div className="grid gird-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-6">
+//         <div className="bg-white">
+//           <Thermoforming />
+//         </div>
+
+//         <div className="bg-white">
+//           <Sanding />
+//         </div>
+//         <div className="bg-white">
+//           <Inspection />
+//         </div>
+//       </div> */}
+//       <div className="grid gird-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-6">
+//         {processTablesData.map((process, index) => (
+//           <div key={index} className="bg-white">
+//             <ProcessTable
+//               processName={process.processName}
+//               machineName={process.machineName}
+//               hourlyData={process.hourlyData}
+//               total={process.total}
+//               employees={process.employees}
+//             />
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
 const HourByHour = () => {
   const BASE_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -509,14 +631,15 @@ const HourByHour = () => {
   const [totalData, setTotalData] = useState();
   const fetchData = async () => {
     const response = await axios.get(
-      `${BASE_URL}/api/frontLine/production/overview`,
+      `${BASE_URL}/api/admin/production/overview`,
     );
     console.log("responseresponse", response);
   };
 
   const fetcHourlyhData = async () => {
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const response = await axios.get(
-      `${BASE_URL}/api/frontLine/production/processes/hourly`,
+      `${BASE_URL}/api/admin/production/processes/hourly?tz=${userTimeZone}`,
     );
     setProcessTablesData(response.data.allProcessData);
     setTotalData(response.data.grandTotals);

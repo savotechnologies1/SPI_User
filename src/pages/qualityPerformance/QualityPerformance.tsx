@@ -23,6 +23,7 @@ import SupplierReturn from "./SupplierReturn";
 import ScrapBar from "./ScrapBar";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
+import ReturnTable from "./ReturnTable";
 
 const data_1 = [
   {
@@ -362,6 +363,8 @@ const QualityPerformance = () => {
   const [endDate, setEndDate] = useState(today);
   const BASE_URL = import.meta.env.VITE_SERVER_URL;
   const [totalData, setTotalData] = useState();
+  const [customerReturns, setCustomerReturns] = useState([]);
+  const [supplierReturns, setSupplierReturns] = useState([]);
   const fetchQualityData = async () => {
     try {
       setLoading(true);
@@ -381,6 +384,8 @@ const QualityPerformance = () => {
       if (data && data.data) {
         setTotalData(data.totalScrapQty);
         setQualityData(data.data);
+        setCustomerReturns(data.customerScrapDetails || []);
+        setSupplierReturns(data.supplierScrapDetails || []);
       }
     } catch (error) {
       console.error("Error fetching quality performance:", error);
@@ -439,6 +444,77 @@ const QualityPerformance = () => {
     // },
   ];
   return (
+    // <div>
+    //   <div className="p-7">
+    //     <div>
+    //       <h1 className="font-bold text-[20px] md:text-[24px] text-black">
+    //         Quality Performance
+    //       </h1>
+    //     </div>
+    //     <div className="flex justify-between mt-2 items-center">
+    //       <div className="flex gap-4 items-center ">
+    //         <p className={`text-sm  text-black font-semibold`}>
+    //           <NavLink to={"/dashboardDetailes"}>Quality Performance :</NavLink>
+    //         </p>
+
+    //         <div className="flex items-center gap-2">
+    //           <DatePicker
+    //             selected={startDate}
+    //             onChange={(date) => setStartDate(date)}
+    //             dateFormat="dd/MM/yyyy"
+    //             className="border rounded-md p-1 text-xs"
+    //           />
+    //           <span>-</span>
+    //           <DatePicker
+    //             selected={endDate}
+    //             onChange={(date) => setEndDate(date)}
+    //             dateFormat="dd/MM/yyyy"
+    //             className="border rounded-md p-1 text-xs"
+    //           />
+    //         </div>
+    //       </div>
+    //     </div>
+
+    //     <div className="mt-6">
+    //       <h1 className="font-semibold text-xl">Scrap</h1>
+    //       <div className="flex flex-col md:flex-row  mt-2 gap-4  ">
+    //         {data_1.map((item) => (
+    //           <div className="flex flex-col justify-between  bg-white  rounded-md w-full p-2 gap-2 border bg-gradient-to-l from-[#FFF7ED]">
+    //             <div className="flex items-center gap-2">
+    //               <div>
+    //                 <img className="w-[40px]" src={item.scrap_img} alt="" />
+    //               </div>
+    //               <div>
+    //                 <p className="text-sm text-gray-600">{item.text}</p>
+    //                 <p className="font-bold text-xl">{item.num}</p>
+    //               </div>
+    //             </div>
+    //             {/* <div>
+    //               <img src={item.scrap} alt="" />
+    //             </div> */}
+    //             {/* <div className="text-sm text-gray-600">
+    //               Increase by{" "}
+    //               <span
+    //                 className={`font-semibold rounded-md text-xs  ${item.textColor} ${item.bgColor}`}
+    //               >
+    //                 {item.increase}
+    //               </span>{" "}
+    //               this week
+    //             </div> */}
+    //           </div>
+    //         ))}
+    //       </div>
+    //     </div>
+
+    //     <div className="mt-6">
+    //       <SupplierReturn qualityData={qualityData} />
+    //     </div>
+    //     <div className="mt-6 bg-white rounded-md shadow-sm">
+    //       <ScrapBar qualityData={qualityData} />
+    //     </div>
+    //   </div>
+    // </div>
+
     <div>
       <div className="p-7">
         <div>
@@ -500,7 +576,19 @@ const QualityPerformance = () => {
             ))}
           </div>
         </div>
+        {/* Customer Return Table */}
+        <ReturnTable
+          title="Customer Return"
+          data={customerReturns} // Yeh state API se aayegi
+          nameLabel="Customer Name"
+        />
 
+        {/* Supplier Return Table */}
+        <ReturnTable
+          title="Supplier Return"
+          data={supplierReturns} // Yeh state API se aayegi
+          nameLabel="Customer Name" // Screenshot mein dono jagah Customer Name hi likha hai
+        />
         <div className="mt-6">
           <SupplierReturn qualityData={qualityData} />
         </div>
