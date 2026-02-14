@@ -339,7 +339,6 @@ const NotificationList = ({ onClose, onNotificationAction }) => {
   const [counts, setCounts] = useState({ all: 0, unread: 0, archived: 0 });
   const [message, setMessage] = useState("");
   
-  // --- Modal ke liye new states ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
 
