@@ -855,7 +855,7 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
           </div>
 
           <div className="flex justify-center items-center p-2 mb-6">
-            <img className="w-[126px]" src={logo} alt="logo" />
+            <img className="w-[166px]" src={logo} alt="logo" />
           </div>
 
           <div className="flex overflow-y-auto h-screen">
