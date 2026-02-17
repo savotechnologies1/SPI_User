@@ -25,59 +25,6 @@ interface WorkInstructionItem {
   statusColor: string;
 }
 
-const mockData: WorkInstructionItem[] = [
-  {
-    id: "1",
-    imageUrl: "/avatar1.jpg",
-    name: "John Smith",
-    partDesc: "Cut Trim",
-    stepNumber: "Step 1",
-    description: "Remove burn and sharp edges",
-    submitDate: "18/09/2016",
-    statusColor: "green",
-  },
-  {
-    id: "2",
-    imageUrl: "/avatar2.jpg",
-    name: "Emily Johnson",
-    partDesc: "Cut Trim",
-    stepNumber: "Step 2",
-    description: "Remove burn and sharp edges",
-    submitDate: "12/06/2020",
-    statusColor: "yellow",
-  },
-  {
-    id: "3",
-    imageUrl: "/avatar3.jpg",
-    name: "Michael Brown",
-    partDesc: "Cut Trim",
-    stepNumber: "Step 3",
-    description: "Remove burn and sharp edges",
-    submitDate: "15/08/2017",
-    statusColor: "red",
-  },
-  {
-    id: "4",
-    imageUrl: "/avatar4.jpg",
-    name: "Sarah Wilson",
-    partDesc: "Cut Trim",
-    stepNumber: "Step 4",
-    description: "Remove burn and sharp edges",
-    submitDate: "07/05/2016",
-    statusColor: "gray",
-  },
-  {
-    id: "5",
-    imageUrl: "/avatar5.jpg",
-    name: "David Lee",
-    partDesc: "Cut Trim",
-    stepNumber: "Step 5",
-    description: "Remove burn and sharp edges",
-    submitDate: "28/10/2012",
-    statusColor: "green",
-  },
-];
-
 // const StockOrderScheduleList: React.FC = () => {
 //   const [workData, setWorkData] = useState<any[]>([]); // Use any[] for now for simplicity
 //   const [totalPages, setTotalPages] = useState(1);
@@ -355,6 +302,15 @@ const mockData: WorkInstructionItem[] = [
 
 // export default StockOrderScheduleList;
 
+// Custom Debounce Hook
+function useDebounce(value: string, delay: number): string {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  return debouncedValue;
+}
 const StockOrderScheduleList: React.FC = () => {
   const [workData, setWorkData] = useState<any[]>([]); // Use any[] for now for simplicity
   const [totalPages, setTotalPages] = useState(1);
@@ -366,29 +322,25 @@ const StockOrderScheduleList: React.FC = () => {
   const rowsPerPage = 10;
   const debouncedSearchVal = useDebounce(searchVal, 500);
 
-  // Custom Debounce Hook (your implementation is fine)
-  function useDebounce(value: string, delay: number) {
-    const [debouncedValue, setDebouncedValue] = useState(value);
-    useEffect(() => {
-      const handler = setTimeout(() => setDebouncedValue(value), delay);
-      return () => clearTimeout(handler);
-    }, [value, delay]);
-    return debouncedValue;
-  }
-
   // Fetcher function
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fetchScheduleList = async (page = 1, type = "all", searchTerm = "") => {
     setIsLoading(true); // 2. API call shuru hone par loading true
     try {
       // Pass all parameters to the API call
-      const response = await scheduleStockOrderListApi(
+      const response: any = await scheduleStockOrderListApi(
         page,
         rowsPerPage,
         type,
         searchTerm,
       );
-      setWorkData(response.data.data || []);
-      setTotalPages(response.data.pagination?.totalPages || 1);
+      // Handle both array response and axios response
+      if (Array.isArray(response)) {
+        setWorkData([]);
+      } else {
+        setWorkData(response.data.data || []);
+        setTotalPages(response.data.pagination?.totalPages || 1);
+      }
       setIsLoading(false); // 3. API call khatam hone par loading false
     } catch (error) {
       console.error("Failed to fetch schedule list:", error);
@@ -422,7 +374,8 @@ const StockOrderScheduleList: React.FC = () => {
     if (!id || !orderId) return;
 
     try {
-      await deleteScheduleOrder(id, { orderId });
+      // API expects object with orderId property
+      await deleteScheduleOrder(id, { orderId } as any);
       fetchScheduleList(currentPage, selectedType, debouncedSearchVal);
     } catch (error) {
       console.error("Failed to delete:", error);
@@ -563,9 +516,9 @@ const StockOrderScheduleList: React.FC = () => {
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {rowItem.status === "completed" ? (
                         <span className="font-medium">
-                          {rowItem.completed_by === "N/A"
+                          {!rowItem.completedByEmployee
                             ? "System"
-                            : rowItem.completed_by}
+                            : `${rowItem?.completedByEmployee?.firstName} ${rowItem?.completedByEmployee?.lastName}`}
                         </span>
                       ) : (
                         <span className="text-gray-400 italic">Pending</span>

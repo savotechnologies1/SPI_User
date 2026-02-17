@@ -589,11 +589,17 @@ interface ProductNumberInterface {
   cost: number;
   productDescription: string;
 }
-
+// Function to get local date (System Date) in YYYY-MM-DD format
+const getSystemLocalDate = () => {
+  const date = new Date();
+  // 'en-CA' use karne se format YYYY-MM-DD milta hai jo input type="date" ko chahiye hota hai
+  // Ye wahi date nikalega jo aapke computer ki ghadi (clock) mein hai
+  return date.toLocaleDateString("en-CA");
+};
 const StockOrderForm = () => {
   const [customerList, setCustomerList] = useState<CustomerInterface[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(
-    null
+    null,
   );
   const [productNumberList, setProductNumberList] = useState<
     ProductNumberInterface[]
@@ -627,7 +633,7 @@ const StockOrderForm = () => {
       <Formik
         initialValues={{
           orderNumber: generateNewOrderNumber(),
-          orderDate: new Date().toISOString().split("T")[0],
+          orderDate: getSystemLocalDate(), // Yahan change kiya
           shipDate: "",
           customerId: "",
           customerName: "",
@@ -650,7 +656,7 @@ const StockOrderForm = () => {
             resetForm({
               values: {
                 orderNumber: generateNewOrderNumber(),
-                orderDate: new Date().toISOString().split("T")[0],
+                orderDate: getSystemLocalDate(), // Yahan change kiya
                 shipDate: "",
                 customerId: "",
                 customerName: "",
@@ -681,7 +687,7 @@ const StockOrderForm = () => {
           handleBlur,
         }) => {
           const handleCustomerSelectChange = (
-            e: React.ChangeEvent<HTMLSelectElement>
+            e: React.ChangeEvent<HTMLSelectElement>,
           ) => {
             const value = e.target.value;
             if (value === "new") {
@@ -711,14 +717,14 @@ const StockOrderForm = () => {
           };
 
           const handleProductSelectChange = (
-            e: React.ChangeEvent<HTMLSelectElement>
+            e: React.ChangeEvent<HTMLSelectElement>,
           ) => {
             const selectedProductId = e.target.value;
             setFieldValue("productId", selectedProductId);
 
             if (selectedProductId) {
               const selectedProduct = productNumberList.find(
-                (p) => p.productId === selectedProductId
+                (p) => p.productId === selectedProductId,
               );
               if (selectedProduct) {
                 const unitCost = selectedProduct.cost;
@@ -729,7 +735,7 @@ const StockOrderForm = () => {
                 setFieldValue("productQuantity", quantity);
                 setFieldValue(
                   "productDescription",
-                  selectedProduct.productDescription
+                  selectedProduct.productDescription,
                 );
                 setFieldValue("totalCost", (unitCost * quantity).toFixed(2));
               }
@@ -745,7 +751,7 @@ const StockOrderForm = () => {
           };
 
           const handleQuantityChange = (
-            e: React.ChangeEvent<HTMLInputElement>
+            e: React.ChangeEvent<HTMLInputElement>,
           ) => {
             const quantityValue = e.target.value;
             setFieldValue("productQuantity", quantityValue);
