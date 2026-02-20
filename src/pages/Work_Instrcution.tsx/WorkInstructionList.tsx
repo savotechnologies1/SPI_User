@@ -10,6 +10,7 @@ import {
 } from "./https/workInstructionApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { format } from "date-fns";
 interface WorkInstructionItem {
   id: string;
   imageUrl: string;
@@ -259,11 +260,11 @@ const WorkInstructionList: React.FC = () => {
                   <td className="px-4 py-3">{item.PartNumber.partNumber}</td>
                   <td className="px-4 py-3">{item.steps.length}</td>
 
-                  <td className="px-4 py-3">
-                    <span className="px-2 py-1 rounded text-xs font-semibold bg-gray-200 text-gray-600">
-                      {new Date(item.createdAt).toLocaleDateString()}
-                    </span>
-                  </td>
+                     <td className="px-4 py-3">
+                      <span className="px-2 py-1 rounded text-xs font-semibold bg-gray-200 text-gray-600">
+                 {item.createdAt ? format(new Date(item.createdAt), "MM/dd/yyyy") : "N/A"}
+                      </span>
+                    </td>
 
                   <td className="px-2 py-3 md:px-3 md:py-4 flex gap-2 md:gap-4">
                     <button

@@ -523,27 +523,27 @@ const QualityPerformance = () => {
           </h1>
         </div>
         <div className="flex justify-between mt-2 items-center">
-          <div className="flex gap-4 items-center ">
-            <p className={`text-sm  text-black font-semibold`}>
-              <NavLink to={"/dashboardDetailes"}>Quality Performance :</NavLink>
-            </p>
+       <div className="flex gap-4 items-center ">
+    <p className={`text-sm  text-black font-semibold`}>
+      <NavLink to={"/dashboardDetailes"}>Quality Performance :</NavLink>
+    </p>
 
-            <div className="flex items-center gap-2">
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
-                dateFormat="dd/MM/yyyy"
-                className="border rounded-md p-1 text-xs"
-              />
-              <span>-</span>
-              <DatePicker
-                selected={endDate}
-                onChange={(date) => setEndDate(date)}
-                dateFormat="dd/MM/yyyy"
-                className="border rounded-md p-1 text-xs"
-              />
-            </div>
-          </div>
+    <div className="flex items-center gap-2">
+      <DatePicker
+        selected={startDate}
+        onChange={(date) => setStartDate(date)}
+        dateFormat="MM/dd/yyyy" // <-- Yahan dd/MM/yyyy ko MM/dd/yyyy kiya
+        className="border rounded-md p-1 text-xs"
+      />
+      <span>-</span>
+      <DatePicker
+        selected={endDate}
+        onChange={(date) => setEndDate(date)}
+        dateFormat="MM/dd/yyyy" // <-- Yahan dd/MM/yyyy ko MM/dd/yyyy kiya
+        className="border rounded-md p-1 text-xs"
+      />
+    </div>
+  </div>
         </div>
 
         <div className="mt-6">

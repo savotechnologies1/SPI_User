@@ -19,6 +19,23 @@ export const addStockOrder = async (apiData: object) => {
   }
 };
 
+
+export const getProductParts = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/product-parts/${id}`);
+    // Handle both { data: [...] } and [...] response formats
+    const data = response.data?.data ?? response.data ?? [];
+    return Array.isArray(data) ? data : [];
+  } catch (error: unknown) {
+    const axiosError = error as AxiosError<{ message: string }>;
+    if (axiosError.response?.data?.message) {
+      toast.error(axiosError.response.data.message);
+    } else {
+      toast.error("Failed to fetch part numbers.");
+    }
+    return [];
+  }
+};
 export const selectCustomer = async () => {
   try {
     const response = await axiosInstance.get(

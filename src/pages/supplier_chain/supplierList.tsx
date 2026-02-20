@@ -503,18 +503,18 @@ const SupplierList = () => {
                     <td className="px-2 py-3 md:px-3 md:py-4 text-xs md:text-sm lg:text-base font-medium hidden md:table-cell">
                       Admin
                     </td>
-                    <td className="px-2 py-3 md:px-3 md:py-4 text-xs md:text-sm lg:text-base font-medium hidden lg:table-cell">
-                      <span
-                        className={`px-2 py-1 md:px-3 rounded-full text-xs md:text-sm font-mediumtext-green-800 bg-green-100`}
-                      >
-                        {new Date(item.createdAt).toLocaleString("en-IN", {
-                          timeZone: "Asia/Kolkata",
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}
-                      </span>
-                    </td>
+                   <td className="px-2 py-3 md:px-3 md:py-4 text-xs md:text-sm lg:text-base font-medium hidden lg:table-cell">
+  <span
+    className={`px-2 py-1 md:px-3 rounded-full text-xs md:text-sm font-medium text-green-800 bg-green-100`}
+  >
+    {new Date(item.createdAt).toLocaleDateString("en-US", {
+      // timeZone: "Asia/Kolkata", // Agar timezone rakhna chahte hain to ise rehne dein
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    })}
+  </span>
+</td>
                     <td className="px-2 py-3 md:px-3 md:py-4 flex gap-2 md:gap-4">
                       <button
                         className="text-brand hover:underline"

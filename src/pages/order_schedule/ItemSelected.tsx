@@ -458,7 +458,6 @@ import { useNavigate } from "react-router-dom";
 // };
 
 // export default ItemSelected;
-
 const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
   const [selectedItems, setSelectedItems] = useState<ScheduledItem[]>([]);
   const [itemInputs, setItemInputs] = useState<ItemInputState>({});
@@ -500,7 +499,7 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
   };
 
   const flattenBOM = (components, parentQty) => {
-    let flatList = [];
+    let flatList: any[] = [];
     components?.forEach((comp) => {
       const currentTotalQty = parentQty * (comp.partQuantity || 1);
       flatList.push({ ...comp, calculatedQty: currentTotalQty });
@@ -611,69 +610,75 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
             Stock orders available to schedule
           </h1>
           <div className="space-y-4">
-            {isLoading && (
-              <p className="text-center">Loading search results...</p>
-            )}
+            {(!Array.isArray(availableItems) || availableItems.length === 0) &&
+              !isLoading && (
+                <p className="text-center text-gray-500">
+                  No stock orders found. Use the form above to search.
+                </p>
+              )}
 
-            {availableItems.map((item) => {
-              // FIX: Default date logic handle karne ke liye variable
-              const displayDate =
-                itemInputs[item.id]?.shipDate ||
-                (item.shipDate ? new Date(item.shipDate) : new Date());
+            {Array.isArray(availableItems) &&
+              availableItems.map((item) => {
+                // FIX: Default date logic handle karne ke liye variable
+                const displayDate =
+                  itemInputs[item.id]?.shipDate ||
+                  (item.shipDate ? new Date(item.shipDate) : new Date());
 
-              return (
-                <div
-                  key={item.id}
-                  className="p-4 bg-white shadow-md flex justify-between items-start gap-4"
-                >
-                  <div className="flex-1 space-y-3">
-                    <p className="font-semibold text-base">
-                      {item.part.partDescription}
-                    </p>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <span>{item.part.partNumber}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <p className="text-[#5A6774]">Stock Order Qty:</p>
-                      <span className="font-bold text-[#637381] bg-[#919EAB29] px-2 py-1 rounded-md">
-                        {item.productQuantity}
-                      </span>
-                    </div>
-                    <input
-                      className="w-full sm:w-40 p-2 border rounded-md text-sm"
-                      type="number"
-                      placeholder="Enter Qty"
-                      value={itemInputs[item.id]?.qty || ""}
-                      onChange={(e) =>
-                        handleInputChange(item.id, "qty", e.target.value)
-                      }
-                    />
-                  </div>
-
-                  <div className="flex flex-col items-end gap-4">
-                    <button
-                      className="px-4 py-2 bg-blue-800 text-white text-sm rounded-md hover:bg-blue-900 transition"
-                      onClick={() => scheduleItem(item)}
-                    >
-                      Schedule Order
-                    </button>
-                    <div className="flex flex-col">
-                      <label className="text-[#1C252E] text-sm text-right mb-1">
-                        Ship Date
-                      </label>
-                      <DatePicker
-                        selected={displayDate}
-                        onChange={(date) =>
-                          handleInputChange(item.id, "shipDate", date as Date)
+                return (
+                  <div
+                    key={item.id}
+                    className="p-4 bg-white shadow-md flex justify-between items-start gap-4"
+                  >
+                    <div className="flex-1 space-y-3">
+                      <p className="font-semibold text-base">
+                        {item.part.partDescription}
+                      </p>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <span>{item.part.partNumber}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <p className="text-[#5A6774]">Stock Order Qty:</p>
+                        <span className="font-bold text-[#637381] bg-[#919EAB29] px-2 py-1 rounded-md">
+                          {item.productQuantity}
+                        </span>
+                      </div>
+                      <input
+                        className="w-full sm:w-40 p-2 border rounded-md text-sm"
+                        type="number"
+                        placeholder="Enter Qty"
+                        value={itemInputs[item.id]?.qty || ""}
+                        onChange={(e) =>
+                          handleInputChange(item.id, "qty", e.target.value)
                         }
-                        dateFormat="dd MMM yyyy"
-                        className="border py-2 px-4 rounded-md font-semibold w-full sm:w-44 text-center"
                       />
                     </div>
+
+                    <div className="flex flex-col items-end gap-4">
+                      <button
+                        className="px-4 py-2 bg-blue-800 text-white text-sm rounded-md hover:bg-blue-900 transition"
+                        onClick={() => scheduleItem(item)}
+                      >
+                        Schedule Order
+                      </button>
+                      <div className="flex flex-col">
+                        <label className="text-[#1C252E] text-sm text-right mb-1">
+                          Ship Date
+                        </label>
+                        <DatePicker
+                          selected={displayDate}
+                          onChange={(date) =>
+                            handleInputChange(item.id, "shipDate", date as Date)
+                          }
+                          dateFormat="MM/dd/yyyy" // <-- US Format: Month/Day/Year
+                          placeholderText="MM/DD/YYYY"
+                          wrapperClassName="w-full sm:w-44"
+                          className="border py-2 px-4 rounded-md font-semibold w-full sm:w-44 text-center outline-none"
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </div>
         {/* Right Section: Selected Items */}
@@ -697,8 +702,10 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
                       onChange={(date) =>
                         updateScheduledDate(item.id, date as Date)
                       }
-                      dateFormat="dd MMM yyyy"
-                      className="border py-2 px-4 rounded-md font-semibold w-full sm:w-44"
+                      dateFormat="MM/dd/yyyy" // <-- US Format: Month/Day/Year
+                      placeholderText="MM/DD/YYYY"
+                      wrapperClassName="w-full sm:w-44"
+                      className="border py-2 px-4 rounded-md font-semibold w-full sm:w-44 outline-none"
                     />
                   </div>
                   <button onClick={() => removeItem(item.id)}>

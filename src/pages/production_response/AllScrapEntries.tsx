@@ -11,6 +11,7 @@ import {
   allScrapEntries,
   deleteScrapEntry,
 } from "./https/productionResponseApi";
+import { format } from "date-fns";
 
 const AllScrapEntries: React.FC = () => {
   const rowsPerPage = 5;
@@ -207,7 +208,7 @@ const AllScrapEntries: React.FC = () => {
                   {/* 6. Date */}
                   <td className="px-4 py-3">
                     <span className="px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-600">
-                      {new Date(item.createdAt).toLocaleDateString()}
+                      {item.createdAt ? format(new Date(item.createdAt), "MM/dd/yyyy") : "N/A"}
                     </span>
                   </td>
 
