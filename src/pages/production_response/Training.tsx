@@ -1318,6 +1318,7 @@ const Training = () => {
     });
   };
 
+
 const formatCycleTime = (dateString) => {
   if (!dateString) return "N/A";
 
@@ -1326,18 +1327,38 @@ const formatCycleTime = (dateString) => {
     if (isNaN(startTime.getTime())) {
       return "Invalid Time";
     }
+
     const now = new Date();
     const diffMs = now - startTime;
 
-    // Math.max use kiya hai taaki agar difference 0 se chota ho toh 0 dikhaye
-    const diffMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
+    // Difference negative na ho isliye Math.max(0, ...)
+    const totalMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
 
-    return `${diffMinutes} min`;
+    if (totalMinutes < 60) {
+      // Agar 60 min se kam hai toh sirf minutes dikhao
+      return `${totalMinutes} min`;
+    } else {
+      // Agar 60 min ya usse zyada hai toh hours aur minutes me convert karo
+      const hours = Math.floor(totalMinutes / 60);
+      const remainingMinutes = totalMinutes % 60;
+
+      if (remainingMinutes === 0) {
+        return `${hours} hr`;
+      } else {
+        return `${hours} hr ${remainingMinutes} min`;
+      }
+    }
   } catch (error) {
     console.error("Could not format cycle time:", dateString, error);
     return "N/A";
   }
 };
+// Examples:
+// 45 minutes -> "45 min"
+// 150 minutes -> "2 hr 30 min"
+// 1440 minutes -> "1 d"
+// 1500 minutes -> "1 d 1 hr"
+// 1510 minutes -> "1 d 1 hr 10 min"
   // 2. Training Certification Check
   const verifyTraining = async (productId: string) => {
     if (!stationUserId || !processId || !productId || stationUserId === "undefined") return;
@@ -1447,7 +1468,7 @@ const formatCycleTime = (dateString) => {
                     <thead className="sticky top-0 bg-[#243C75]">
                       <tr className="font-semibold text-xs sm:text-sm">
                         <th className="border border-white px-2 py-1">Part Number (Learning)</th>
-                        <th className="border border-white px-2 py-1">Due Date</th>
+                        <th className="border border-white px-2 py-1"> Date</th>
                       </tr>
                     </thead>
                     <tbody>

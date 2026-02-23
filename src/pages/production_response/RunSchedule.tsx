@@ -4441,6 +4441,7 @@ const formatDate = (dateString: string | undefined): string => {
 //     return "N/A";
 //   }
 // };
+
 const formatCycleTime = (dateString) => {
   if (!dateString) return "N/A";
 
@@ -4449,18 +4450,33 @@ const formatCycleTime = (dateString) => {
     if (isNaN(startTime.getTime())) {
       return "Invalid Time";
     }
+
     const now = new Date();
     const diffMs = now - startTime;
-    
-    // Math.max use kiya hai taaki agar difference 0 se chota ho toh 0 dikhaye
-    const diffMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
 
-    return `${diffMinutes} min`;
+    // Difference negative na ho isliye Math.max(0, ...)
+    const totalMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
+
+    if (totalMinutes < 60) {
+      // Agar 60 min se kam hai toh sirf minutes dikhao
+      return `${totalMinutes} min`;
+    } else {
+      // Agar 60 min ya usse zyada hai toh hours aur minutes me convert karo
+      const hours = Math.floor(totalMinutes / 60);
+      const remainingMinutes = totalMinutes % 60;
+
+      if (remainingMinutes === 0) {
+        return `${hours} hr`;
+      } else {
+        return `${hours} hr ${remainingMinutes} min`;
+      }
+    }
   } catch (error) {
     console.error("Could not format cycle time:", dateString, error);
     return "N/A";
   }
 };
+
 const RunSchedule = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -4751,7 +4767,7 @@ if (jobData.incomingJobs && jobData.incomingJobs.length > 0) {
       <thead className="sticky top-0 bg-[#243C75]">
         <tr className="font-semibold">
           <th className="border border-white px-2 py-1 text-xs sm:text-sm">Part Number</th>
-          <th className="border border-white px-2 py-1 text-xs sm:text-sm">Type/Date</th>
+          <th className="border border-white px-2 py-1 text-xs sm:text-sm">Date</th>
         </tr>
       </thead>
       <tbody>

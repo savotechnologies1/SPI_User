@@ -3262,15 +3262,31 @@ const formatCycleTime = (dateString) => {
     }
 
     const now = new Date();
-    const diffMs = now - startTime; // milliseconds difference
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffMs = now - startTime;
 
-    return `${diffMinutes} min`;
+    // Difference negative na ho isliye Math.max(0, ...)
+    const totalMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
+
+    if (totalMinutes < 60) {
+      // Agar 60 min se kam hai toh sirf minutes dikhao
+      return `${totalMinutes} min`;
+    } else {
+      // Agar 60 min ya usse zyada hai toh hours aur minutes me convert karo
+      const hours = Math.floor(totalMinutes / 60);
+      const remainingMinutes = totalMinutes % 60;
+
+      if (remainingMinutes === 0) {
+        return `${hours} hr`;
+      } else {
+        return `${hours} hr ${remainingMinutes} min`;
+      }
+    }
   } catch (error) {
     console.error("Could not format cycle time:", dateString, error);
     return "N/A";
   }
 };
+
 const RunWithScan = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -3381,12 +3397,48 @@ const RunWithScan = () => {
           year: "numeric",
         });
 
-  const formatCycleTime = (dateString: any) => {
-    if (!dateString) return "N/A";
+
+const formatCycleTime = (dateString) => {
+  if (!dateString) return "N/A";
+
+  try {
     const startTime = new Date(dateString);
-    const diffMs = new Date().getTime() - startTime.getTime();
-    return `${Math.floor(diffMs / (1000 * 60))} min`;
-  };
+    if (isNaN(startTime.getTime())) {
+      return "Invalid Time";
+    }
+
+    const now = new Date();
+    const diffMs = now - startTime;
+
+    // Difference negative na ho isliye Math.max(0, ...)
+    const totalMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
+
+    if (totalMinutes < 60) {
+      // Agar 60 min se kam hai toh sirf minutes dikhao
+      return `${totalMinutes} min`;
+    } else {
+      // Agar 60 min ya usse zyada hai toh hours aur minutes me convert karo
+      const hours = Math.floor(totalMinutes / 60);
+      const remainingMinutes = totalMinutes % 60;
+
+      if (remainingMinutes === 0) {
+        return `${hours} hr`;
+      } else {
+        return `${hours} hr ${remainingMinutes} min`;
+      }
+    }
+  } catch (error) {
+    console.error("Could not format cycle time:", dateString, error);
+    return "N/A";
+  }
+};
+
+// Examples:
+// 45 minutes -> "45 min"
+// 150 minutes -> "2 hr 30 min"
+// 1440 minutes -> "1 d"
+// 1500 minutes -> "1 d 1 hr"
+// 1510 minutes -> "1 d 1 hr 10 min"
 
   if (loading)
     return (
@@ -3445,10 +3497,10 @@ const RunWithScan = () => {
                 <div className="bg-opacity-50 rounded-md overflow-x-auto w-full text-white">
                   <table className="border border-white text-center w-full min-w-[280px]">
                     <thead>
-                      <tr className="font-semibold uppercase text-xs">
+                      <tr className="font-semibold  text-xs">
                         <th className="border border-white px-2 py-1">Part</th>
                         <th className="border border-white px-2 py-1">
-                          Schedule date
+                          Date
                         </th>
                       </tr>
                     </thead>
