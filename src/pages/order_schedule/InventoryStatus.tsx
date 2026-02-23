@@ -204,7 +204,7 @@ import edit from "../../assets/edit.png";
 
 import React, { useEffect } from "react";
 import axios from "axios";
-const BASE_URL = import.meta.env.VITE_SERVER_URL;
+import { toast } from "react-toastify";
 const InventoryStatus = () => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

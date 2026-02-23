@@ -9,7 +9,7 @@ import {
 } from "./https/productionResponseApi";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
-import { FaCircle } from "react-icons/fa";
+import { FaArrowLeft, FaCircle } from "react-icons/fa";
 
 const EditProductScrapEntry = () => {
   const [partData, setPartData] = useState([]);
@@ -137,6 +137,14 @@ const EditProductScrapEntry = () => {
 
   return (
     <div className="py-4 px-5">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium"
+        title="Go Back"
+      >
+        <FaArrowLeft />
+        Back
+      </button>
       <form onSubmit={formik.handleSubmit} autoComplete="off">
         <h1 className="font-semibold text-[20px] md:text-[24px] text-black mb-2">
           Edit Product Scrap Entry

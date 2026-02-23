@@ -397,7 +397,7 @@ const Settings = () => {
         (ci) => ({
           value: ci.name,
           label: ci.name,
-        })
+        }),
       )
     : [];
 
@@ -419,7 +419,7 @@ const Settings = () => {
         city: data.city?.label,
       },
       employeeProfileImg,
-      isFile
+      isFile,
     );
   };
   useEffect(() => {
@@ -453,7 +453,7 @@ const Settings = () => {
         if (stateOption) {
           const cities = City.getCitiesOfState(
             countryOption.value,
-            stateOption.value
+            stateOption.value,
           );
           const foundCity = cities.find((ci) => ci.name === data.city);
           cityOption = foundCity

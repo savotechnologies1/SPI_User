@@ -3,6 +3,14 @@ import data from "../../components/Data/LaborData";
 import ItemSelector from "./ItemSelector";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { selectProcess } from "./https/schedulingApis";
+
+interface ProcessItem {
+  id: string;
+  name: string;
+  machineName?: string;
+}
+
 const LaborForecastList = () => {
   const BASE_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -14,7 +22,7 @@ const LaborForecastList = () => {
   } = useForm();
 
   const [data, setData] = useState<any[]>([]);
-  const [processData, setProcessData] = useState([]);
+  const [processData, setProcessData] = useState<ProcessItem[]>([]);
 
   // Filtered Data Fetch karne ke liye
   const getInventory = async (filters: any = {}) => {
@@ -85,7 +93,7 @@ const LaborForecastList = () => {
   const fetchProcessList = async () => {
     try {
       const response = await selectProcess();
-      setProcessData(response);
+      setProcessData(Array.isArray(response) ? response : []);
     } catch (error) {
       console.error(error);
     }
@@ -109,9 +117,10 @@ const LaborForecastList = () => {
                   className="border p-3 rounded-md w-full"
                 >
                   <option value="">Select Process</option>
-                  {processData.map((item: any) => (
+                  {processData.map((item) => (
                     <option key={item.id} value={item.id}>
-                      {item.name} ({item.machineName})
+                      {item.name}{" "}
+                      {item.machineName ? `(${item.machineName})` : ""}
                     </option>
                   ))}
                 </select>
@@ -136,8 +145,8 @@ const LaborForecastList = () => {
                   className="border py-3 px-4 rounded-md w-full"
                 />
               </div>
-              {/* 
-              <div className="w-full md:w-1/2">
+
+              {/* <div className="w-full md:w-1/2">
                 <label className="font-semibold">
                   Forecast Hours (per unit)
                 </label>

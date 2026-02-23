@@ -781,7 +781,7 @@ const CurrentStatus = () => {
     return <p className="p-6 text-center font-semibold">Loading data...</p>;
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8 mt-5">
       {/* Header */}
       <div className="flex justify-between items-center flex-col md:flex-row">
         <div>
