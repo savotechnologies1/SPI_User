@@ -4491,7 +4491,6 @@ const formatCycleTime = (dateString) => {
     return "N/A";
   }
 };
-
 const RunSchedule = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -4499,67 +4498,6 @@ const RunSchedule = () => {
   const [loading, setLoading] = useState(true);
   const [noJob, setNoJob] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null); // Video URL store karne ke liye
-  const [elapsedTime, setElapsedTime] = useState<string>("00:00:00");
-  const formatTotalDuration = (startTimeString: string | undefined) => {
-    if (!startTimeString) return "0 min";
-
-    try {
-      const start = new Date(startTimeString).getTime();
-      const now = new Date().getTime();
-
-      // Total milliseconds ka difference
-      const diffMs = now - start;
-
-      // Milliseconds ko minutes mein badlein
-      const totalMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
-
-      if (totalMinutes < 60) {
-        // 60 min se kam hai toh sirf minutes
-        return `${totalMinutes} min`;
-      } else {
-        // 60 min se zyada hai toh hours aur minutes nikaalein
-        const hours = Math.floor(totalMinutes / 60);
-        const remainingMinutes = totalMinutes % 60;
-
-        return remainingMinutes > 0
-          ? `${hours} hr ${remainingMinutes} min`
-          : `${hours} hr`;
-      }
-    } catch (error) {
-      return "N/A";
-    }
-  };
-  // --- 2. LIVE TIMER LOGIC ---
-  useEffect(() => {
-    // Agar cycleTime (start time) available nahi hai toh stop
-    if (!jobData?.cycleTime) {
-      setElapsedTime("00:00:00");
-      return;
-    }
-
-    const timer = setInterval(() => {
-      const start = new Date(jobData.cycleTime).getTime();
-      const now = new Date().getTime();
-      const diffInSeconds = Math.max(0, Math.floor((now - start) / 1000));
-
-      // Hours, Minutes, Seconds calculation
-      const hours = Math.floor(diffInSeconds / 3600);
-      const minutes = Math.floor((diffInSeconds % 3600) / 60);
-      const seconds = diffInSeconds % 60;
-
-      // HH:MM:SS format mein convert karna
-      const formatted =
-        String(hours).padStart(2, "0") +
-        ":" +
-        String(minutes).padStart(2, "0") +
-        ":" +
-        String(seconds).padStart(2, "0");
-
-      setElapsedTime(formatted);
-    }, 1000);
-
-    return () => clearInterval(timer); // Memory leak se bachne ke liye cleanup
-  }, [jobData?.cycleTime]);
   const fetchJobDetails = async (jobId: string | undefined) => {
     if (!jobId) {
       setLoading(false);
@@ -4669,22 +4607,24 @@ const RunSchedule = () => {
     if (!jobData || isCompleting) return;
     setIsCompleting(true);
     try {
+      // 1. Define the variables clearly
       const stationUserId = jobData.employeeInfo?.id;
+      const adminName = "Admin";
       const currentPartId = jobData.part_id || jobData.customPartId;
       const parentProductId = jobData.order?.partId || jobData.productId;
 
+      // 2. Call the function with arguments in the EXACT order defined in completeOrder
       await completeOrder(
-        jobData.productionId,
-        jobData.order_id,
-        jobData.order_type,
-        currentPartId,
-        stationUserId,
-        parentProductId,
-        jobData.partNumber,
-        "Admin",
+        jobData.productionId, // Arg 1: id (This goes into the URL /complete-order/${id})
+        jobData.order_id, // Arg 2: orderId
+        jobData.order_type, // Arg 3: order_type
+        currentPartId, // Arg 4: partId
+        stationUserId, // Arg 5: employeeId
+        parentProductId, // Arg 6: productId
+        jobData.partNumber, // Arg 7: type (Sending the Part Number string here)
+        jobData.employeeInfo.id, // Arg 8: completedBy
       );
 
-      // Refresh data (issey naya cycle time start hoga)
       fetchJobDetails(id);
     } catch (error) {
       console.error("Completion Error:", error);
@@ -4767,6 +4707,7 @@ const RunSchedule = () => {
     upcommingOrder,
     order_date,
   } = jobData;
+  console.log("partpart", jobData);
 
   // 1. Pehle current job ko row mein daalein
   // Current Job details
@@ -5052,9 +4993,6 @@ const RunSchedule = () => {
               <p className="text-sm md:text-base">
                 {formatCycleTime(jobData?.cycleTime)}
               </p>
-              {/* <p className="text-sm md:text-base font-bold text-white">
-                {formatTotalDuration(jobData?.cycleTime)}
-              </p> */}
             </div>
           </div>
         </div>
@@ -5096,5 +5034,4 @@ const RunSchedule = () => {
     </div>
   );
 };
-
 export default RunSchedule;
