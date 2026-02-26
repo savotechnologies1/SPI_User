@@ -621,8 +621,6 @@
 
 // export default Training;
 
-
-
 // import belt from "../../assets/belt-solid.png";
 // import { IoLogOutOutline } from "react-icons/io5";
 // import { NavLink, useNavigate, useParams } from "react-router-dom";
@@ -1256,13 +1254,15 @@ import {
   updateStepTime,
 } from "./https/productionResponseApi";
 import CommentBox from "./CommentBox";
- import belt from "../../assets/belt-solid.png";
+import belt from "../../assets/belt-solid.png";
 import { formatDate } from "date-fns";
 import { FaPlay, FaSpinner } from "react-icons/fa";
 const BASE_URL = import.meta.env.VITE_SERVER_URL;
 
 // --- Interfaces ---
-interface Image { imagePath: string; }
+interface Image {
+  imagePath: string;
+}
 interface Step {
   id: string;
   title: string;
@@ -1273,19 +1273,18 @@ interface Step {
 
 interface JobData {
   productionId: string;
-  part_id: string;        // Added for training check
-  customPartId: string;   // Added for training check
+  part_id: string; // Added for training check
+  customPartId: string; // Added for training check
   workInstructionSteps: Step[];
   part: {
     partNumber: string;
     partDescription: string;
   };
-  employeeInfo: { firstName: string; lastName: string; };
-  process: { processName: string; };
+  employeeInfo: { firstName: string; lastName: string };
+  process: { processName: string };
   cycleTime: string;
-  order: { orderNumber: string; orderDate: string; };
+  order: { orderNumber: string; orderDate: string };
 }
-
 
 const Training = () => {
   const navigate = useNavigate();
@@ -1318,55 +1317,76 @@ const Training = () => {
     });
   };
 
+  const formatCycleTime = (dateString) => {
+    if (!dateString) return "N/A";
 
-const formatCycleTime = (dateString) => {
-  if (!dateString) return "N/A";
-
-  try {
-    const startTime = new Date(dateString);
-    if (isNaN(startTime.getTime())) {
-      return "Invalid Time";
-    }
-
-    const now = new Date();
-    const diffMs = now - startTime;
-
-    // Difference negative na ho isliye Math.max(0, ...)
-    const totalMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
-
-    if (totalMinutes < 60) {
-      // Agar 60 min se kam hai toh sirf minutes dikhao
-      return `${totalMinutes} min`;
-    } else {
-      // Agar 60 min ya usse zyada hai toh hours aur minutes me convert karo
-      const hours = Math.floor(totalMinutes / 60);
-      const remainingMinutes = totalMinutes % 60;
-
-      if (remainingMinutes === 0) {
-        return `${hours} hr`;
-      } else {
-        return `${hours} hr ${remainingMinutes} min`;
+    try {
+      const startTime = new Date(dateString);
+      if (isNaN(startTime.getTime())) {
+        return "Invalid Time";
       }
+
+      const now = new Date();
+      const diffMs = now - startTime;
+
+      // Total minutes nikaalein
+      const totalMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
+
+      // 1. Agar 24 ghante (1440 min) se zyada hai
+      if (totalMinutes >= 1440) {
+        const days = Math.floor(totalMinutes / 1440);
+        const remainingMinutesAfterDays = totalMinutes % 1440;
+        const hours = Math.floor(remainingMinutesAfterDays / 60);
+        const mins = remainingMinutesAfterDays % 60;
+
+        let result = `${days} day${days > 1 ? "s" : ""}`;
+        if (hours > 0) result += ` ${hours} hr`;
+        if (mins > 0) result += ` ${mins} min`;
+
+        return result;
+      }
+
+      // 2. Agar 1 ghante (60 min) se zyada hai
+      else if (totalMinutes >= 60) {
+        const hours = Math.floor(totalMinutes / 60);
+        const mins = totalMinutes % 60;
+
+        if (mins === 0) {
+          return `${hours} hr`;
+        } else {
+          return `${hours} hr ${mins} min`;
+        }
+      }
+
+      // 3. Agar sirf minutes hain
+      else {
+        return `${totalMinutes} min`;
+      }
+    } catch (error) {
+      console.error("Could not format cycle time:", dateString, error);
+      return "N/A";
     }
-  } catch (error) {
-    console.error("Could not format cycle time:", dateString, error);
-    return "N/A";
-  }
-};
-// Examples:
-// 45 minutes -> "45 min"
-// 150 minutes -> "2 hr 30 min"
-// 1440 minutes -> "1 d"
-// 1500 minutes -> "1 d 1 hr"
-// 1510 minutes -> "1 d 1 hr 10 min"
+  };
+  // Examples:
+  // 45 minutes -> "45 min"
+  // 150 minutes -> "2 hr 30 min"
+  // 1440 minutes -> "1 d"
+  // 1500 minutes -> "1 d 1 hr"
+  // 1510 minutes -> "1 d 1 hr 10 min"
   // 2. Training Certification Check
   const verifyTraining = async (productId: string) => {
-    if (!stationUserId || !processId || !productId || stationUserId === "undefined") return;
+    if (
+      !stationUserId ||
+      !processId ||
+      !productId ||
+      stationUserId === "undefined"
+    )
+      return;
     try {
       const response = await traningStatus({
         stationUserId: String(stationUserId),
         processId: String(processId),
-        productId: String(productId)
+        productId: String(productId),
       });
       if (response?.isTrained) {
         navigate(`/station-login`);
@@ -1384,7 +1404,10 @@ const formatCycleTime = (dateString) => {
     }
     try {
       setLoading(true);
-      const response = await stationTrainingProcessDetail(processId, stationUserId);
+      const response = await stationTrainingProcessDetail(
+        processId,
+        stationUserId,
+      );
       if (response?.data) {
         setJobData(response.data);
         const pId = response.data.part_id || response.data.customPartId;
@@ -1408,7 +1431,7 @@ const formatCycleTime = (dateString) => {
     try {
       await updateStepTime({
         productionId: String(jobData.productionId),
-        stepId: String(stepId)
+        stepId: String(stepId),
       });
     } catch (error) {
       console.error("Failed to update step time:", error);
@@ -1432,18 +1455,37 @@ const formatCycleTime = (dateString) => {
     fetchJobDetails();
   }, [processId]);
 
-  if (loading) return <div className="min-h-screen flex justify-center items-center"><FaSpinner/></div>;
-  if (!jobData) return <div className="min-h-screen flex justify-center items-center">No Jobs Found.</div>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <FaSpinner />
+      </div>
+    );
+  if (!jobData)
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        No Jobs Found.
+      </div>
+    );
 
   const allSteps = jobData.workInstructionSteps || [];
-  const rows = [{ status: "Current", part: jobData.part?.partNumber || "N/A", date: jobData.order_date }];
+  const rows = [
+    {
+      status: "Current",
+      part: jobData.part?.partNumber || "N/A",
+      date: jobData.order_date,
+    },
+  ];
 
   return (
     <div className="bg-[#F5F6FA] min-h-screen flex flex-col">
       {/* HEADER SECTION (Consistent with RunSchedule) */}
       <div className="bg-[#243C75] relative">
         <div className="flex items-center gap-2 text-white bg-[#17274C] w-full justify-end p-2">
-          <button onClick={() => navigate("/station-login")} className="text-xs md:text-sm font-semibold flex items-center gap-1">
+          <button
+            onClick={() => navigate("/station-login")}
+            className="text-xs md:text-sm font-semibold flex items-center gap-1"
+          >
             Log out <IoLogOutOutline size={20} />
           </button>
         </div>
@@ -1453,30 +1495,41 @@ const formatCycleTime = (dateString) => {
             <div className="relative w-full max-w-xl mx-auto">
               <div className="w-full mb-8">
                 <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-white px-2">
-                  Training Mode: 
+                  Training Mode:
                   <span className="text-md font-medium ml-2">
-                    {jobData.process?.processName} ({jobData.process?.machineName})
+                    {jobData.process?.processName} (
+                    {jobData.process?.machineName})
                   </span>
                 </p>
               </div>
 
-              <img src={belt} alt="Belt" className="w-20 sm:w-24 md:w-28 lg:w-32 object-contain" />
+              <img
+                src={belt}
+                alt="Belt"
+                className="w-20 sm:w-24 md:w-28 lg:w-32 object-contain"
+              />
 
               <div className="absolute inset-0 flex items-center justify-center px-2 mt-5">
                 <div className="bg-opacity-50 rounded-md overflow-y-auto w-full max-h-[150px]">
                   <table className="border border-white text-white text-center w-full min-w-[280px]">
                     <thead className="sticky top-0 bg-[#243C75]">
                       <tr className="font-semibold text-xs sm:text-sm">
-                        <th className="border border-white px-2 py-1">Part Number (Learning)</th>
+                        <th className="border border-white px-2 py-1">
+                          Part Number (Learning)
+                        </th>
                         <th className="border border-white px-2 py-1"> Date</th>
                       </tr>
                     </thead>
                     <tbody>
                       {rows.map((row, i) => (
                         <tr key={i} className="bg-blue-600/30">
-                          <td className="border border-white px-2 py-1 text-xs sm:text-sm">{row.part}</td>
                           <td className="border border-white px-2 py-1 text-xs sm:text-sm">
-                            {row.date.includes('T') ? formatDate(row.date) : row.date}
+                            {row.part}
+                          </td>
+                          <td className="border border-white px-2 py-1 text-xs sm:text-sm">
+                            {row.date.includes("T")
+                              ? formatDate(row.date)
+                              : row.date}
                           </td>
                         </tr>
                       ))}
@@ -1488,8 +1541,12 @@ const formatCycleTime = (dateString) => {
           </div>
 
           <div className="text-white flex flex-col gap-1">
-            <p className="text-sm font-bold uppercase text-blue-300">Training Progress</p>
-            <p className="text-3xl font-black">{completedSteps.size} / {allSteps.length}</p>
+            <p className="text-sm font-bold uppercase text-blue-300">
+              Training Progress
+            </p>
+            <p className="text-3xl font-black">
+              {completedSteps.size} / {allSteps.length}
+            </p>
             <p className="text-sm">Steps Completed</p>
           </div>
         </div>
@@ -1507,8 +1564,10 @@ const formatCycleTime = (dateString) => {
               `}
             >
               {/* STEP NUMBER */}
-              <div className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full font-bold 
-                ${completedSteps.has(step.id) ? "bg-green-500 text-white" : "bg-gray-200 text-gray-600"}`}>
+              <div
+                className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full font-bold 
+                ${completedSteps.has(step.id) ? "bg-green-500 text-white" : "bg-gray-200 text-gray-600"}`}
+              >
                 {index + 1}
               </div>
 
@@ -1527,11 +1586,15 @@ const formatCycleTime = (dateString) => {
                     className="relative w-32 h-32 md:w-40 md:h-40 bg-black rounded-md overflow-hidden group border"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent marking step as learned when just playing video
-                      setActiveVideo(`${BASE_URL}/uploads/workInstructionVideo/${step.videos[0].videoPath}`);
+                      setActiveVideo(
+                        `${BASE_URL}/uploads/workInstructionVideo/${step.videos[0].videoPath}`,
+                      );
                     }}
                   >
                     <video className="w-full h-full object-cover opacity-60">
-                      <source src={`${BASE_URL}/uploads/workInstructionVideo/${step.videos[0].videoPath}#t=0.1`} />
+                      <source
+                        src={`${BASE_URL}/uploads/workInstructionVideo/${step.videos[0].videoPath}#t=0.1`}
+                      />
                     </video>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="bg-white/30 backdrop-blur-md p-3 rounded-full group-hover:scale-110 transition-transform">
@@ -1545,10 +1608,18 @@ const formatCycleTime = (dateString) => {
               {/* TEXT SECTION */}
               <div className="flex-1">
                 <div className="flex justify-between items-start">
-                  <h3 className="font-bold text-lg text-gray-800 mb-1">{step.title}</h3>
-                  {completedSteps.has(step.id) && <span className="text-green-600 font-bold text-sm">✓ LEARNED</span>}
+                  <h3 className="font-bold text-lg text-gray-800 mb-1">
+                    {step.title}
+                  </h3>
+                  {completedSteps.has(step.id) && (
+                    <span className="text-green-600 font-bold text-sm">
+                      ✓ LEARNED
+                    </span>
+                  )}
                 </div>
-                <p className="text-gray-600 leading-relaxed">{step.instruction}</p>
+                <p className="text-gray-600 leading-relaxed">
+                  {step.instruction}
+                </p>
               </div>
             </div>
           ))}
@@ -1558,11 +1629,15 @@ const formatCycleTime = (dateString) => {
         <div className="flex flex-col items-center mt-10 mb-10">
           <button
             onClick={handleCompleteTraining}
-            disabled={completedSteps.size < allSteps.length || allSteps.length === 0}
+            disabled={
+              completedSteps.size < allSteps.length || allSteps.length === 0
+            }
             className={`px-10 py-3 rounded-md font-bold text-lg transition-all
-              ${completedSteps.size < allSteps.length 
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
-                : "bg-brand text-white px-4 py-2 rounded-md text-sm md:text-base font-semibold w-full sm:w-auto"}
+              ${
+                completedSteps.size < allSteps.length
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-brand text-white px-4 py-2 rounded-md text-sm md:text-base font-semibold w-full sm:w-auto"
+              }
             `}
           >
             Complete Training
@@ -1574,9 +1649,8 @@ const formatCycleTime = (dateString) => {
       </div>
 
       {/* VIDEO PLAYER MODAL */}
-       <div className="bg-[#243C75] w-full mt-auto">
+      <div className="bg-[#243C75] w-full mt-auto">
         <div className="container mx-auto p-3 md:p-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          
           {/* Left Side: Order & Process Stats */}
           <div className="text-white flex gap-4 md:gap-10 items-center flex-wrap justify-center">
             <div className="flex flex-col items-center">
@@ -1616,11 +1690,17 @@ const formatCycleTime = (dateString) => {
               </p>
             </div> */}
             <div className="flex flex-col items-center text-white">
-              <p className="text-xs md:text-sm font-semibold opacity-70">Completed</p>
-              <p className="text-sm md:text-base">{jobData.employeeCompletedQty || 0}</p>
+              <p className="text-xs md:text-sm font-semibold opacity-70">
+                Completed
+              </p>
+              <p className="text-sm md:text-base">
+                {jobData.employeeCompletedQty || 0}
+              </p>
             </div>
             <div className="flex flex-col items-center text-white">
-              <p className="text-xs md:text-sm font-semibold opacity-70">Cycle Time</p>
+              <p className="text-xs md:text-sm font-semibold opacity-70">
+                Cycle Time
+              </p>
               <p className="text-sm md:text-base font-mono">
                 {formatCycleTime(jobData?.cycleTime)}
               </p>
@@ -1633,17 +1713,29 @@ const formatCycleTime = (dateString) => {
       {/* Video Player Modal (Same as before) */}
       {activeVideo && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
-          <div className="absolute inset-0" onClick={() => setActiveVideo(null)}></div>
+          <div
+            className="absolute inset-0"
+            onClick={() => setActiveVideo(null)}
+          ></div>
           <div className="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden shadow-2xl z-10">
             {/* Close & Video Player */}
             <div className="absolute top-0 right-0 p-4 z-20">
-               <button onClick={() => setActiveVideo(null)} className="text-white bg-white/10 p-2 rounded-full"><IoClose size={30} /></button>
+              <button
+                onClick={() => setActiveVideo(null)}
+                className="text-white bg-white/10 p-2 rounded-full"
+              >
+                <IoClose size={30} />
+              </button>
             </div>
-            <video src={activeVideo} controls autoPlay className="w-full h-full" />
+            <video
+              src={activeVideo}
+              controls
+              autoPlay
+              className="w-full h-full"
+            />
           </div>
         </div>
       )}
-      
     </div>
   );
 };
@@ -1672,7 +1764,7 @@ export default Training;
 //     });
 
 //     if (response?.isTrained) {
-//        navigate(`/production/${processId}`); 
+//        navigate(`/production/${processId}`);
 //     }
 //   } catch (error) {
 //     console.error("Training check failed", error);
@@ -1688,7 +1780,7 @@ export default Training;
 //       const response = await stationTrainingProcessDetail(jobId, stationUserId);
 //       if (response?.data) {
 //         setJobData(response.data);
-        
+
 //         // Job milte hi training check karein
 //         const pId = response.data.part_id || response.data.customPartId;
 //         if (pId) {

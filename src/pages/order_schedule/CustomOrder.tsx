@@ -14,15 +14,6 @@ const CustomOrder = () => {
             Custom Orders
           </h1>
         </div>
-
-        {/* <div className="flex relative  ">
-          <button className="py-2 px-7 rounded-lg border-gray-100 bg-brand text-white flex gap-1 items-center h-fit hover:cursor-pointer">
-            <NavLink to="/dashboard/addEmployees"> Custom Order</NavLink>
-          </button>
-          <div className="absolute top-3 right-2 pl-2 ">
-            <img src={add} alt="" />
-          </div>
-        </div> */}
       </div>
       <div className="flex justify-between  items-center">
         <div className="flex gap-2 items-center ">

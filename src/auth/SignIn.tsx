@@ -310,10 +310,10 @@ const SignIn: FC = () => {
       <div className="w-full lg:w-1/2 bg-white flex items-center justify-center py-8 lg:py-0 relative">
         {/* Logos */}
         <div className="absolute top-6 right-6 hidden lg:block">
-       <img
-  src={logo}
-  alt="Logo"
-  className="
+          <img
+            src={logo}
+            alt="Logo"
+            className="
     h-8 
     sm:h-10 
     md:h-12 
@@ -327,7 +327,7 @@ const SignIn: FC = () => {
     lg:max-w-[220px] 
     object-contain
   "
-/>
+          />
         </div>
         <div className="absolute top-4 left-0 right-0 mx-auto lg:hidden">
           <img className="w-32 mx-auto" src={logo} alt="Company Logo" />
@@ -340,13 +340,6 @@ const SignIn: FC = () => {
           <p className="text-gray-600 text-center lg:text-left mb-8">
             Welcome back! Please enter your details
           </p>
-
-          {/* Error Display */}
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-md text-sm">
-              {error}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Email Field */}

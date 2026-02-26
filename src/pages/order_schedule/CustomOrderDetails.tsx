@@ -3,34 +3,9 @@ import { FaCircle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 
 const CustomOrderDetails = () => {
-  // const [formData, setFormData] = useState({
-  //   orderNumber: "",
-  //   orderDate: "2025-02-26",
-  //   shipDate: "2025-02-26",
-  //   customer: "Cortez Herring",
-  //   customerName: "",
-  //   customerEmail: "",
-  //   customerPhone: "",
-  //   productNumber: "",
-  //   cost: "",
-  //   quantity: "",
-  //   description: "",
-  //   file: null,
-  //   partFamily: "Cortez Herring",
-  //   partNumber: "",
-  //   partDesc: "",
-  //   partQuantity: "",
-  //   partCost: "",
-  //   time: "09:33 AM",
-  //   process: "Cortez Herring",
-  //   assignTo: "Cortez Herring",
-  // });
-
   const { register, handleSubmit } = useForm();
 
-  const onSubmit = (data: any) => {
-    console.log("Form Data:", data);
-  };
+  const onSubmit = (data: any) => {};
   return (
     <div className="p-4 mt-5">
       <div>

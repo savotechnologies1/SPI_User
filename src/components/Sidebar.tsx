@@ -75,17 +75,6 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
 
   const sections = isShopFloor
     ? [
-        // {
-        //     category: "Overview",
-        //     items: [
-        //       {
-        //         key: "Dashboard",
-        //         label: "Dashboard",
-        //         icon: dashboard,
-        //         path: "/dashboardDetailes",
-        //       },
-        //     ],
-        //   },
         {
           category: "Daily Activity",
           items: [
@@ -269,30 +258,6 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
               ],
             },
 
-            // {
-            //   key: "Time Clock",
-            //   label: "Time Clock",
-            //   icon: time_clock,
-            //   hasSubmenu: true,
-            //   submenu: [
-            //     {
-            //       key: "Clockinout",
-            //       label: "Clock in and out",
-            //       path: "/clock-in-out",
-            //     },
-            //     {
-            //       key: "VacationRequest",
-            //       label: "Vacation Request",
-            //       path: "/vaction-request",
-            //     },
-            //     {
-            //       key: "Time_Sheet",
-            //       label: "Time Sheet",
-            //       path: "/time-sheet",
-            //     },
-            //   ],
-            // },
-
             {
               key: "Production Live",
               label: "Production Live",
@@ -321,7 +286,7 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                 },
               ],
             },
-  {
+            {
               key: "Production Response",
               label: "Production Response",
               icon: production_response,
@@ -344,21 +309,12 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                   label: "All work Instruction",
                   path: "work-instructions-list",
                 },
-                // {
-                //   key: "select process & product",
-                //   label: "select process & product",
-                //   path: "/work-instruction",
-                // },
+
                 {
                   key: "Add & Edit work Instruction",
                   label: "Add & Edit work Instruction ",
                   path: "/add-work-instruction",
                 },
-                // {
-                //   key: "Edit work Instruction",
-                //   label: "Edit work Instruction",
-                //   path: "/edit-work-instruction",
-                // },
 
                 {
                   key: "Apply work instruction to diffrent product/process",
@@ -367,8 +323,6 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                 },
               ],
             },
-
-          
           ],
         },
         {
@@ -392,30 +346,7 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
               icon: blog,
               path: "/continuous-improvement",
             },
-            // {
-            //   key: "Customer relation",
-            //   label: "Customer relation",
-            //   icon: order,
-            //   path: "/customer-relation",
-            // },
-            // {
-            //   key: "Business Intelligence ",
-            //   label: "Business Intelligence  ",
-            //   icon: order,
-            //   path: "/business-intelligence",
-            // },
-            // {
-            //   key: "Business Analysis",
-            //   label: "Business Analysis ",
-            //   icon: blog,
-            //   path: "/business-analysis",
-            // },
-            // {
-            //   key: "projecion ",
-            //   label: "Projecion  ",
-            //   icon: production_response,
-            //   path: "/projecion",
-            // },
+
             {
               key: "Setting",
               label: "Settings",
@@ -439,10 +370,6 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
   const toggleSubmenu = (key: string) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
   };
-
-  // const handleLogout = () => {
-  //   navigate("/sign-in");
-  // };
 
   const hasSubmenu = (
     item: any,
@@ -510,7 +437,7 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                         <Link
                           to={item.path || "#"}
                           onClick={(e) => {
-                            e.preventDefault(); // Prevent default navigation
+                            e.preventDefault();
                             handleMenuItemClick(item);
                           }}
                           className={`flex items-center justify-between w-full p-2 
@@ -545,7 +472,6 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                           )}
                         </Link>
 
-                        {/* Render Submenu */}
                         {hasSubmenu(item) && openSections[item.key] && (
                           <ul className="ml-4">
                             {item.submenu.map((submenu) => (
@@ -600,8 +526,6 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                                     )}
                                   </Link>
                                 </div>
-
-                                {/* Render Nested Submenu */}
                                 {hasSubmenu(submenu) &&
                                   openSections[submenu.key] && (
                                     <ul className="ml-4">

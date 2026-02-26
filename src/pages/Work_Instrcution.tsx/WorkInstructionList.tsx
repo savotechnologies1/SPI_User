@@ -3,7 +3,6 @@ import edit from "../../assets/edit_icon.png";
 import { FaCircle, FaTrash } from "react-icons/fa";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import add from "../../assets/add.png";
-import { Trash2 } from "lucide-react";
 import {
   deleteWorkInstruction,
   workInstructionList,
@@ -22,59 +21,6 @@ interface WorkInstructionItem {
   statusColor: string;
 }
 
-const mockData: WorkInstructionItem[] = [
-  {
-    id: "1",
-    imageUrl: "/avatar1.jpg",
-    name: "John Smith",
-    partDesc: "Cut Trim",
-    stepNumber: "Step 1",
-    description: "Remove burn and sharp edges",
-    submitDate: "18/09/2016",
-    statusColor: "green",
-  },
-  {
-    id: "2",
-    imageUrl: "/avatar2.jpg",
-    name: "Emily Johnson",
-    partDesc: "Cut Trim",
-    stepNumber: "Step 2",
-    description: "Remove burn and sharp edges",
-    submitDate: "12/06/2020",
-    statusColor: "yellow",
-  },
-  {
-    id: "3",
-    imageUrl: "/avatar3.jpg",
-    name: "Michael Brown",
-    partDesc: "Cut Trim",
-    stepNumber: "Step 3",
-    description: "Remove burn and sharp edges",
-    submitDate: "15/08/2017",
-    statusColor: "red",
-  },
-  {
-    id: "4",
-    imageUrl: "/avatar4.jpg",
-    name: "Sarah Wilson",
-    partDesc: "Cut Trim",
-    stepNumber: "Step 4",
-    description: "Remove burn and sharp edges",
-    submitDate: "07/05/2016",
-    statusColor: "gray",
-  },
-  {
-    id: "5",
-    imageUrl: "/avatar5.jpg",
-    name: "David Lee",
-    partDesc: "Cut Trim",
-    stepNumber: "Step 5",
-    description: "Remove burn and sharp edges",
-    submitDate: "28/10/2012",
-    statusColor: "green",
-  },
-];
-
 const WorkInstructionList: React.FC = () => {
   const [openOptionsIndex, setOpenOptionsIndex] = useState<number | null>(null);
   const rowsPerPage = 5;
@@ -84,30 +30,11 @@ const WorkInstructionList: React.FC = () => {
   const toggleOptions = (index: number) => {
     setOpenOptionsIndex((prev) => (prev === index ? null : index));
   };
-
   const { id } = useParams();
-
-  const getColorClass = (color: string) => {
-    switch (color) {
-      case "green":
-        return "bg-green-200 text-green-700";
-      case "yellow":
-        return "bg-yellow-200 text-yellow-800";
-      case "red":
-        return "bg-red-200 text-red-700";
-      default:
-        return "bg-gray-200 text-gray-600";
-    }
-  };
-
   const navigate = useNavigate();
-  const handleEdit = (id: string) => {
-    navigate(`/edit-work-instruction/${id}`);
-  };
   const [workData, setWorkData] = useState<[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [searchVal, setSearchVal] = useState("");
-  const [showConfirmId, setShowConfirmId] = useState(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedValue, setSelectedValue] = useState("all");
   const debouncedSearchVal = useDebounce(searchVal, 500);
@@ -137,10 +64,7 @@ const WorkInstructionList: React.FC = () => {
   const handleSelectChange = (event) => {
     const newValue = event.target.value;
     setSelectedValue(newValue);
-
-    console.log("A new option was selected:", newValue);
   };
-  console.log("searchValsearchVal", searchVal);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -152,14 +76,14 @@ const WorkInstructionList: React.FC = () => {
   const fetchWorkInstructionList = async (
     page = 1,
     searchTerm = "",
-    type = ""
+    type = "",
   ) => {
     try {
       const response = await workInstructionList(
         page,
         rowsPerPage,
         searchTerm,
-        type
+        type,
       );
       setWorkData(response.data);
       setTotalPages(response.pagination?.totalPages || 1);
@@ -181,7 +105,7 @@ const WorkInstructionList: React.FC = () => {
         await fetchWorkInstructionList(
           currentPage,
           selectedValue,
-          debouncedSearchVal
+          debouncedSearchVal,
         );
       }
     } catch (error) {
@@ -260,11 +184,13 @@ const WorkInstructionList: React.FC = () => {
                   <td className="px-4 py-3">{item.PartNumber.partNumber}</td>
                   <td className="px-4 py-3">{item.steps.length}</td>
 
-                     <td className="px-4 py-3">
-                      <span className="px-2 py-1 rounded text-xs font-semibold bg-gray-200 text-gray-600">
-                 {item.createdAt ? format(new Date(item.createdAt), "MM/dd/yyyy") : "N/A"}
-                      </span>
-                    </td>
+                  <td className="px-4 py-3">
+                    <span className="px-2 py-1 rounded text-xs font-semibold bg-gray-200 text-gray-600">
+                      {item.createdAt
+                        ? format(new Date(item.createdAt), "MM/dd/yyyy")
+                        : "N/A"}
+                    </span>
+                  </td>
 
                   <td className="px-2 py-3 md:px-3 md:py-4 flex gap-2 md:gap-4">
                     <button

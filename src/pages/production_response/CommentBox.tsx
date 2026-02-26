@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { sendStationNotification } from "./https/productionResponseApi";
 
 export default function CommentBox({ employeeInfo }) {
@@ -9,7 +8,6 @@ export default function CommentBox({ employeeInfo }) {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  // Handle image selection
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -18,7 +16,6 @@ export default function CommentBox({ employeeInfo }) {
     }
   };
 
-  // Handle sending comment + image
   const handleSend = async () => {
     if (!comment && !image) {
       alert("Please enter a comment or choose an image.");
@@ -35,9 +32,6 @@ export default function CommentBox({ employeeInfo }) {
 
     try {
       const res = await sendStationNotification(formData);
-      console.log("Response:", res.data);
-
-      // Reset fields
       setComment("");
       setImage(null);
       setPreview(null);
@@ -47,51 +41,6 @@ export default function CommentBox({ employeeInfo }) {
   };
 
   return (
-    // <div className="flex flex-col gap-4 mb-6">
-    //   {/* Input Row */}
-    //   <div className="flex flex-col md:flex-row items-center gap-3">
-    //     <input
-    //       type="text"
-    //       placeholder="Write your comment..."
-    //       className="w-full border border-gray-300 bg-transparent px-4 py-2 rounded-md text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-brand placeholder-gray-400"
-    //       value={comment}
-    //       onChange={(e) => setComment(e.target.value)}
-    //     />
-
-    //     <div className="flex gap-3 w-full md:w-auto">
-    //       {/* Image Upload */}
-    //       <label className="flex items-center justify-center bg-brand text-white px-4 md:px-6 py-2 rounded-md text-sm md:text-base font-medium cursor-pointer hover:opacity-90 transition w-full md:w-auto">
-    //         Add Picture
-    //         <input
-    //           type="file"
-    //           accept="image/*"
-    //           className="hidden"
-    //           onChange={handleImageChange}
-    //         />
-    //       </label>
-
-    //       {/* Send Button */}
-    //       <button
-    //         className="flex items-center justify-center bg-brand text-white px-5 py-2 rounded-md text-sm md:text-base font-medium hover:opacity-90 transition w-full md:w-auto"
-    //         onClick={handleSend}
-    //       >
-    //         Send
-    //       </button>
-    //     </div>
-    //   </div>
-
-    //   {/* Image Preview */}
-    //   {preview && (
-    //     <div className="flex items-center gap-3">
-    //       <img
-    //         src={preview}
-    //         alt="Preview"
-    //         className="w-20 h-20 object-cover rounded-md border border-gray-300"
-    //       />
-    //       <span className="text-xs text-gray-500">Image preview</span>
-    //     </div>
-    //   )}
-    // </div>
     <div className="flex flex-col md:flex-row items-center gap-3 mb-6 p-4 border rounded-lg">
       <input
         type="text"

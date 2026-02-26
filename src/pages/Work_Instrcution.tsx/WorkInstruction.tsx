@@ -23,7 +23,7 @@ const WorkInstruction = () => {
       const response = await selectProcessApi();
       setProcessData(response || []);
     } catch (error) {
-      console.error("Failed to fetch process:", error);
+      throw error;
     }
   };
 
@@ -32,7 +32,7 @@ const WorkInstruction = () => {
       const response = await workInstructionApi();
       setProcessData(response.processData || []);
     } catch (error) {
-      console.error("Work process fetch failed:", error);
+      throw error;
     }
   };
   const selectProduct = async () => {
@@ -78,23 +78,7 @@ const WorkInstruction = () => {
             if (!values.process) errors.process = "Process is required";
             return errors;
           }}
-          onSubmit={async (values, { setSubmitting }) => {
-            // try {
-            //   console.log("valllllllllllueeeeeeeeee", values);
-            //   const response: any = await addWorkInstruction({
-            //     processId: values.process,
-            //     productId: values.product,
-            //   });
-            //   console.log("responseresponse", response.data.data.processId);
-            //   if (response.status === 201) {
-            //     navigate("/add-work-instruction");
-            //   }
-            // } catch (error) {
-            //   console.error("Error adding instruction:", error);
-            // } finally {
-            //   setSubmitting(false);
-            // }
-          }}
+          onSubmit={async (values, { setSubmitting }) => {}}
         >
           {({ errors, touched }) => (
             <Form>

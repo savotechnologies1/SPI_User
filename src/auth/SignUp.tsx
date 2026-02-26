@@ -7,9 +7,6 @@ import fb from "../assets/facebook_ic.png";
 import google from "../assets/google_ic.png";
 import apple from "../assets/apple_ic.png";
 import { signUpApi } from "./https/authApis";
-// import { signUpApi } from "./https/authApis";
-// import { signUpApi } from "./https/authApis";
-// import { toast } from "react-toastify";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,7 +18,6 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
 
-  // const navigate = useNavigate();
   const onSubmit = async (data: object) => {
     console.log("Submitted data:", data);
     const payload = {
@@ -29,16 +25,9 @@ const SignUp = () => {
       role: "Frontline",
     };
     try {
-      // navigate("/sign-in", { replace: true });
       const response = await signUpApi(data);
-      // console.log("responseresponse", response);
-      // if (response.status === 201) {
-      //   console.log("login page redirect");
-      //   navigate("/sign-in", { replace: true });
-      // }
     } catch (error: unknown) {
       console.log(error);
-      // toast.error(error.response.message);
     }
   };
 

@@ -38,7 +38,6 @@ const EditPartScrapEntry = () => {
           ...values,
           type: "part",
           returnQuantity: parseInt(values.returnQuantity, 10) || 0,
-          // scrapStatus ko wapas boolean me convert karna ho sakta hai backend ke liye
           scrapStatus: values.scrapStatus === "yes" ? true : false,
         };
 
@@ -68,8 +67,6 @@ const EditPartScrapEntry = () => {
         const allSuppliers = suppliersRes || [];
         setPartData(allParts);
         setSupplierData(allSuppliers);
-
-        // ✅ Data Mapping from JSON
         const entryData = entryRes.data.data;
         formik.setValues({
           searchPart: entryData.PartNumber?.partNumber || "",
@@ -79,7 +76,7 @@ const EditPartScrapEntry = () => {
           returnQuantity: entryData.returnQuantity?.toString() || "",
           scrapStatus: entryData.scrapStatus === true ? "yes" : "no",
           type: entryData.type || "part",
-          defectDesc: entryData.defectDesc || "", // ✅ Pre-fill Description
+          defectDesc: entryData.defectDesc || "",
         });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -147,7 +144,6 @@ const EditPartScrapEntry = () => {
           Edit Part Scrap Entry
         </h1>
 
-        {/* Part Search Input */}
         <div className="bg-white p-4 relative border rounded-md">
           <label className="block font-semibold mb-1">Search Part</label>
           <input
@@ -179,7 +175,6 @@ const EditPartScrapEntry = () => {
           )}
         </div>
 
-        {/* Supplier Input */}
         <div className="bg-white p-4 relative mt-4 border rounded-md">
           <label className="block font-semibold mb-1">Supplier</label>
           <input
@@ -209,7 +204,6 @@ const EditPartScrapEntry = () => {
           )}
         </div>
 
-        {/* Return Quantity & Scrap Status */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 mt-4 border rounded-md">
           <div>
             <label className="block font-semibold mb-1">Return Quantity</label>
@@ -232,8 +226,6 @@ const EditPartScrapEntry = () => {
             </select>
           </div>
         </div>
-
-        {/* Defect Description (Naya Field) */}
         <div className="bg-white p-4 mt-4 border rounded-md">
           <label className="block font-semibold mb-1">Defect Description</label>
           <textarea
@@ -244,7 +236,6 @@ const EditPartScrapEntry = () => {
           />
         </div>
 
-        {/* Buttons */}
         <div className="flex items-center justify-between bg-white p-6 mt-4 border rounded-md">
           <button
             type="submit"

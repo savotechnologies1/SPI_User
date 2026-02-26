@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
@@ -9,6 +9,30 @@ import Select from "react-select";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
+
+interface SupplierOption {
+  id: string;
+  name: string;
+}
+
+interface ProductOption {
+  id: string;
+  partNumber: string;
+}
+
+interface OrderFormValues {
+  order_number: string;
+  order_date: string;
+  supplier_id: string;
+  part_id: string;
+  quantity: string;
+  cost: string;
+  need_date: string;
+  showFields: boolean;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
 
 const validationSchema = Yup.object({
   order_date: Yup.date().required("Order Date is required"),
@@ -43,11 +67,12 @@ const validationSchema = Yup.object({
     .min(0, "Cost cannot be negative")
     .required("Cost is required"),
   need_date: Yup.date().required("Required By Date is required"),
+  showFields: Yup.boolean(),
 });
 
 const SupplierOrdersForm = () => {
-  const [supplierData, setSupplierData] = useState([]);
-  const [productData, setProductData] = useState([]);
+  const [supplierData, setSupplierData] = useState<SupplierOption[]>([]);
+  const [productData, setProductData] = useState<ProductOption[]>([]);
   const [orderNumber, setOrderNumber] = useState("");
   const navigate = useNavigate();
 
@@ -80,12 +105,15 @@ const SupplierOrdersForm = () => {
     email: "",
   };
 
-  const handleSubmit = async (values, { resetForm }) => {
+  const handleSubmit = async (
+    values: OrderFormValues,
+    { resetForm }: FormikHelpers<OrderFormValues>,
+  ) => {
     const { showFields, firstName, lastName, email, ...orderData } = values;
-    let finalPayload = { ...orderData };
+    const finalPayload: Record<string, unknown> = { ...orderData };
     const tempId = uuidv4();
     if (showFields) {
-      finalPayload.supplier_id = null;
+      finalPayload.supplier_id = "";
       finalPayload.newSupplier = {
         firstName,
         lastName,
@@ -95,7 +123,7 @@ const SupplierOrdersForm = () => {
     }
     try {
       const response = await addSupplierOrder(finalPayload);
-      if (response.status === 201) {
+      if (response && response.status === 201) {
         navigate("/supplier-order-list");
       }
       const newOrderNum = Math.floor(10000 + Math.random() * 90000).toString();

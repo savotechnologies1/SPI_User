@@ -14,6 +14,7 @@ const EditSuppliers = () => {
     firstName: string;
     lastName: string;
     email?: string;
+    companyName?: string;
     address?: string;
     billingTerms?: string;
   }
@@ -28,10 +29,11 @@ const EditSuppliers = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const onSubmit = async (data: object) => {
+  const onSubmit = async (data: SupplierFormData) => {
+    if (!id) return;
     try {
-      const response = await editSupplier(data, id!).then();
-      if (response.status === 200) {
+      const response = await editSupplier(data, id);
+      if (response && response.status === 200) {
         navigate("/all-supplier");
       }
     } catch (error: unknown) {
@@ -40,16 +42,17 @@ const EditSuppliers = () => {
   };
 
   const fetchProcessDetail = async () => {
+    if (!id) return;
     try {
-      const response = await supplierDetail(id!);
-      const data = response.data;
+      const response = await supplierDetail(id);
+      const formData = response.data;
       reset({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        companyName: data.companyName,
-        address: data.address,
-        billingTerms: data.billingTerms,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        companyName: formData.companyName,
+        address: formData.address,
+        billingTerms: formData.billingTerms,
       });
     } catch (error) {
       throw error;
@@ -61,8 +64,9 @@ const EditSuppliers = () => {
   }, [id]);
 
   const handleDelete = async () => {
+    if (!id) return;
     try {
-      const response = await deleteSupplier(id!);
+      await deleteSupplier(id);
       navigate("/all-supplier");
     } catch (error: unknown) {
       throw error;

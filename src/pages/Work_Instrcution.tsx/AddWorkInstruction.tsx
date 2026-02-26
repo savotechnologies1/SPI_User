@@ -49,7 +49,7 @@ const ApplyWorkInstruction = () => {
 
       await applyWorkInstructionApi(payload);
     } catch (error) {
-      console.error("Error submitting:", error);
+      throw error;
     }
   };
 
@@ -70,8 +70,7 @@ const ApplyWorkInstruction = () => {
         label: `${item.partNumber} - ${item.partDescription}`,
       }));
     } catch (error) {
-      console.error("Failed to load product options:", error);
-      return [];
+      throw error;
     }
   };
   const handleProductChange = (selectedOption) => {

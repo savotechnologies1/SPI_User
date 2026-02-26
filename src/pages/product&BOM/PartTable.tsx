@@ -10,7 +10,7 @@ export default function PartTable() {
 
   if (!partContext) {
     throw new Error(
-      "PartContext is undefined. Ensure it is properly provided."
+      "PartContext is undefined. Ensure it is properly provided.",
     );
   }
 
@@ -19,7 +19,6 @@ export default function PartTable() {
   return (
     <div className="p-4">
       <div>
-        {" "}
         <h1 className="font-semibold text-[20px] md:text-[24px] text-black">
           Browse BOM
         </h1>
@@ -47,15 +46,15 @@ export default function PartTable() {
       <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg mt-4">
         <div className="flex justify-center gap-4 items-center mb-6">
           <div className="flex flex-col gap-1 w-full ">
-          <label htmlFor="">Search by product number</label>
+            <label htmlFor="">Search by product number</label>
 
-          <div className="w-full ">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="border w-full px-3 py-2 rounded-md"
-            />
-          </div>
+            <div className="w-full ">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="border w-full px-3 py-2 rounded-md"
+              />
+            </div>
           </div>
           <div>
             <BsThreeDotsVertical
@@ -113,12 +112,10 @@ export default function PartTable() {
                     {part.orderQty}
                   </td>
                   <td className="flex items-center gap-4 border-b border-dashed p-2">
-                    {/* Edit Icon */}
                     <FiEdit2
                       className="text-black  cursor-pointer text-lg"
                       title="Quick Edit"
                     />
-                    {/* More Icon */}
                     <BsThreeDotsVertical
                       className="text-black hover:text-black cursor-pointer text-lg"
                       title="More Options"

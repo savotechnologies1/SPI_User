@@ -2,28 +2,33 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axiosInstance";
 import { AxiosError } from "axios";
 
+const BASE_URL = import.meta.env.VITE_SERVER_URL;
+
+const handleAxiosError = (error: unknown, defaultMessage: string) => {
+  const axiosError = error as AxiosError<{ message: string }>;
+  if (axiosError.response?.data?.message) {
+    toast.error(axiosError.response.data.message);
+  } else {
+    toast.error(defaultMessage);
+  }
+};
+
 export const addStockOrder = async (apiData: object) => {
-  // eslint-disable-next-line no-useless-catch
   try {
     const response = await axiosInstance.post("/create-stock-order", apiData);
-    console.log("responseresponse", response);
 
     if (response.status === 201) {
       toast.success(response.data.message);
     }
     return response;
   } catch (error: unknown) {
-    console.log("errorerror", error);
-
-    toast.error(error.response.data.message);
+    handleAxiosError(error, "Failed to create stock order.");
   }
 };
-
 
 export const getProductParts = async (id: string) => {
   try {
     const response = await axiosInstance.get(`/product-parts/${id}`);
-    // Handle both { data: [...] } and [...] response formats
     const data = response.data?.data ?? response.data ?? [];
     return Array.isArray(data) ? data : [];
   } catch (error: unknown) {
@@ -39,7 +44,7 @@ export const getProductParts = async (id: string) => {
 export const selectCustomer = async () => {
   try {
     const response = await axiosInstance.get(
-      `/select-customer-for-stock-order`
+      `/select-customer-for-stock-order`,
     );
     return response.data;
   } catch (error: unknown) {
@@ -56,7 +61,7 @@ export const selectCustomer = async () => {
 export const selectProductNumber = async () => {
   try {
     const response = await axiosInstance.get(
-      `/select-product-number-for-stock`
+      `/select-product-number-for-stock`,
     );
     return response.data.data;
   } catch (error: unknown) {
@@ -72,7 +77,7 @@ export const selectProductNumber = async () => {
 export const selectPartNumber = async () => {
   try {
     const response = await axiosInstance.get(
-      `/select-part-number-for-custom-order`
+      `/select-part-number-for-custom-order`,
     );
     return response.data.data;
   } catch (error: unknown) {
@@ -102,7 +107,6 @@ export const selectProcess = async () => {
 };
 
 export const addCustomOrder = async (apiData: object) => {
-  // eslint-disable-next-line no-useless-catch
   try {
     const response = await axiosInstance.post("/add-custom-orders", apiData);
     if (response.status === 201) {
@@ -110,14 +114,13 @@ export const addCustomOrder = async (apiData: object) => {
     }
     return response;
   } catch (error: unknown) {
-    toast.error(error.data.message);
+    handleAxiosError(error, "Failed to add custom order.");
+    return null;
   }
 };
 
 export const searchStockOrder = async (searchParams: object) => {
   try {
-    console.log("searchParams", searchParams);
-
     const response = await axiosInstance.get("/search-stock-order", {
       params: searchParams,
     });
@@ -135,8 +138,6 @@ export const searchStockOrder = async (searchParams: object) => {
 
 export const searchCustomOrder = async (searchParams: object) => {
   try {
-    console.log("searchParams", searchParams);
-
     const response = await axiosInstance.get("/search-custom-order", {
       params: searchParams,
     });
@@ -154,7 +155,6 @@ export const searchCustomOrder = async (searchParams: object) => {
 export const scheduleStockOrder = async (apiData: object) => {
   try {
     const response = await axiosInstance.post("/stock-order-schedule", apiData);
-    console.log("response.statusresponse.status", response.data.message);
 
     return response;
   } catch (error: unknown) {
@@ -171,7 +171,7 @@ export const scheduleCustomOrder = async (apiData: object) => {
   try {
     const response = await axiosInstance.post(
       "/custom-order-schedule",
-      apiData
+      apiData,
     );
     if (response.status === 201) {
       toast.success(response.data.message);
@@ -191,11 +191,11 @@ export const scheduleStockOrderListApi = async (
   page = 1,
   limit = 5,
   type: string,
-  searchTerm: string
+  searchTerm: string,
 ) => {
   try {
     const response = await axiosInstance.get(
-      `/stock-order-schedule-list?page=${page}&limit=${limit}&order_type=${type}&search=${searchTerm}`
+      `/stock-order-schedule-list?page=${page}&limit=${limit}&order_type=${type}&search=${searchTerm}`,
     );
     return response;
   } catch (error) {
@@ -210,16 +210,13 @@ export const scheduleStockOrderListApi = async (
 };
 export const validateQty = async (productId: string, quantity: number) => {
   try {
-    const res = await fetch(
-      "http://localhost:5000/api/validate-stock-quantity",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productId, quantity }),
-      }
-    );
+    const res = await fetch(`${BASE_URL}/api/validate-stock-quantity`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ productId, quantity }),
+    });
 
     const data = await res.json();
 
@@ -229,7 +226,6 @@ export const validateQty = async (productId: string, quantity: number) => {
       alert(data.message);
     }
   } catch (error) {
-    console.error("API error:", error);
     alert("Something went wrong.");
   }
 };
@@ -237,35 +233,28 @@ export const validateQty = async (productId: string, quantity: number) => {
 export const deleteEmployee = async (id: string) => {
   try {
     const response = await axiosInstance.patch(`/delete-employee/${id}`);
-    console.log("response222", response);
     if (response.status === 200) {
       toast.success(response.data.message);
     }
     return response;
   } catch (error: unknown) {
-    toast.error(error.response.data.message);
+    handleAxiosError(error, "Failed to delete employee.");
+    return null;
   }
 };
 
 export const deleteScheduleOrder = async (id: string, orderId: string) => {
   try {
-    console.log("orderIdorderId", orderId.orderId);
     const response = await axiosInstance.delete(
-      `/delete-schedule-order/${id}?orderId=${orderId.orderId}`
+      `/delete-schedule-order/${id}?orderId=${orderId}`,
     );
     toast.success(response.data.message);
 
-    console.log("response222", response.status === 200);
     if (response.status === 200) {
-      console.log(
-        "response.data.messageresponse.data.message",
-        response.data.message
-      );
       toast.success(response.data.message);
     }
     return response;
   } catch (error: unknown) {
-    console.log("errorerror", error);
-    toast.error(error.response?.data?.message);
+    handleAxiosError(error, "Failed to delete schedule order.");
   }
 };

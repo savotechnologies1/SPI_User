@@ -1,10 +1,10 @@
 import data from "../../components/Data/DailyScheduleData";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { selectProcess } from "./https/schedulingApis";
-
+import DatePicker from "react-datepicker";
 const DailyScheduleList = () => {
   interface FormData {
     date: string;
@@ -17,14 +17,14 @@ const DailyScheduleList = () => {
     return today.toISOString().split("T")[0];
   };
 
-  // ✅ defaultValues में आज की तारीख सेट करें
-  const { register, watch } = useForm<FormData>({
+  const { register, watch, control } = useForm<FormData>({
     defaultValues: {
       date: getTodayDate(),
       process: "",
     },
   });
 
+  const [inputType, setInputType] = useState("text");
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [processes, setProcesses] = useState<
@@ -39,8 +39,8 @@ const DailyScheduleList = () => {
   useEffect(() => {
     const fetchProcesses = async () => {
       // मान लेते हैं selectProcess कहीं से आ रहा है
-      // const res = await selectProcess();
-      // setProcesses(res || []);
+      const res = await selectProcess();
+      setProcesses(res || []);
     };
     fetchProcesses();
   }, []);
@@ -102,13 +102,21 @@ const DailyScheduleList = () => {
     <div className="p-4 bg-white rounded-lg shadow-md">
       <div className="flex flex-col md:flex-row gap-3 mb-4">
         <div className="flex flex-col w-full md:w-1/2 gap-2">
-          <label className="font-semibold">Select Date</label>
-          {/* ✅ input type="date" में placeholder नहीं चलता, 
-              इसलिए हमने default value सेट की है */}
-          <input
-            type="date"
-            {...register("date")}
-            className="border py-3 px-4 rounded-md placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <label className="font-semibold text-gray-700">Select Date</label>
+          <Controller
+            control={control}
+            name="date"
+            render={({ field }) => (
+              <DatePicker
+                selected={field.value}
+                onChange={(date) => field.onChange(date)}
+                dateFormat="MM/dd/yyyy"
+                placeholderText="MM/DD/YYYY"
+                className="w-full border py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300"
+                isClearable
+                todayButton="Today"
+              />
+            )}
           />
         </div>
 
@@ -121,7 +129,7 @@ const DailyScheduleList = () => {
             <option value="">All Processes</option>
             {processes.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.processName} ({p.machineName})
+                {p.name} ({p.machineName})
               </option>
             ))}
           </select>

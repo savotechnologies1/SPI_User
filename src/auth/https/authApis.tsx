@@ -43,7 +43,7 @@ export const loginApi = async (userData: object) => {
   }
 };
 
-export const forgetPassword = async (data: string) => {
+export const forgetPassword = async (data: { email: string }) => {
   // eslint-disable-next-line no-useless-catch
   try {
     const response = await axiosInstance.post("/forget-password", data);

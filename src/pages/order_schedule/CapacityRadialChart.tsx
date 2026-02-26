@@ -1,6 +1,20 @@
 import ReactApexChart from "react-apexcharts";
+import { ApexOptions } from "apexcharts";
 
-const CapacityRadialChart = ({ processCompletion, overallAverage }) => {
+interface ProcessCompletion {
+  completionPercentage: string;
+  processName: string;
+}
+
+interface CapacityRadialChartProps {
+  processCompletion: ProcessCompletion[];
+  overallAverage?: string;
+}
+
+const CapacityRadialChart = ({
+  processCompletion,
+  overallAverage,
+}: CapacityRadialChartProps) => {
   if (!processCompletion || processCompletion.length === 0) return null;
 
   const series = processCompletion.map((p) =>
@@ -25,23 +39,22 @@ const CapacityRadialChart = ({ processCompletion, overallAverage }) => {
     (_, index) => palette[index % palette.length],
   );
 
-  const options = {
-    chart: { type: "radialBar" },
+  const options: ApexOptions = {
+    chart: { type: "radialBar" as const },
     plotOptions: {
       radialBar: {
-        hollow: { size: "50%" },
+        hollow: { size: "50%" as const },
         dataLabels: {
-          name: { fontSize: "14px", color: "#666", fontWeight: "600" },
+          name: { fontSize: "14px", color: "#666", fontWeight: "600" as const },
           value: {
             fontSize: "20px",
             color: "#000",
-            fontWeight: "bold",
+            fontWeight: "bold" as const,
             offsetY: 10,
           },
           total: {
             show: true,
             label: "Average",
-            // 🔹 WISE CHANGE: Backend se aayi hui overallAverage use kar rahe hain
             formatter: () => {
               return parseFloat(overallAverage || 0).toFixed(2) + "%";
             },
@@ -54,7 +67,7 @@ const CapacityRadialChart = ({ processCompletion, overallAverage }) => {
     colors,
     legend: {
       show: true,
-      position: "bottom",
+      position: "bottom" as const,
       markers: { size: 10 },
       itemMargin: { horizontal: 10, vertical: 5 },
     },
@@ -62,7 +75,9 @@ const CapacityRadialChart = ({ processCompletion, overallAverage }) => {
 
   return (
     <div className="p-6 bg-white rounded-md shadow-md h-full">
-   <h2 className="text-lg font-semibold mb-4">Status By Process ( Schedule Orders Process )</h2>
+      <h2 className="text-lg font-semibold mb-4">
+        Status By Process ( Schedule Orders Process )
+      </h2>
       <ReactApexChart
         options={options}
         series={series}

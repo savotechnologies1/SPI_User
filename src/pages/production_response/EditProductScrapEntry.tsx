@@ -30,7 +30,7 @@ const EditProductScrapEntry = () => {
       returnQuantity: "",
       scrapStatus: "yes",
       type: "product",
-      defectDesc: "", // ✅ Added Defect Description
+      defectDesc: "",
     },
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
@@ -67,20 +67,19 @@ const EditProductScrapEntry = () => {
         setPartData(partsRes || []);
         setCustomerData(customersRes || []);
 
-        // ✅ Prefilling Logic from API JSON
         const data = entryRes.data.data;
         formik.setValues({
           searchPart: data.PartNumber?.partNumber || "",
           partId: data.partId || "",
-          customer: data.customer?.name || "", // Agar customer obj me name ho
-          customerId: data.customersId || "", // Aapke JSON me customersId hai
+          customer: data.customer?.name || "",
+          customerId: data.customersId || "",
           returnQuantity: data.returnQuantity?.toString() || "",
           scrapStatus: data.scrapStatus === true ? "yes" : "no",
           type: data.type || "product",
-          defectDesc: data.defectDesc || "", // ✅ Prefill Defect Desc
+          defectDesc: data.defectDesc || "",
         });
       } catch (error) {
-        console.error("Error fetching scrap entry details:", error);
+        throw error;
       } finally {
         setIsLoading(false);
       }
@@ -89,7 +88,6 @@ const EditProductScrapEntry = () => {
     if (id) fetchInitialData();
   }, [id]);
 
-  // Product Suggestions Logic
   useEffect(() => {
     if (formik.values.searchPart && !formik.values.partId) {
       const filtered = partData.filter((part) =>
@@ -103,7 +101,6 @@ const EditProductScrapEntry = () => {
     }
   }, [formik.values.searchPart, formik.values.partId, partData]);
 
-  // Customer Suggestions Logic
   useEffect(() => {
     if (formik.values.customer && !formik.values.customerId) {
       const filtered = customerData.filter((c) =>
@@ -223,7 +220,6 @@ const EditProductScrapEntry = () => {
           )}
         </div>
 
-        {/* 📦 Return Quantity & Scrap Status */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 mt-4 border rounded-md">
           <div>
             <label className="block font-semibold mb-1">Return Quantity</label>
@@ -246,7 +242,6 @@ const EditProductScrapEntry = () => {
           </div>
         </div>
 
-        {/* 📝 Defect Description Field */}
         <div className="bg-white p-4 mt-4 border rounded-md">
           <label className="block font-semibold mb-1">Defect Description</label>
           <textarea
@@ -257,7 +252,6 @@ const EditProductScrapEntry = () => {
           />
         </div>
 
-        {/* ✅ Action Buttons */}
         <div className="flex items-center justify-between bg-white p-6 mt-4 border rounded-md">
           <button
             type="submit"

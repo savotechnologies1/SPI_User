@@ -4,32 +4,39 @@ import { useForm } from "react-hook-form";
 import { addSupplier } from "./https/suppliersApi";
 import { toast } from "react-toastify";
 
+interface SupplierFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  companyName: string;
+  address: string;
+  billingTerms: string;
+}
+
 const AddSuppliers = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<SupplierFormData>();
 
   const navigate = useNavigate();
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: SupplierFormData) => {
     try {
       const response = await addSupplier(data);
-      if (response.status === 201) {
-        toast.success("Supplier added successfully!");
+      if (response && response.status === 201) {
         navigate("/all-supplier");
       }
-    } catch (error: any) {
-      // Wise Error Handling: Show the backend message to the user
-      const errorMsg = error.response?.data?.message || "Something went wrong";
+    } catch (error: unknown) {
+      const errorMsg =
+        error instanceof Error ? error.message : "Something went wrong";
       toast.error(errorMsg);
     }
   };
 
   return (
     <div className="p-7 my-5">
-      {/* Header with Back Button */}
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate(-1)}
@@ -43,7 +50,6 @@ const AddSuppliers = () => {
         </h1>
       </div>
 
-      {/* Breadcrumbs */}
       <div className="flex justify-between mt-3 items-center">
         <div className="flex gap-2 items-center text-gray-500">
           <p className="text-[14px]">
@@ -126,7 +132,7 @@ const AddSuppliers = () => {
             <input
               {...register("companyName", {
                 required: "Company name is required",
-              })} // Fixed the email pattern bug here
+              })}
               type="text"
               placeholder="Enter company name"
               className={`border py-3 px-4 rounded-md w-full focus:outline-brand ${errors.companyName ? "border-red-500" : ""}`}

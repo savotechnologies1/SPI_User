@@ -1,9 +1,7 @@
 import { FaCircle } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-
 import CapacityBarChart from "./CapacityBarChart";
 import CapacityRadialChart from "./CapacityRadialChart";
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -28,7 +26,6 @@ const CapacityStatus = () => {
         setOverallAverage(res.data.overallAverage);
         setLoading(false);
       } catch (error) {
-        console.log("Error fetching capacity status:", error);
         setLoading(false);
       }
     };

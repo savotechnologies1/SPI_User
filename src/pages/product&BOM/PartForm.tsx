@@ -30,7 +30,6 @@ const PartForm = () => {
   });
 
   const [processStepFormData, setProcessStepFormData] = useState({
-    // Create relevant fields for process step
     partFamily: "",
     partNumber: "",
     description: "",
@@ -68,8 +67,6 @@ const PartForm = () => {
 
   const handleSubmitProcessStep = (e: any) => {
     e.preventDefault();
-    // Add your own logic here
-    console.log("Process Step Data:", processStepFormData);
   };
   return (
     <div className="p-4 md:p-7">
@@ -98,7 +95,6 @@ const PartForm = () => {
           onSubmit={handleSubmitPartForm}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
         >
-          {/* Part Family */}
           <label className="block col-span-4 md:col-span-2">
             Part Family
             <select
@@ -114,7 +110,6 @@ const PartForm = () => {
             </select>
           </label>
 
-          {/* Part Number */}
           <label className="block col-span-4 md:col-span-2">
             Part Number
             <input
@@ -127,7 +122,6 @@ const PartForm = () => {
             />
           </label>
 
-          {/* Description */}
           <label className="block col-span-4">
             Meta Description
             <textarea
@@ -139,7 +133,6 @@ const PartForm = () => {
             ></textarea>
           </label>
 
-          {/* Cost */}
           <div className="col-span-4 md:col-span-1">
             <label className="block text-sm md:text-base mb-1">Cost ($)</label>
             <input
@@ -152,7 +145,6 @@ const PartForm = () => {
             />
           </div>
 
-          {/* Lead Time */}
           <div className="col-span-4 md:col-span-1">
             <label className="block text-sm md:text-base mb-1">
               Lead Time (Days)
@@ -167,7 +159,6 @@ const PartForm = () => {
             />
           </div>
 
-          {/* Order Qty */}
           <div className="col-span-4 md:col-span-1">
             <label className="block text-sm md:text-base mb-1">
               Order Quantity
@@ -182,7 +173,6 @@ const PartForm = () => {
             />
           </div>
 
-          {/* Company */}
           <div className="col-span-4 md:col-span-1">
             <label className="block text-sm md:text-base mb-1">
               Company Name
@@ -197,7 +187,6 @@ const PartForm = () => {
             />
           </div>
 
-          {/* Minimum Stock */}
           <div className="col-span-4 md:col-span-1">
             <label className="block text-sm md:text-base mb-1">
               Minimum Stock
@@ -212,7 +201,6 @@ const PartForm = () => {
             />
           </div>
 
-          {/* Available Stock */}
           <div className="col-span-4 md:col-span-1">
             <label className="block text-sm md:text-base mb-1">
               Available Stock
@@ -227,7 +215,6 @@ const PartForm = () => {
             />
           </div>
 
-          {/* Cycle Time */}
           <div className="col-span-4 md:col-span-1">
             <label className="block text-sm md:text-base mb-1">
               Cycle Time
@@ -242,7 +229,6 @@ const PartForm = () => {
             />
           </div>
 
-          {/* Availability (Yes/No) */}
           <div className="col-span-4 md:col-span-1">
             <label className="block text-sm md:text-base mb-1">
               Process order required
@@ -298,7 +284,6 @@ const PartForm = () => {
             onSubmit={handleSubmitProcessStep}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
           >
-            {/* Part Family */}
             <label className="block col-span-4 md:col-span-2">
               Part Family
               <select
@@ -313,8 +298,6 @@ const PartForm = () => {
                 <option value="Plastic">Plastic</option>
               </select>
             </label>
-
-            {/* Part Number */}
             <label className="block  col-span-4 md:col-span-2">
               Part Number
               <input
@@ -326,8 +309,6 @@ const PartForm = () => {
                 className="border p-2 rounded w-full"
               />
             </label>
-
-            {/* Description */}
             <label className="block col-span-4">
               Meta Description
               <textarea
@@ -339,7 +320,6 @@ const PartForm = () => {
               ></textarea>
             </label>
 
-            {/* Cost */}
             <label className="block col-span-4 md:col-span-1">
               Cost ($)
               <input
@@ -351,8 +331,6 @@ const PartForm = () => {
                 className="border p-2 rounded w-full"
               />
             </label>
-
-            {/* Lead Time */}
             <label className="block col-span-4 md:col-span-1">
               Lead Time (Days)
               <input
@@ -365,7 +343,6 @@ const PartForm = () => {
               />
             </label>
 
-            {/* Order Qty */}
             <label className="block col-span-4 md:col-span-1">
               Order Quantity by Supplier
               <input
@@ -378,7 +355,6 @@ const PartForm = () => {
               />
             </label>
 
-            {/* Company */}
             <label className="block col-span-4 md:col-span-1">
               Company Name
               <input
@@ -391,7 +367,6 @@ const PartForm = () => {
               />
             </label>
 
-            {/* Minimum Stock */}
             <label className="block col-span-4 md:col-span-1">
               Minimum Stock
               <input
@@ -404,7 +379,6 @@ const PartForm = () => {
               />
             </label>
 
-            {/* Available Stock */}
             <label className="block col-span-4 md:col-span-1">
               Available Stock
               <input
@@ -417,7 +391,6 @@ const PartForm = () => {
               />
             </label>
 
-            {/* Cycle Time */}
             <label className="block col-span-4 md:col-span-1">
               Cycle Time
               <input
@@ -430,7 +403,6 @@ const PartForm = () => {
               />
             </label>
 
-            {/* Availability (Yes/No) */}
             <label className="block col-span-4 md:col-span-1">
               Process order required
               <select

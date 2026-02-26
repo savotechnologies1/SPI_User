@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { FiEdit2 } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaCircle, FaTrash } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";

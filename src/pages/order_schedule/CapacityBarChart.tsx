@@ -7,6 +7,8 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartOptions,
+  ChartData,
 } from "chart.js";
 
 ChartJS.register(
@@ -17,7 +19,11 @@ ChartJS.register(
   Tooltip,
   Legend,
 );
-const CapacityBarChart = ({ chartData }) => {
+interface CapacityBarChartProps {
+  chartData: ChartData<"bar"> | undefined;
+}
+
+const CapacityBarChart = ({ chartData }: CapacityBarChartProps) => {
   if (!chartData) return null;
 
   const data = {
@@ -46,7 +52,7 @@ const CapacityBarChart = ({ chartData }) => {
     })),
   };
 
-  const options = {
+  const options: ChartOptions<"bar"> = {
     indexAxis: "y" as const,
     responsive: true,
     maintainAspectRatio: false,
@@ -59,8 +65,10 @@ const CapacityBarChart = ({ chartData }) => {
         grid: { color: "#e5e5e5" },
         ticks: {
           stepSize: 60,
-          callback: (value: number) =>
-            value % 60 === 0 ? `${value / 60} hr` : `${value} min`,
+          callback: function(value) {
+            const numValue = typeof value === 'string' ? parseInt(value, 10) : value;
+            return numValue % 60 === 0 ? `${numValue / 60} hr` : `${numValue} min`;
+          },
           font: { size: 12 },
         },
       },
