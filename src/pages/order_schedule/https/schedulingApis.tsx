@@ -121,10 +121,17 @@ export const addCustomOrder = async (apiData: object) => {
 
 export const searchStockOrder = async (searchParams: object) => {
   try {
+    console.log("searchParams", searchParams);
+
     const response = await axiosInstance.get("/search-stock-order", {
       params: searchParams,
     });
-    return response.data || [];
+
+    console.log("responseresponseresponse", response.data.message);
+
+    // Check if response.data has a data property (common API pattern)
+    const data = response.data?.data ?? response.data ?? [];
+    return Array.isArray(data) ? data : [];
   } catch (error) {
     const axiosError = error as AxiosError<{ message: string }>;
     if (axiosError.response?.data?.message) {
@@ -135,7 +142,6 @@ export const searchStockOrder = async (searchParams: object) => {
     return [];
   }
 };
-
 export const searchCustomOrder = async (searchParams: object) => {
   try {
     const response = await axiosInstance.get("/search-custom-order", {

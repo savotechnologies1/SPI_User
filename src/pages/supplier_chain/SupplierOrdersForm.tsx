@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
@@ -9,30 +9,6 @@ import Select from "react-select";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
-
-interface SupplierOption {
-  id: string;
-  name: string;
-}
-
-interface ProductOption {
-  id: string;
-  partNumber: string;
-}
-
-interface OrderFormValues {
-  order_number: string;
-  order_date: string;
-  supplier_id: string;
-  part_id: string;
-  quantity: string;
-  cost: string;
-  need_date: string;
-  showFields: boolean;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
 
 const validationSchema = Yup.object({
   order_date: Yup.date().required("Order Date is required"),
@@ -59,6 +35,7 @@ const validationSchema = Yup.object({
         .email("Please enter a valid email address.")
         .required("Email is required for a new supplier."),
   }),
+
   part_id: Yup.string().required("Product is required"),
   quantity: Yup.number()
     .min(1, "Quantity must be at least 1")
@@ -67,17 +44,15 @@ const validationSchema = Yup.object({
     .min(0, "Cost cannot be negative")
     .required("Cost is required"),
   need_date: Yup.date().required("Required By Date is required"),
-  showFields: Yup.boolean(),
 });
 
 const SupplierOrdersForm = () => {
-  const [supplierData, setSupplierData] = useState<SupplierOption[]>([]);
-  const [productData, setProductData] = useState<ProductOption[]>([]);
+  const [supplierData, setSupplierData] = useState([]);
+  const [productData, setProductData] = useState([]);
   const [orderNumber, setOrderNumber] = useState("");
-  const navigate = useNavigate();
-
   useEffect(() => {
     setOrderNumber(Math.floor(10000 + Math.random() * 90000).toString());
+
     const fetchInitialData = async () => {
       try {
         const suppliers = await selectSupplier();
@@ -88,6 +63,7 @@ const SupplierOrdersForm = () => {
         console.error("Failed to fetch initial data:", error);
       }
     };
+
     fetchInitialData();
   }, []);
 
@@ -104,16 +80,16 @@ const SupplierOrdersForm = () => {
     lastName: "",
     email: "",
   };
+  const navigate = useNavigate();
 
-  const handleSubmit = async (
-    values: OrderFormValues,
-    { resetForm }: FormikHelpers<OrderFormValues>,
-  ) => {
+  const handleSubmit = async (values, { resetForm }) => {
+    console.log("handleSubmit called!");
+
     const { showFields, firstName, lastName, email, ...orderData } = values;
-    const finalPayload: Record<string, unknown> = { ...orderData };
+    let finalPayload = { ...orderData };
     const tempId = uuidv4();
     if (showFields) {
-      finalPayload.supplier_id = "";
+      finalPayload.supplier_id = null;
       finalPayload.newSupplier = {
         firstName,
         lastName,
@@ -122,8 +98,9 @@ const SupplierOrdersForm = () => {
       };
     }
     try {
+      console.log("Submitting Payload to API:", finalPayload);
       const response = await addSupplierOrder(finalPayload);
-      if (response && response.status === 201) {
+      if (response.status === 201) {
         navigate("/supplier-order-list");
       }
       const newOrderNum = Math.floor(10000 + Math.random() * 90000).toString();
@@ -136,7 +113,7 @@ const SupplierOrdersForm = () => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-2xl border shadow-md max-w-4xl">
+    <div className="p-6 bg-white rounded-2xl border shadow-md max-w-4xl ">
       <Formik
         enableReinitialize
         initialValues={{ ...initialValues, order_number: orderNumber }}
@@ -145,14 +122,12 @@ const SupplierOrdersForm = () => {
       >
         {({ resetForm, setFieldValue, values, touched, errors }) => (
           <Form className="space-y-8">
-            {/* Order Information Section */}
             <div>
               <h2 className="text-xl font-bold text-gray-800 border-b pb-2 mb-6">
                 Order Information
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                {/* Order Number (Half Width) */}
-                <div className="md:col-span-1">
+                <div>
                   <label className="font-semibold text-gray-700 block mb-2">
                     Order Number
                   </label>
@@ -160,12 +135,7 @@ const SupplierOrdersForm = () => {
                     {values.order_number}
                   </p>
                 </div>
-
-                {/* Spacer to keep Order Number on left if you want it half-width, 
-                    OR you can make Order Number full-width too by changing to md:col-span-2 */}
-
-                {/* Order Date (FULL WIDTH) */}
-                <div className="md:col-span-2">
+                <div>
                   <label
                     htmlFor="order_date"
                     className="font-semibold text-gray-700 block mb-2"
@@ -179,8 +149,7 @@ const SupplierOrdersForm = () => {
                     onChange={(date) => setFieldValue("order_date", date)}
                     dateFormat="MM/dd/yyyy"
                     placeholderText="Select Order Date"
-                    wrapperClassName="w-full" // Makes the datepicker container full width
-                    className="border py-3 px-4 rounded-md w-full focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="border py-3 px-4 rounded-md w-full focus:ring-2 focus:ring-blue-500 outline-none "
                   />
                   {errors.order_date && touched.order_date && (
                     <div className="text-red-500 text-sm mt-1">
@@ -188,8 +157,6 @@ const SupplierOrdersForm = () => {
                     </div>
                   )}
                 </div>
-
-                {/* Supplier Selection (Full Width) */}
                 <div className="md:col-span-2">
                   <label
                     htmlFor="supplier_id"
@@ -250,8 +217,6 @@ const SupplierOrdersForm = () => {
                 </div>
               </div>
             </div>
-
-            {/* New Supplier Fields */}
             {values.showFields && (
               <div className="border-t pt-6 mt-6 border-dashed">
                 <h3 className="text-lg font-bold text-gray-700 mb-4">
@@ -265,6 +230,7 @@ const SupplierOrdersForm = () => {
                     <Field
                       name="firstName"
                       type="text"
+                      placeholder="Enter First Name"
                       className="border py-3 px-4 rounded-md w-full"
                     />
                     <ErrorMessage
@@ -280,6 +246,7 @@ const SupplierOrdersForm = () => {
                     <Field
                       name="lastName"
                       type="text"
+                      placeholder="Enter Last Name"
                       className="border py-3 px-4 rounded-md w-full"
                     />
                     <ErrorMessage
@@ -295,6 +262,7 @@ const SupplierOrdersForm = () => {
                     <Field
                       name="email"
                       type="email"
+                      placeholder="Enter Supplier Email"
                       className="border py-3 px-4 rounded-md w-full"
                     />
                     <ErrorMessage
@@ -306,8 +274,6 @@ const SupplierOrdersForm = () => {
                 </div>
               </div>
             )}
-
-            {/* Item Details Section */}
             <div>
               <h2 className="text-xl font-bold text-gray-800 border-b pb-2 mb-6">
                 Item Details
@@ -337,6 +303,7 @@ const SupplierOrdersForm = () => {
                         .find((opt) => opt.value === values.part_id) || null
                     }
                     isClearable
+                    id="part_id"
                     placeholder="Search or select a product..."
                   />
                   <ErrorMessage
@@ -356,6 +323,7 @@ const SupplierOrdersForm = () => {
                     id="quantity"
                     name="quantity"
                     type="number"
+                    placeholder="e.g., 100"
                     className="border py-3 px-4 rounded-md w-full"
                   />
                   <ErrorMessage
@@ -375,6 +343,7 @@ const SupplierOrdersForm = () => {
                     id="cost"
                     name="cost"
                     type="number"
+                    placeholder="e.g., 550.50"
                     className="border py-3 px-4 rounded-md w-full"
                   />
                   <ErrorMessage
@@ -383,8 +352,6 @@ const SupplierOrdersForm = () => {
                     className="text-red-500 text-sm mt-1"
                   />
                 </div>
-
-                {/* Required By Date (FULL WIDTH) */}
                 <div className="md:col-span-2">
                   <label
                     htmlFor="need_date"
@@ -399,7 +366,6 @@ const SupplierOrdersForm = () => {
                     onChange={(date) => setFieldValue("need_date", date)}
                     dateFormat="MM/dd/yyyy"
                     placeholderText="Select Need Date"
-                    wrapperClassName="w-full" // Makes the datepicker container full width
                     className="border py-3 px-4 rounded-md w-full focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                   {errors.need_date && touched.need_date && (
@@ -410,7 +376,6 @@ const SupplierOrdersForm = () => {
                 </div>
               </div>
             </div>
-
             <div className="flex justify-end items-center gap-4 pt-6 border-t">
               <button
                 type="button"
