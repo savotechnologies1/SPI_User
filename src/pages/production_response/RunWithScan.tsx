@@ -3933,7 +3933,33 @@ const RunWithScan = () => {
                       </tr>
                     ))}
                   </tbody>
-                </table> */}
+                </table>{" "} */}
+                <table className="border border-white text-white text-center w-full min-w-[280px]">
+                  <thead className="sticky top-0 bg-[#243C75]">
+                    <tr className="font-semibold">
+                      <th className="border border-white px-2 py-1 text-xs sm:text-sm">
+                        Part Number
+                      </th>
+                      <th className="border border-white px-2 py-1 text-xs sm:text-sm">
+                        Date
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((row, i) => (
+                      <tr key={i} className={i === 0 ? "bg-green-600/30" : ""}>
+                        {" "}
+                        {/* Current job ko highlight karne ke liye */}
+                        <td className="border border-white px-2 py-1 text-xs sm:text-sm">
+                          {row.part}
+                        </td>
+                        <td className="border border-white px-2 py-1 text-xs sm:text-sm">
+                          {row.date === "N/A" ? "N/A" : formatDate(row.date)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
