@@ -537,6 +537,15 @@ export const selectPartNamber = async () => {
   }
 };
 
+export const selectPartNamber1 = async () => {
+  try {
+    const response = await axiosInstance.get(`/select-parts`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const selectProductNumber = async () => {
   try {
     const response = await axiosInstance.get(`/select-schedule-product-number`);
@@ -551,6 +560,14 @@ export const selectProductNumber = async () => {
   }
 };
 
+export const selectProductNamber1 = async () => {
+  try {
+    const response = await axiosInstance.get(`/select-products`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 export const scrapEntryDetail = async (id: string) => {
   try {
     const response = await axiosInstance.get(`/scrap-entry-detail/${id}`);

@@ -462,12 +462,10 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
   const [selectedItems, setSelectedItems] = useState<ScheduledItem[]>([]);
   const [itemInputs, setItemInputs] = useState<ItemInputState>({});
   const [loading, setLoading] = useState(false);
-
   const scheduleItem = (itemToAdd: SearchResultItem) => {
     const inputs = itemInputs[itemToAdd.id];
     const qtyToSchedule = parseInt(inputs?.qty || "0", 10);
 
-    // FIX: Pehle state ki date check karo, fir item ki date, fir current date (fixed at midnight)
     const shipDate =
       inputs?.shipDate ||
       (itemToAdd.shipDate ? new Date(itemToAdd.shipDate) : new Date());
@@ -479,6 +477,7 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
 
     const newScheduledItem: ScheduledItem = {
       ...itemToAdd,
+      instanceId: `${itemToAdd.id}-${Date.now()}-${Math.random()}`, // Unique ID banaya
       scheduledQty: qtyToSchedule,
       shipDate: shipDate,
     };
@@ -491,10 +490,9 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
       return newInputs;
     });
   };
-
-  const removeItem = (itemIdToRemove: string) => {
+  const removeItem = (instanceIdToRemove: string) => {
     setSelectedItems(
-      selectedItems.filter((item) => item.id !== itemIdToRemove),
+      selectedItems.filter((item) => item.instanceId !== instanceIdToRemove),
     );
   };
 
@@ -511,10 +509,10 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
     return flatList;
   };
 
-  const updateScheduledDate = (itemId: string, date: Date) => {
+  const updateScheduledDate = (instanceId: string, date: Date) => {
     setSelectedItems(
       selectedItems.map((item) =>
-        item.id === itemId ? { ...item, shipDate: date } : item,
+        item.instanceId === instanceId ? { ...item, shipDate: date } : item,
       ),
     );
   };
@@ -708,7 +706,7 @@ const ItemSelected = ({ availableItems, isLoading }: ItemSelectedProps) => {
                       className="border py-2 px-4 rounded-md font-semibold w-full sm:w-44 outline-none"
                     />
                   </div>
-                  <button onClick={() => removeItem(item.id)}>
+                  <button onClick={() => removeItem(item.instanceId)}>
                     <FaTrashAlt className="text-red-500 " />
                   </button>
                 </div>
