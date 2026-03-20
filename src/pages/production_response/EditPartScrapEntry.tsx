@@ -271,18 +271,17 @@ const EditPartScrapEntry = () => {
 
   const formik = useFormik({
     initialValues: {
-      searchPart: "", // UI display text
-      partId: "", // ID for Backend
-      supplier: "", // UI display text
-      supplierId: "", // ID for Backend
+      searchPart: "",
+      partId: "",
+      supplier: "",
+      supplierId: "",
       returnQuantity: "",
       scrapStatus: "yes",
-      type: "part", // Fixed type for this form
+      type: "part",
       defectDesc: "",
     },
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
-      // Backend Payload Mapping
       const payload = {
         type: "part",
         partId: values.partId,
@@ -307,7 +306,6 @@ const EditPartScrapEntry = () => {
     },
   });
 
-  // 1. Initial Data Load & Prefilling
   useEffect(() => {
     const fetchInitialData = async () => {
       setIsLoading(true);
@@ -327,14 +325,11 @@ const EditPartScrapEntry = () => {
 
         setPartData(allParts);
         setSupplierData(allSuppliers);
-
-        // Pre-fill fields from Detail API
         const entryData = detailRes.data.data;
         if (entryData) {
           formik.setValues({
             searchPart: entryData.PartNumber?.partNumber || "",
             partId: entryData.partId || "",
-            // Supplier mapping (considering name or companyName)
             supplier:
               entryData.supplier?.name || entryData.supplier?.companyName || "",
             supplierId: entryData.supplierId || "",
