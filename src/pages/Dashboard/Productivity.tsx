@@ -1,6 +1,4 @@
 const Productivity = ({ productivity }) => {
-  console.log("productivityproductivity", productivity);
-
   return (
     <div className="bg-white rounded-lg shadow-md p-4 md:w-[100%] overflow-x-auto mt-6">
       <h2 className="text-lg font-semibold mb-4">Producitivity</h2>

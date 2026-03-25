@@ -11,7 +11,6 @@ import {
   Filler,
 } from "chart.js";
 
-// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -20,7 +19,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 const FormingTemp = () => {
@@ -30,32 +29,32 @@ const FormingTemp = () => {
       {
         label: "2022",
         data: [80, 80, 50, 100, 40],
-        borderColor: "rgba(114, 9, 183, 1)", // Purple
+        borderColor: "rgba(114, 9, 183, 1)",
         backgroundColor: "rgba(114, 9, 183, 0.2)",
         pointBackgroundColor: "rgba(114, 9, 183, 1)",
         pointBorderColor: "#fff",
         pointRadius: 5,
-        tension: 0.4, // Smooth curve
+        tension: 0.4,
       },
       {
         label: "2023",
         data: [20, 60, 30, 90, 50],
-        borderColor: "rgba(255, 99, 132, 1)", // Red
+        borderColor: "rgba(255, 99, 132, 1)",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         pointBackgroundColor: "rgba(255, 99, 132, 1)",
         pointBorderColor: "#fff",
         pointRadius: 5,
-        tension: 0.4, // Smooth curve
+        tension: 0.4,
       },
       {
         label: "2024",
         data: [15, 40, 25, 35, 45],
-        borderColor: "rgba(75, 192, 192, 1)", // Cyan
+        borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         pointBackgroundColor: "rgba(75, 192, 192, 1)",
         pointBorderColor: "#fff",
         pointRadius: 5,
-        tension: 0.4, // Smooth curve
+        tension: 0.4,
       },
     ],
   };

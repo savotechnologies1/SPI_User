@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import img1 from "../../assets/green.png";
-import img3 from "../../assets/orange.png";
 import scrap_1 from "../../assets/scrap_1.png";
 import scrap_3 from "../../assets/scrap_3.png";
 import scrap_cost from "../../assets/scrap_cost.png";
@@ -18,7 +16,6 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import DatePicker from "react-datepicker";
 
 const formatDollar = (value: number) => `${value.toLocaleString()}`;
 
@@ -47,8 +44,6 @@ const Costing = () => {
   const [costingData, setCostingData] = useState<CostingDataItem[]>([]);
   const [monthlyCOGS, setMonthlyCOGS] = useState<MonthlyCOGSItem[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-
-  // Generate list of years dynamically
   const years = Array.from(
     { length: new Date().getFullYear() - 2020 + 1 },
     (_, i) => 2020 + i,
@@ -62,8 +57,6 @@ const Costing = () => {
           `${BASE_URL}/api/admin/costing-data?year=${selectedYear}`,
         );
         const data = res.data;
-
-        // Cards
         setCardsData([
           {
             num: formatDollar(data.totalYearCost || 0),
@@ -82,7 +75,6 @@ const Costing = () => {
           },
         ]);
 
-        // Vertical Bar Chart
         setCostingData([
           {
             name: "Cost",
@@ -152,7 +144,6 @@ const Costing = () => {
                   <p className="font-bold text-xl">{item.num}</p>
                 </div>
               </div>
-             
             </div>
           ))}
         </div>

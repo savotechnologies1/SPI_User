@@ -109,8 +109,6 @@ const Production = () => {
   return (
     <div className="p-4">
       <h1 className="font-semibold text-2xl mb-4">Production</h1>
-
-      {/* Totals Cards */}
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         {totalsCards.map((item, index) => (
           <div

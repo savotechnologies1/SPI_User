@@ -1,22 +1,14 @@
 import { useEffect, useState } from "react";
-import data from "../../components/Data/LaborData";
-import ItemSelector from "./ItemSelector";
 import { Controller, useForm } from "react-hook-form";
 import axios from "axios";
 import { selectProcess } from "./https/schedulingApis";
 import DatePicker from "react-datepicker";
 
-interface ProcessItem {
-  id: string;
-  name: string;
-  machineName?: string;
-}
-
 const LaborForecastList = () => {
   const BASE_URL = import.meta.env.VITE_SERVER_URL;
 
   const {
-    control, // DatePicker ke liye zaroori
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -96,7 +88,6 @@ const LaborForecastList = () => {
     const fetchInit = async () => {
       const response = await selectProcess();
       setProcessData(Array.isArray(response) ? response : []);
-      // Initial load with default dates
       getInventory({ startDate: new Date(), endDate: new Date() });
     };
     fetchInit();
@@ -106,7 +97,6 @@ const LaborForecastList = () => {
     <div className="p-4 bg-white rounded-lg shadow-md">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          {/* Process Selection */}
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-gray-700">Process</label>
             <select
@@ -140,7 +130,6 @@ const LaborForecastList = () => {
             />
           </div>
 
-          {/* End Date (Month/Day/Year) */}
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-gray-700">End Date</label>
             <Controller
@@ -175,7 +164,6 @@ const LaborForecastList = () => {
         </div>
       </form>
 
-      {/* Summary Section (Cards) */}
       {data.some((item) => item.Forecast > 0) && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
           <div className="px-6 py-4 bg-gray-50 border-b">

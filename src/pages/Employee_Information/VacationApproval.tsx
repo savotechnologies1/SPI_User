@@ -5,7 +5,6 @@ const VacationApproval = () => {
   return (
     <div className="p-7">
       <div>
-        {" "}
         <h1 className="font-bold text-[20px] md:text-[24px] text-black">
           vacation Approval
         </h1>
@@ -14,7 +13,7 @@ const VacationApproval = () => {
         <div className="flex gap-4 items-center ">
           <p
             className={`text-xs sm:text-[14px] text-black`}
-            onClick={() => ("dashboardDetailes")}
+            onClick={() => "dashboardDetailes"}
           >
             <NavLink to={"/dashboardDetailes"}>Dashboard</NavLink>
           </p>
