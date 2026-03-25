@@ -64,7 +64,6 @@ const App = () => {
   const { isLoading, token } = useAuth();
 
   if (isLoading) {
-    // Show loader until token check is done
     return (
       <div className="flex justify-center items-center h-screen">
         <FiLoader className="text-brand" />
@@ -76,7 +75,6 @@ const App = () => {
       <ToastContainer />
       <Router basename="/Frontline">
         <Routes>
-          {/* Public Routes */}
           <Route path="sign-in" element={<SignIn />} />
           <Route path="sign-up" element={<SignUp />} />
           <Route path="forget-password" element={<ForgetPassowrd />} />
@@ -115,13 +113,6 @@ const App = () => {
             path="edit-product-scrap-entry/:id"
             element={token ? <EditProductScrapEntry /> : <Training />}
           />
-          {/* Protected Routes */}
-          {/* <Route
-            path="/"
-            element={
-              token ? <Layout /> : <Navigate to="/sign-in" replace />
-            }
-          > */}
           <Route path="/" element={token ? <Layout /> : <SignIn />}>
             <Route index element={<DasboardDetails />} />
             <Route path="dashboardDetailes" element={<DasboardDetails />} />

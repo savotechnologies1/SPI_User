@@ -41,7 +41,7 @@ const AuthContext = createContext<IAuthContext | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<IUser | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // Start true on app load
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(() => {
     const validateTokenOnLoad = async () => {
       const storedToken = localStorage.getItem("auth_token");
@@ -83,48 +83,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     validateTokenOnLoad();
   }, []);
-
-  // useEffect(() => {
-  //   const validateTokenOnLoad = async () => {
-  //     const storedToken = localStorage.getItem("auth_token");
-
-  //     if (storedToken) {
-  //       try {
-  //         const response = await axios.get<AuthResponse>(
-  //           `${BASE_URL}/api/admin/check-token`,
-  //           {
-  //             headers: {
-  //               Authorization: `Bearer ${storedToken}`,
-  //             },
-  //           }
-  //         );
-
-  //         const data = response.data;
-  //         setUser(data.user);
-  //         setToken(storedToken);
-  //       } catch (error) {
-  //         if (axios.isAxiosError(error)) {
-  //           const errorData = error.response?.data as ErrorResponse;
-  //           if (errorData?.message) {
-  //             toast.error(errorData.message);
-  //           } else {
-  //             toast.error("Session expired or invalid. Please log in again.");
-  //           }
-  //         } else {
-  //           console.error("An unexpected error occurred:", error);
-  //           toast.error("An unexpected error occurred.");
-  //         }
-
-  //         localStorage.removeItem("auth_token");
-  //         setUser(null);
-  //         setToken(null);
-  //       }
-  //     }
-  //     setIsLoading(false);
-  //   };
-
-  //   validateTokenOnLoad();
-  // }, []);
 
   const login = (newToken: string, userData: IUser) => {
     localStorage.setItem("auth_token", newToken);

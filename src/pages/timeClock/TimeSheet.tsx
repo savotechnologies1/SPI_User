@@ -1,7 +1,6 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { FaCircle } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-// import ItemSelector from "./ItemSelector";
 import more from "../../assets/more.png";
 
 const TimeSheet = () => {
@@ -124,7 +123,7 @@ const TimeSheet = () => {
 
   const currentRows = data.slice(
     (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
+    currentPage * rowsPerPage,
   );
 
   const goToPreviousPage = () => {
@@ -149,7 +148,7 @@ const TimeSheet = () => {
         <div className="flex gap-2 items-center ">
           <p
             className={`text-[14px] text-black`}
-            onClick={() => ("dashboardDetailes")}
+            onClick={() => "dashboardDetailes"}
           >
             <NavLink to={"/dashboardDetailes"}>Dashboard</NavLink>
           </p>
@@ -207,7 +206,10 @@ const TimeSheet = () => {
           </thead>
           <tbody>
             {currentRows.map((row) => (
-              <tr key={row.id} className="border-b hover:bg-gray-50 whitespace-nowrap">
+              <tr
+                key={row.id}
+                className="border-b hover:bg-gray-50 whitespace-nowrap"
+              >
                 <td className="py-3 px-4 text-[#061D22] text-sm">{row.date}</td>
                 <td className="py-3 px-4 text-[#061D22] text-sm">
                   {row.loginTime}
@@ -265,5 +267,3 @@ const TimeSheet = () => {
 };
 
 export default TimeSheet;
-
-

@@ -9,20 +9,18 @@ const VacationRequest = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data :any) => {
+  const onSubmit = (data: any) => {
     console.log("📦 Request Data:", data);
   };
   return (
     <div>
       <div className="p-7">
-        {/* Title */}
         <div>
           <h1 className="font-bold text-[20px] md:text-[24px] text-black">
             Vacation Request
           </h1>
         </div>
 
-        {/* Breadcrumb */}
         <div className="flex justify-between mt-2 items-center">
           <div className="flex gap-4 items-center ">
             <p className={`text-xs  text-black`}>
@@ -41,13 +39,9 @@ const VacationRequest = () => {
           </div>
         </div>
 
-        {/* Form */}
         <div className="mt-4 bg-white p-2 sm:p-6 w-full rounded-2xl xl:w-2/3">
-          {/* Start Date and End Date */}
-
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className=" bg-white  w-full rounded-2xl ">
-              {/* Start Date and End Date */}
               <div className="flex flex-col sm:flex-row gap-4 mt-2 mb-6">
                 <div className="w-full">
                   <label className="font-semibold">Start Date</label>
@@ -83,7 +77,6 @@ const VacationRequest = () => {
                 </div>
               </div>
 
-              {/* How Many Hours */}
               <label className="font-semibold">How Many Hours</label>
               <div className="mt-2 w-full mb-6">
                 <input
@@ -96,11 +89,12 @@ const VacationRequest = () => {
                   className="border py-4 px-4 rounded-md w-full"
                 />
                 {errors.hours && (
-                  <p className="text-red-500 text-sm">{String(errors.hours.message)}</p>
+                  <p className="text-red-500 text-sm">
+                    {String(errors.hours.message)}
+                  </p>
                 )}
               </div>
 
-              {/* PIN */}
               <label className="font-semibold">PIN</label>
               <div className="mt-2 w-full">
                 <input
@@ -113,11 +107,12 @@ const VacationRequest = () => {
                   className="border py-4 px-4 rounded-md w-full"
                 />
                 {errors.pin && (
-                  <p className="text-red-500 text-sm">{String(errors.pin.message)}</p>
+                  <p className="text-red-500 text-sm">
+                    {String(errors.pin.message)}
+                  </p>
                 )}
               </div>
 
-              {/* Button */}
               <div className="mt-6 text-end">
                 <button
                   type="submit"

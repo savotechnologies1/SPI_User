@@ -1,240 +1,13 @@
 import { useForm } from "react-hook-form";
 import {
   ScrapEntryApi,
+  selectProductNamber1,
   selectProductNumber,
 } from "./https/productionResponseApi";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { selectCustomer } from "../order_schedule/https/schedulingApis";
-
-// const ProductForm = () => {
-//   const [partData, setPartData] = useState([]);
-//   const [suggestions, setSuggestions] = useState([]);
-//   const [customerData, setCustomerData] = useState([]);
-//   const [customerSuggestions, setCustomerSuggestions] = useState([]);
-
-//   const formik = useFormik({
-//     initialValues: {
-//       searchPart: "",
-//       partId: "",
-//       customer: "",
-//       customerId: "",
-//       returnQuantity: "",
-//       scrapStatus: "yes",
-//       type: "product",
-//       defectDesc: "", // ✅ Added defectDesc key
-//     },
-//     onSubmit: async (values, { setSubmitting }) => {
-//       console.log("Form Submitted:", values);
-//       try {
-//         setSubmitting(true);
-//         await ScrapEntryApi({
-//           ...values,
-//           type: "product",
-//           returnQuantity: parseInt(values.returnQuantity, 10) || 0,
-//         });
-
-//         // Success handling
-//         formik.resetForm();
-//         setSuggestions([]);
-//         setCustomerSuggestions([]);
-//       } catch (error) {
-//         console.error("Submission failed:", error);
-//       } finally {
-//         setSubmitting(false);
-//       }
-//     },
-//   });
-
-//   const handleReset = () => {
-//     formik.resetForm();
-//     setSuggestions([]);
-//     setCustomerSuggestions([]);
-//   };
-
-//   useEffect(() => {
-//     (async () => {
-//       try {
-//         const parts = await selectProductNumber();
-//         const customers = await selectCustomer();
-
-//         setPartData(parts || []);
-//         setCustomerData(customers || []);
-//       } catch (err) {
-//         console.error("Error fetching data:", err);
-//       }
-//     })();
-//   }, []);
-
-//   // Product Suggestions Logic
-//   useEffect(() => {
-//     if (formik.values.searchPart && !formik.values.partId) {
-//       const filteredSuggestions = partData.filter((part) =>
-//         part.partNumber
-//           .toLowerCase()
-//           .includes(formik.values.searchPart.toLowerCase()),
-//       );
-//       setSuggestions(filteredSuggestions);
-//     } else {
-//       setSuggestions([]);
-//     }
-//   }, [formik.values.searchPart, formik.values.partId, partData]);
-
-//   // Customer Suggestions Logic
-//   useEffect(() => {
-//     if (formik.values.customer && !formik.values.customerId) {
-//       const filtered = customerData.filter((c) =>
-//         c.name.toLowerCase().includes(formik.values.customer.toLowerCase()),
-//       );
-//       setCustomerSuggestions(filtered);
-//     } else {
-//       setCustomerSuggestions([]);
-//     }
-//   }, [formik.values.customer, formik.values.customerId, customerData]);
-
-//   const handleSuggestionClick = (part) => {
-//     formik.setFieldValue("searchPart", part.partNumber);
-//     formik.setFieldValue("partId", part.id);
-//     setSuggestions([]);
-//   };
-
-//   const handleCustomerClick = (customer) => {
-//     formik.setFieldValue("customer", customer.name);
-//     formik.setFieldValue("customerId", customer.id);
-//     setCustomerSuggestions([]);
-//   };
-
-//   return (
-//     <div className="">
-//       <form onSubmit={formik.handleSubmit} className="">
-//         {/* 🔍 Search Product */}
-//         <div className="bg-white p-4">
-//           <label className="block font-semibold mb-1">Search Product</label>
-//           <div className="relative">
-//             <input
-//               type="text"
-//               placeholder="Search product ....."
-//               className="border py-3 px-4 rounded-md w-full text-gray-600 placeholder-black"
-//               value={formik.values.searchPart}
-//               onChange={(e) => {
-//                 formik.setFieldValue("searchPart", e.target.value);
-//                 formik.setFieldValue("partId", "");
-//               }}
-//               onFocus={() => {
-//                 if (!formik.values.searchPart) setSuggestions(partData);
-//               }}
-//               onBlur={() => {
-//                 setTimeout(() => setSuggestions([]), 150);
-//               }}
-//             />
-//             {suggestions.length > 0 && (
-//               <ul className="absolute z-10 w-full bg-white border rounded-md mt-1 max-h-60 overflow-y-auto shadow-lg">
-//                 {suggestions.map((part) => (
-//                   <li
-//                     key={part.id}
-//                     className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
-//                     onClick={() => handleSuggestionClick(part)}
-//                   >
-//                     {part.partNumber} (Stock: {part.availStock})
-//                   </li>
-//                 ))}
-//               </ul>
-//             )}
-//           </div>
-//         </div>
-
-//         {/* 👥 Customer Selection */}
-//         <div className="grid grid-cols-1 gap-4 bg-white p-4">
-//           <label className="block font-semibold mb-1">Customer</label>
-//           <div className="relative">
-//             <input
-//               type="text"
-//               placeholder="Search Customer"
-//               className="border py-3 px-4 rounded-md w-full text-gray-600"
-//               value={formik.values.customer}
-//               onChange={(e) => {
-//                 formik.setFieldValue("customer", e.target.value);
-//                 formik.setFieldValue("customerId", "");
-//               }}
-//               onFocus={() => {
-//                 if (!formik.values.customer)
-//                   setCustomerSuggestions(customerData);
-//               }}
-//               onBlur={() => {
-//                 setTimeout(() => setCustomerSuggestions([]), 150);
-//               }}
-//             />
-//             {customerSuggestions.length > 0 && (
-//               <ul className="absolute z-10 w-full bg-white border rounded-md mt-1 max-h-60 overflow-y-auto shadow-lg">
-//                 {customerSuggestions.map((customer) => (
-//                   <li
-//                     key={customer.id}
-//                     className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
-//                     onClick={() => handleCustomerClick(customer)}
-//                   >
-//                     {customer.name}
-//                   </li>
-//                 ))}
-//               </ul>
-//             )}
-//           </div>
-//         </div>
-
-//         {/* 📦 Return Quantity & Scrap Status */}
-//         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4">
-//           <div>
-//             <label className="block font-semibold mb-1">Return Quantity</label>
-//             <input
-//               type="number"
-//               placeholder="Enter Return Quantity"
-//               className="border py-3 px-4 rounded-md w-full text-gray-600"
-//               {...formik.getFieldProps("returnQuantity")}
-//             />
-//           </div>
-//           <div>
-//             <label className="block font-semibold mb-1">Scrap Status</label>
-//             <select
-//               className="border py-3 px-4 rounded-md w-full text-gray-600"
-//               {...formik.getFieldProps("scrapStatus")}
-//             >
-//               <option value="yes">Yes</option>
-//               <option value="no">No</option>
-//             </select>
-//           </div>
-//         </div>
-
-//         {/* ✅ NEW: Description / Defect Description Field */}
-//         <div className="bg-white p-4">
-//           <label className="block font-semibold mb-1">Defect Description</label>
-//           <textarea
-//             rows={3}
-//             placeholder="Enter reason for scrap or defect details..."
-//             className="border py-3 px-4 rounded-md w-full text-gray-600 focus:outline-blue-500"
-//             {...formik.getFieldProps("defectDesc")}
-//           />
-//         </div>
-
-//         {/* ✅ Buttons */}
-//         <div className="flex items-center justify-between bg-white p-6">
-//           <button
-//             type="submit"
-//             disabled={formik.isSubmitting}
-//             className="px-6 py-2 bg-blue-600 text-white text-md hover:bg-blue-800 transition rounded-md disabled:bg-gray-400"
-//           >
-//             {formik.isSubmitting ? "Saving..." : "Save Scrap"}
-//           </button>
-//           <button
-//             type="button"
-//             onClick={handleReset}
-//             className="ml-4 px-6 py-2 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition rounded-md flex items-center"
-//           >
-//             <span className="text-lg mr-1">🔄</span> Reset
-//           </button>
-//         </div>
-//       </form>
-//     </div>
-//   );
-// };
+import { toast } from "react-toastify";
 
 const ProductForm = () => {
   const [productData, setProductData] = useState([]);
@@ -244,20 +17,19 @@ const ProductForm = () => {
 
   const formik = useFormik({
     initialValues: {
-      searchPart: "", // UI Input for Product
-      partId: "", // Product ID for Backend
-      customer: "", // UI Input for Customer
-      customerId: "", // Customer ID for Backend
+      searchPart: "",
+      partId: "",
+      customer: "",
+      customerId: "",
       returnQuantity: "",
       scrapStatus: "yes",
-      type: "product", // Backend logic identifies this as product scrap
+      type: "product",
       defectDesc: "",
     },
     onSubmit: async (values, { setSubmitting, resetForm }) => {
-      // Backend Payload Mapping
       const payload = {
         type: values.type,
-        partId: values.partId, // Product selected from list
+        partId: values.partId,
         customerId: values.customerId || null,
         returnQuantity: Number(values.returnQuantity),
         scrapStatus: values.scrapStatus,
@@ -282,7 +54,6 @@ const ProductForm = () => {
     },
   });
 
-  // 1. Initial Data Fetching
   useEffect(() => {
     (async () => {
       try {
@@ -291,7 +62,6 @@ const ProductForm = () => {
           selectCustomer(),
         ]);
 
-        // Handle data formats
         setProductData(
           Array.isArray(products) ? products : products?.data || [],
         );
@@ -304,7 +74,6 @@ const ProductForm = () => {
     })();
   }, []);
 
-  // 2. Real-time Product Filtering
   useEffect(() => {
     const query = formik.values.searchPart.toLowerCase().trim();
     if (query && !formik.values.partId) {
@@ -317,7 +86,6 @@ const ProductForm = () => {
     }
   }, [formik.values.searchPart, formik.values.partId, productData]);
 
-  // 3. Real-time Customer Filtering
   useEffect(() => {
     const query = formik.values.customer.toLowerCase().trim();
     if (query && !formik.values.customerId) {
@@ -343,7 +111,6 @@ const ProductForm = () => {
         className="space-y-4"
         autoComplete="off"
       >
-        {/* PRODUCT SEARCH */}
         <div className="relative">
           <label className="block font-semibold mb-1">Search Product *</label>
           <input
@@ -353,7 +120,7 @@ const ProductForm = () => {
             value={formik.values.searchPart}
             onChange={(e) => {
               formik.setFieldValue("searchPart", e.target.value);
-              formik.setFieldValue("partId", ""); // Reset ID when typing
+              formik.setFieldValue("partId", "");
             }}
           />
           {productSuggestions.length > 0 && (
@@ -380,8 +147,6 @@ const ProductForm = () => {
             </ul>
           )}
         </div>
-
-        {/* CUSTOMER SEARCH */}
         <div className="bg-white p-4 border rounded-md relative">
           <label className="block font-semibold mb-1">
             Customer (Optional)
@@ -415,7 +180,6 @@ const ProductForm = () => {
           )}
         </div>
 
-        {/* QUANTITY & STATUS */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white p-4 border rounded-md">
             <label className="block font-semibold mb-1">
@@ -440,7 +204,6 @@ const ProductForm = () => {
           </div>
         </div>
 
-        {/* DEFECT DESCRIPTION */}
         <div className="bg-white p-4 border rounded-md">
           <label className="block font-semibold mb-1">Defect Description</label>
           <textarea
@@ -451,7 +214,6 @@ const ProductForm = () => {
           />
         </div>
 
-        {/* BUTTONS */}
         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-md">
           <button
             type="submit"

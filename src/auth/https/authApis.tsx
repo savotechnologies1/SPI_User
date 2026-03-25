@@ -25,10 +25,6 @@ export const signUpApi = async (userData: object) => {
 export const loginApi = async (userData: object) => {
   try {
     const response = await axiosInstance.post("/login", userData);
-    console.log("299999999999999999980");
-
-    console.log("responseresponse", response);
-
     if (response.status === 201) {
       toast.success(response.data.message);
     }
@@ -44,7 +40,6 @@ export const loginApi = async (userData: object) => {
 };
 
 export const forgetPassword = async (data: { email: string }) => {
-  // eslint-disable-next-line no-useless-catch
   try {
     const response = await axiosInstance.post("/forget-password", data);
     localStorage.setItem("email", response.data.email);
@@ -58,7 +53,6 @@ export const forgetPassword = async (data: { email: string }) => {
 };
 
 export const otpVarify = async (data: object) => {
-  // eslint-disable-next-line no-useless-catch
   try {
     const response = await axiosInstance.post("/validate-otp", data);
     if (response.status === 200) {

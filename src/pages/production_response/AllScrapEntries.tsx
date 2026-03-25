@@ -3,8 +3,6 @@ import edit from "../../assets/edit_icon.png";
 import { FaCircle, FaTrash } from "react-icons/fa";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import add from "../../assets/add.png";
-import { Trash2 } from "lucide-react";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import {

@@ -1,6 +1,5 @@
 import { FaCircle } from "react-icons/fa";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import delete_img from "../../assets/delete_1.png";
 import { useForm } from "react-hook-form";
 import {
   deleteSupplier,
@@ -217,12 +216,6 @@ const EditSuppliers = () => {
             >
               Save
             </button>
-            {/* <div
-              onClick={handleDelete}
-              className="bg-[#FF5630] rounded-full p-2 cursor-pointer"
-            >
-              <img className="w-[20px]" src={delete_img} alt="delete" />
-            </div> */}
           </div>
         </div>
       </form>

@@ -126,10 +126,6 @@ export const searchStockOrder = async (searchParams: object) => {
     const response = await axiosInstance.get("/search-stock-order", {
       params: searchParams,
     });
-
-    console.log("responseresponseresponse", response.data.message);
-
-    // Check if response.data has a data property (common API pattern)
     const data = response.data?.data ?? response.data ?? [];
     return Array.isArray(data) ? data : [];
   } catch (error) {

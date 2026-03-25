@@ -217,7 +217,7 @@ const StockOrderForm = () => {
                           date ? date.toLocaleDateString("en-CA") : "",
                         )
                       }
-                      dateFormat="MM/dd/yyyy" 
+                      dateFormat="MM/dd/yyyy"
                       placeholderText="MM/DD/YYYY"
                       wrapperClassName="w-full"
                       className="border py-3 px-4 rounded-md w-full placeholder-gray-600 outline-none h-[50px] border-gray-300"
@@ -230,7 +230,6 @@ const StockOrderForm = () => {
                   />
                 </div>
 
-                {/* 3. Ship Date (Same as Order Date) */}
                 <div className="flex flex-col">
                   <label className="font-semibold mb-1">Ship Date</label>
                   <div className="relative w-full">
@@ -244,7 +243,7 @@ const StockOrderForm = () => {
                           date ? date.toLocaleDateString("en-CA") : "",
                         )
                       }
-                      dateFormat="MM/dd/yyyy" // <-- US Format Force kiya
+                      dateFormat="MM/dd/yyyy"
                       placeholderText="MM/DD/YYYY"
                       wrapperClassName="w-full"
                       className={`border py-3 px-4 rounded-md w-full placeholder-gray-600 outline-none h-[50px] ${
@@ -457,7 +456,6 @@ const StockOrderForm = () => {
                 </div>
               </div>
 
-              {/* Submit Button */}
               <div className="mt-6">
                 <button
                   type="submit"

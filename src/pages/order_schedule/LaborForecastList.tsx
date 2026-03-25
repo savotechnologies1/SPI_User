@@ -22,11 +22,8 @@ const LaborForecastList = () => {
 
   const [data, setData] = useState<any[]>([]);
   const [processData, setProcessData] = useState<any[]>([]);
-
-  // 1. API Fetch Logic
   const getInventory = async (filters: any = {}) => {
     try {
-      // Date formatting for Backend (YYYY-MM-DD)
       const startStr =
         filters.startDate instanceof Date
           ? filters.startDate.toISOString().split("T")[0]

@@ -76,7 +76,6 @@ const DailyScheduleList = () => {
               sub_name: item.subName || "",
               part: item.part?.process?.processName || "-",
               machineName: item.part?.process?.machineName || "-",
-              // 🔥 Yahan MM/DD/YYYY format apply kiya gaya hai
               Schedule_Date: formatToMDY(item.order_date),
               Schedule_time: item.order_date
                 ? new Date(item.order_date).toLocaleTimeString([], {
@@ -116,7 +115,7 @@ const DailyScheduleList = () => {
               <DatePicker
                 selected={field.value}
                 onChange={(date) => field.onChange(date)}
-                dateFormat="MM/dd/yyyy" // 🔥 Input box mein format
+                dateFormat="MM/dd/yyyy"
                 className="w-full border py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300"
                 isClearable
                 placeholderText="Select Date"

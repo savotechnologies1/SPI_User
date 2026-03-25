@@ -1,4 +1,4 @@
-import  { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { FaCircle } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import { PartContext } from "../../components/Context/PartContext";
@@ -29,39 +29,37 @@ const EditPartForm = () => {
   }
 
   const [formData, setFormData] = useState<Part>({
-      partFamily: "",
-      partNumber: "",
-      description: "",
-      cost: 0,
-      leadTime: 0,
-      availableStock: "",
-      orderQty: 0,
-      cycleTime: 0,
+    partFamily: "",
+    partNumber: "",
+    description: "",
+    cost: 0,
+    leadTime: 0,
+    availableStock: "",
+    orderQty: 0,
+    cycleTime: 0,
   });
 
-  const handleChange = (e: { target: { name: any; value: any; }; }) => {
+  const handleChange = (e: { target: { name: any; value: any } }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    addPart(formData); // Save data in Context
-    navigate("/part-table"); // Redirect to table page
-    console.log("Submitted Form Data:", formData);
+    addPart(formData);
+    navigate("/part-table");
   };
   return (
     <div className="p-4 md:p-7">
       <div>
-        {" "}
         <h1 className="font-bold text-[20px] md:text-[24px] text-black">
-        Product Number
+          Product Number
         </h1>
       </div>
       <div className="flex justify-between mt-2 items-center">
         <div className="flex gap-4 items-center ">
           <p
             className={`text-xs sm:text-[16px] text-black`}
-            onClick={() => ("dashboardDetailes")}
+            onClick={() => "dashboardDetailes"}
           >
             <NavLink to={"/dashboardDetailes"}>Dashboard</NavLink>
           </p>
@@ -75,13 +73,15 @@ const EditPartForm = () => {
             <FaCircle className="text-[6px] text-gray-500" />
           </span>
           <span className="text-xs sm:text-[16px] hover:cursor-pointer">
-          Add Product Number
+            Add Product Number
           </span>
         </div>
       </div>
       <div className="mt-6 bg-white p-6 w-full rounded-2xl shadow-md">
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          {/* Part Family */}
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"
+        >
           <label className="block col-span-4 md:col-span-2">
             Part Family
             <select
@@ -97,7 +97,6 @@ const EditPartForm = () => {
             </select>
           </label>
 
-          {/* Part Number */}
           <label className="block col-span-4 md:col-span-2">
             Product Number
             <input
@@ -110,7 +109,6 @@ const EditPartForm = () => {
             />
           </label>
 
-          {/* Description */}
           <label className="block col-span-4">
             Part Description
             <textarea
@@ -122,7 +120,6 @@ const EditPartForm = () => {
             ></textarea>
           </label>
 
-          {/* Cost */}
           <label className="block col-span-4 md:col-span-1">
             Cost ($)
             <input
@@ -135,7 +132,6 @@ const EditPartForm = () => {
             />
           </label>
 
-          {/* Lead Time */}
           <label className="block col-span-4 md:col-span-1">
             Lead Time (Days)
             <input
@@ -148,7 +144,6 @@ const EditPartForm = () => {
             />
           </label>
 
-          {/* Order Qty */}
           <label className="block col-span-4 md:col-span-1">
             Order Quantity by Supplier
             <input
@@ -161,7 +156,6 @@ const EditPartForm = () => {
             />
           </label>
 
-          {/* Company */}
           <label className="block col-span-4 md:col-span-1">
             Company Name
             <input
@@ -174,7 +168,6 @@ const EditPartForm = () => {
             />
           </label>
 
-          {/* Minimum Stock */}
           <label className="block col-span-4 md:col-span-1">
             Minimum Stock
             <input
@@ -187,7 +180,6 @@ const EditPartForm = () => {
             />
           </label>
 
-          {/* Available Stock */}
           <label className="block col-span-4 md:col-span-1">
             Available Stock
             <input
@@ -200,7 +192,6 @@ const EditPartForm = () => {
             />
           </label>
 
-          {/* Cycle Time */}
           <label className="block col-span-4 md:col-span-1">
             Cycle Time
             <input
@@ -213,9 +204,8 @@ const EditPartForm = () => {
             />
           </label>
 
-          {/* Availability (Yes/No) */}
           <label className="block col-span-4 md:col-span-1">
-          Process order required
+            Process order required
             <select
               name="availableStock"
               value={formData.availableStock}

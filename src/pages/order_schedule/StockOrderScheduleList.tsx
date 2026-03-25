@@ -1,29 +1,14 @@
 import React, { useEffect, useState } from "react";
-import edit from "../../assets/edit_icon.png";
 import { FaCircle, FaTrash } from "react-icons/fa";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import add from "../../assets/add.png";
-import { Trash2 } from "lucide-react";
-import {
-  deleteWorkInstruction,
-  workInstructionList,
-} from "../Work_Instrcution.tsx/https/workInstructionApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import {
   deleteScheduleOrder,
   scheduleStockOrderListApi,
 } from "./https/schedulingApis";
-interface WorkInstructionItem {
-  id: string;
-  imageUrl: string;
-  name: string;
-  partDesc: string;
-  stepNumber: string;
-  description: string;
-  submitDate: string;
-  statusColor: string;
-}
+
 function useDebounce(value: string, delay: number): string {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {

@@ -136,7 +136,7 @@ interface ItemForUI {
   img1: string;
   orderNumber: string;
   text1: string;
-  text2: string; // Selected process
+  text2: string;
   qty: number;
   inputQty: string;
   allProcesses: ProcessDetail[];
@@ -333,7 +333,6 @@ interface Customer {
   id: string;
   firstName: string;
   lastName: string;
-  // ... baaki properties
 }
 
 interface ApiItem {
@@ -370,9 +369,7 @@ const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
       return;
     }
 
-    // जब भी items (search results) बदलेंगे, available list अपडेट होगी
     const newTransformedItems = items.map((apiItem) => {
-      // BOM list में से पहली प्रोसेस निकालें (डिस्प्ले के लिए)
       const processName =
         apiItem.bomList?.[0]?.processName || "Multiple Processes";
 
@@ -380,7 +377,6 @@ const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
         id: apiItem.id,
         img1: "https://via.placeholder.com/150",
         orderNumber: apiItem.orderNumber,
-        // अगर product object है तो उसकी description लें
         text1: apiItem.product?.partDescription || "Custom Order",
         text2: processName,
         qty: apiItem.productQuantity || 1,
@@ -392,7 +388,7 @@ const CustomItemSelected = ({ items, isLoading }: CustomItemSelectedProps) => {
     });
 
     setAvailableItems(newTransformedItems);
-  }, [items]); // ← यह Dependency बहुत ज़रूरी है
+  }, [items]);
 
   const addToSelected = (itemToAdd: ItemForUI) => {
     const existingItemIndex = selectedItems.findIndex(
