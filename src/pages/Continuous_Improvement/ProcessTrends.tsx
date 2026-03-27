@@ -33,7 +33,6 @@ export default function ProcessTrends() {
         Process Trends (Thermoforming)
       </h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        {/* Steps Bar Chart */}
         <div className="bg-white shadow-md rounded-xl md:rounded-2xl p-3 md:p-4">
           <h2 className="text-base md:text-lg font-medium mb-2">Steps</h2>
           <div className="h-[250px] sm:h-[300px]">
@@ -78,7 +77,6 @@ export default function ProcessTrends() {
           </div>
         </div>
 
-        {/* Manual Line Chart */}
         <div className="bg-white shadow-md rounded-xl md:rounded-2xl p-3 md:p-4">
           <h2 className="text-base md:text-lg font-medium mb-2">Manual</h2>
           <div className="h-[250px] sm:h-[300px]">

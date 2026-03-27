@@ -1,32 +1,38 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { FaCircle } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-import { deleteProfile, getProfile, updateProfile } from "./https/profileApi";
-import { Country, State, City } from "country-state-city";
+import { FaCircle } from "react-icons/fa";
 import Select from "react-select";
+import { Country, State, City } from "country-state-city";
+import { getProfile, updateProfile, deleteProfile } from "./https/profileApi"; // Paths as per your project
 
 const IMAGE_URL = import.meta.env.VITE_SERVER_URL;
 
+// --- 1. Interfaces Define Karein ---
+
+interface SelectOption {
+  label: string;
+  value: string;
+}
+
+interface FormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  country: SelectOption | null;
+  state: SelectOption | null;
+  city: SelectOption | null;
+  zipCode: string;
+  about: string;
+}
+
 const Settings = () => {
   const [photo, setPhoto] = useState<string | null>(null);
-  const [employeeProfileImg, setProfileImg] = useState<string | null>(null);
-  const [isFile, setIsFile] = useState<string | boolean>(false);
-
-  const form1 = useForm({
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phoneNumber: "",
-      address: "",
-      country: null,
-      city: null,
-      state: null,
-      zipCode: "",
-      about: "",
-    },
-  });
+  // employeeProfileImg file bhi ho sakti hai aur string bhi
+  const [employeeProfileImg, setProfileImg] = useState<File | string | null>(null);
+  const [isFile, setIsFile] = useState<boolean>(false);
 
   const {
     reset,
@@ -36,112 +42,134 @@ const Settings = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = form1;
+  } = useForm<FormValues>({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      address: "",
+      country: null,
+      state: null,
+      city: null,
+      zipCode: "",
+      about: "",
+    },
+  });
 
-  const handlePhotoChange = (e: any) => {
-    const file = e.target.files[0];
+  // Photo change handler with proper event type
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       setIsFile(true);
       setProfileImg(file);
       setPhoto(URL.createObjectURL(file));
     }
   };
+
   const selectedCountry = watch("country");
   const selectedState = watch("state");
 
-  const countryOptions = Country.getAllCountries().map((c) => ({
+  // Options Logic
+  const countryOptions: SelectOption[] = Country.getAllCountries().map((c) => ({
     value: c.isoCode,
     label: c.name,
   }));
 
-  const stateOptions = selectedCountry
+  const stateOptions: SelectOption[] = selectedCountry
     ? State.getStatesOfCountry(selectedCountry.value).map((s) => ({
         value: s.isoCode,
         label: s.name,
       }))
     : [];
 
-  const cityOptions = selectedState
-    ? City.getCitiesOfState(selectedCountry.value, selectedState.value).map(
-        (ci) => ({
-          value: ci.name,
-          label: ci.name,
-        }),
-      )
+  const cityOptions: SelectOption[] = (selectedCountry && selectedState)
+    ? City.getCitiesOfState(selectedCountry.value, selectedState.value).map((ci) => ({
+        value: ci.name,
+        label: ci.name,
+      }))
     : [];
 
-  const onSubmit = async (data: any) => {
-    await updateProfile(
-      {
-        ...data,
-        country: data.country?.label,
-        state: data.state?.label,
-        city: data.city?.label,
-      },
-      employeeProfileImg,
-      isFile,
-    );
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await updateProfile(
+        {
+          ...data,
+          country: data.country?.label || "",
+          state: data.state?.label || "",
+          city: data.city?.label || "",
+        },
+        employeeProfileImg,
+        isFile
+      );
+    } catch (error) {
+      console.error("Update failed", error);
+    }
   };
+
   useEffect(() => {
     const fetchUserData = async () => {
-      const res = await getProfile();
-      const data = res.data;
-      if (data?.employeeProfileImg) {
-        const imageUrl = `${IMAGE_URL}/uploads/employeeProfileImg/${data.employeeProfileImg}`;
-        setPhoto(imageUrl);
-        setProfileImg(data.employeeProfileImg);
-      }
+      try {
+        const res = await getProfile();
+        const data = res.data;
+        
+        if (data?.employeeProfileImg) {
+          const imageUrl = `${IMAGE_URL}/uploads/employeeProfileImg/${data.employeeProfileImg}`;
+          setPhoto(imageUrl);
+          setProfileImg(data.employeeProfileImg);
+        }
 
-      const countries = Country.getAllCountries();
-      const foundCountry = countries.find((c) => c.name === data.country);
-      const countryOption = foundCountry
-        ? { label: foundCountry.name, value: foundCountry.isoCode }
-        : null;
-
-      let stateOption = null;
-      let cityOption = null;
-
-      if (countryOption) {
-        const states = State.getStatesOfCountry(countryOption.value);
-        const foundState = states.find((s) => s.name === data.state);
-        stateOption = foundState
-          ? { label: foundState.name, value: foundState.isoCode }
+        // Logic to find and set country/state/city options
+        const countries = Country.getAllCountries();
+        const foundCountry = countries.find((c) => c.name === data.country);
+        const countryOption = foundCountry
+          ? { label: foundCountry.name, value: foundCountry.isoCode }
           : null;
 
-        if (stateOption) {
-          const cities = City.getCitiesOfState(
-            countryOption.value,
-            stateOption.value,
-          );
-          const foundCity = cities.find((ci) => ci.name === data.city);
-          cityOption = foundCity
-            ? { label: foundCity.name, value: foundCity.name }
-            : null;
-        }
-      }
+        let stateOption: SelectOption | null = null;
+        let cityOption: SelectOption | null = null;
 
-      reset({
-        firstName: data.firstName || "",
-        lastName: data.lastName || "",
-        email: data.email || "",
-        phoneNumber: data.phoneNumber || "",
-        address: data.address || "",
-        zipCode: data.zipCode || "",
-        about: data.about || "",
-        country: countryOption,
-        state: stateOption,
-        city: cityOption,
-      });
+        if (countryOption) {
+          const states = State.getStatesOfCountry(countryOption.value);
+          const foundState = states.find((s) => s.name === data.state);
+          stateOption = foundState ? { label: foundState.name, value: foundState.isoCode } : null;
+
+          if (stateOption) {
+            const cities = City.getCitiesOfState(countryOption.value, stateOption.value);
+            const foundCity = cities.find((ci) => ci.name === data.city);
+            cityOption = foundCity ? { label: foundCity.name, value: foundCity.name } : null;
+          }
+        }
+
+        reset({
+          firstName: data.firstName || "",
+          lastName: data.lastName || "",
+          email: data.email || "",
+          phoneNumber: data.phoneNumber || "",
+          address: data.address || "",
+          zipCode: data.zipCode || "",
+          about: data.about || "",
+          country: countryOption,
+          state: stateOption,
+          city: cityOption,
+        });
+      } catch (error) {
+        console.error("Fetch profile failed", error);
+      }
     };
 
     fetchUserData();
   }, [reset]);
 
   const deletProfileApi = async () => {
-    try {
-      await deleteProfile();
-    } catch (error) {
-      throw error;
+    if (window.confirm("Are you sure you want to delete your profile?")) {
+      try {
+        await deleteProfile();
+        setPhoto(null);
+        setProfileImg(null);
+      } catch (error) {
+        console.error("Delete failed", error);
+      }
     }
   };
 
@@ -149,7 +177,6 @@ const Settings = () => {
     <div className="p-8 mt-8 min-h-screen">
       <div className="mx-auto">
         <h1 className="text-2xl font-bold mb-2">Account</h1>
-
         <div className="flex justify-between items-center mb-6">
           <div className="flex gap-2 items-center">
             <p className="text-[14px] text-black">
@@ -161,21 +188,17 @@ const Settings = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Profile Photo Sidebar */}
           <div className="bg-white p-6 shadow rounded-lg">
             <div className="flex flex-col items-center mt-12">
-              <div className="w-32 h-32 rounded-full shadow-xl relative group overflow-hidden">
+              <div className="w-32 h-32 rounded-full shadow-xl relative group overflow-hidden bg-gray-100">
                 {photo ? (
-                  <img
-                    src={photo}
-                    alt="Profile"
-                    className="w-full h-full object-cover rounded-full"
-                  />
+                  <img src={photo} alt="Profile" className="w-full h-full object-cover rounded-full" />
                 ) : (
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs text-center p-2">
                     Update Photo
                   </div>
                 )}
-
                 <input
                   type="file"
                   accept="image/*"
@@ -183,14 +206,10 @@ const Settings = () => {
                   onChange={handlePhotoChange}
                 />
               </div>
-
-              <p className="text-sm mt-4 text-gray-600">
-                Allowed: .jpeg, .jpg, .png
-              </p>
-              <p className="text-sm">Max size of 3.1 MB</p>
-
+              <p className="text-sm mt-4 text-gray-600">Allowed: .jpeg, .jpg, .png</p>
+              <p className="text-sm">Max size: 3.1 MB</p>
               <button
-                className="bg-[#FF563014] text-[#B71D18] px-4 py-2 mt-4 rounded-md font-semibold"
+                className="bg-[#FF563014] text-[#B71D18] px-4 py-2 mt-4 rounded-md font-semibold hover:bg-red-100"
                 onClick={deletProfileApi}
               >
                 Delete
@@ -198,151 +217,104 @@ const Settings = () => {
             </div>
           </div>
 
-          <div className="md:col-span-2 bg-white p-4 rounded-lg shadow-md">
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
-            >
+          {/* Form Section */}
+          <div className="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
+            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-[#637381]">
-                  First Name
-                </label>
+                <label className="text-xs font-medium text-[#637381]">First Name</label>
                 <input
                   type="text"
                   {...register("firstName")}
-                  placeholder="First Name"
-                  className="w-full border px-4 py-2 rounded-md"
+                  className="w-full border px-4 py-2 rounded-md text-sm mt-1"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-[#637381]">
-                  Last Name
-                </label>
+                <label className="text-xs font-medium text-[#637381]">Last Name</label>
                 <input
                   type="text"
                   {...register("lastName")}
-                  placeholder="Last Name"
-                  className="w-full border px-4 py-2 rounded-md"
+                  className="w-full border px-4 py-2 rounded-md text-sm mt-1"
                 />
               </div>
-
               <div>
-                <label className="text-sm font-medium text-[#637381]">
-                  Email
-                </label>
+                <label className="text-xs font-medium text-[#637381]">Email</label>
                 <input
                   type="email"
                   {...register("email")}
-                  placeholder="Email"
-                  className="w-full border px-4 py-2 rounded-md"
+                  className="w-full border px-4 py-2 rounded-md text-sm mt-1"
                 />
               </div>
-
               <div>
-                <label className="text-sm font-medium text-[#637381]">
-                  Phone Number
-                </label>
+                <label className="text-xs font-medium text-[#637381]">Phone Number</label>
                 <input
                   type="text"
                   {...register("phoneNumber")}
-                  placeholder="365-374-4961"
-                  className="w-full border px-4 py-2 rounded-md"
+                  className="w-full border px-4 py-2 rounded-md text-sm mt-1"
                 />
               </div>
-
-              <div>
-                <label className="text-sm font-medium text-[#637381]">
-                  Address
-                </label>
+              <div className="md:col-span-2">
+                <label className="text-xs font-medium text-[#637381]">Address</label>
                 <textarea
                   {...register("address")}
-                  placeholder="Address"
-                  className="w-full border px-4 py-2 rounded-md"
+                  rows={2}
+                  className="w-full border px-4 py-2 rounded-md text-sm mt-1"
                 />
               </div>
 
-              <div className="">
-                <label className="text-sm font-medium text-[#637381]">
-                  About
-                </label>
-                <textarea
-                  {...register("about")}
-                  placeholder="About"
-                  className="w-full border px-4 py-2 rounded-md"
-                />
-              </div>
               <div>
-                <label>Country:</label>
+                <label className="text-xs font-medium text-[#637381]">Country</label>
                 <Controller
                   name="country"
                   control={control}
                   render={({ field }) => (
-                    <Select
-                      {...field}
-                      options={countryOptions}
-                      placeholder="Select country..."
-                    />
+                    <Select {...field} options={countryOptions} className="mt-1 text-sm" />
                   )}
                 />
-                {errors.country && (
-                  <p style={{ color: "red" }}>{errors.country.message}</p>
-                )}
               </div>
 
               <div>
-                <label>State:</label>
+                <label className="text-xs font-medium text-[#637381]">State</label>
                 <Controller
                   name="state"
                   control={control}
                   render={({ field }) => (
-                    <Select
-                      {...field}
-                      options={stateOptions}
-                      placeholder="Select state..."
-                      isDisabled={!selectedCountry}
-                    />
+                    <Select {...field} options={stateOptions} isDisabled={!selectedCountry} className="mt-1 text-sm" />
                   )}
                 />
-                {errors.state && (
-                  <p style={{ color: "red" }}>{errors.state.message}</p>
-                )}
               </div>
 
               <div>
-                <label>City:</label>
+                <label className="text-xs font-medium text-[#637381]">City</label>
                 <Controller
                   name="city"
                   control={control}
                   render={({ field }) => (
-                    <Select
-                      {...field}
-                      options={cityOptions}
-                      placeholder="Select city..."
-                      isDisabled={!selectedState}
-                    />
+                    <Select {...field} options={cityOptions} isDisabled={!selectedState} className="mt-1 text-sm" />
                   )}
                 />
-                {errors.city && (
-                  <p style={{ color: "red" }}>{errors.city.message}</p>
-                )}
               </div>
+
               <div>
-                <label className="text-sm font-medium text-[#637381]">
-                  Zip/Code
-                </label>
+                <label className="text-xs font-medium text-[#637381]">Zip/Code</label>
                 <input
                   type="text"
                   {...register("zipCode")}
-                  placeholder="Zip code"
-                  className="w-full border px-4 py-2 rounded-md"
+                  className="w-full border px-4 py-2 rounded-md text-sm mt-1"
                 />
               </div>
-              <div className="col-span-2 flex justify-end">
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-6 py-2 rounded-md"
-                >
-                  Save changes
+
+              <div className="md:col-span-2">
+                <label className="text-xs font-medium text-[#637381]">About</label>
+                <textarea
+                  {...register("about")}
+                  rows={3}
+                  className="w-full border px-4 py-2 rounded-md text-sm mt-1"
+                />
+              </div>
+
+              <div className="md:col-span-2 flex justify-end mt-4">
+                <button type="submit" className="bg-blue-600 text-white px-8 py-2 rounded-md font-semibold text-sm shadow-md">
+                  Save Changes
                 </button>
               </div>
             </form>

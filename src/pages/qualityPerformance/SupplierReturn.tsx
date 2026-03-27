@@ -12,7 +12,6 @@ interface SupplierReturnProps {
 }
 
 const SupplierReturn = ({ qualityData }: SupplierReturnProps) => {
-  console.log("qualityData", qualityData);
 
   return (
     <div className="py-6 bg-white rounded-lg">

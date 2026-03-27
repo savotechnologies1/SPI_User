@@ -65,7 +65,6 @@ const Inventory = () => {
         setTotalInventoryCost(0);
       }
     } catch (error) {
-      console.error("Inventory graph error:", error);
       setChartData([]);
       setTotalInventoryCost(0);
     } finally {

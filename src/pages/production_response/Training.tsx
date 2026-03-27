@@ -139,7 +139,7 @@ const Training = () => {
   };
 
   const handleCompleteTraining = async () => {
-    if (!jobData?.productionId) return;
+    if (!jobData?.productionId || !processId || !stationUserId) return;
 
     try {
       setLoading(true);

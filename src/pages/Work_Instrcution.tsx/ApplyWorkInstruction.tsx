@@ -1,7 +1,381 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
+// import { FaCircle } from "react-icons/fa";
+// import { NavLink } from "react-router-dom";
+// import Select from "react-select";
+// import {
+//   selectProcessApi,
+//   getAllWorkInstructionApi,
+//   applyWorkInstructionApi,
+//   selectProductInfoApi,
+// } from "./https/workInstructionApi";
+// import AsyncSelect from "react-select/async";
+
+// const ApplyWorkInstruction = () => {
+//   const [workInstructions, setWorkInstructions] = useState([]);
+//   const [processData, setProcessData] = useState([]);
+//   const [formData, setFormData] = useState({
+//     workInstructionId: "",
+//     processId: "",
+//     productId: "",
+//   });
+//   const [selectedProduct, setSelectedProduct] = useState(null);
+//   useEffect(() => {
+//     fetchProcess();
+//     fetchWorkInstructions();
+//   }, []);
+//   const fetchProcess = async () => {
+//     const res = await selectProcessApi();
+//     setProcessData(res || []);
+//   };
+//   const fetchWorkInstructions = async () => {
+//     const res = await getAllWorkInstructionApi();
+//     setWorkInstructions(res?.data || []);
+//   };
+
+//   const handleSelectChange = (selectedOption, field) => {
+//     setFormData((prev) => ({
+//       ...prev,
+//       [field]: selectedOption?.value || "",
+//     }));
+//   };
+
+//   const handleSubmit = async () => {
+//     try {
+//       const payload = {
+//         workInstructionId: formData.workInstructionId,
+//         processId: formData.processId,
+//         productId: formData.productId,
+//       };
+
+//       await applyWorkInstructionApi(payload);
+//     } catch (error) {
+//       throw error;
+//     }
+//   };
+
+//   const breadcrumbs = [
+//     { path: "/dashboardDetailes", label: "Dashboard" },
+//     { label: "Work Instruction" },
+//     { label: "Apply work instruction to different product/process" },
+//   ];
+//   const loadProductOptions = async (inputValue) => {
+//     if (!inputValue || inputValue.length < 2) {
+//       return [];
+//     }
+
+//     try {
+//       const response = await selectProductInfoApi(inputValue);
+//       return response.data.map((item) => ({
+//         value: item.id,
+//         label: `${item.partNumber} - ${item.partDescription}`,
+//       }));
+//     } catch (error) {
+//       throw error;
+//     }
+//   };
+//   const handleProductChange = (selectedOption) => {
+//     setSelectedProduct(selectedOption);
+//     setFormData((prev) => ({
+//       ...prev,
+//       productId: selectedOption ? selectedOption.value : "",
+//     }));
+//   };
+
+//   return (
+//     <div className="p-4 sm:p-6 mt-6">
+//       <h1 className="font-bold text-xl sm:text-2xl text-black mb-2">
+//         Apply Work Instruction
+//       </h1>
+//       <div className="flex items-center gap-2 mb-4">
+//         {breadcrumbs.map((item, index) => (
+//           <div key={index} className="flex items-center gap-2">
+//             {item.path ? (
+//               <NavLink
+//                 to={item.path}
+//                 className="text-xs sm:text-sm text-black hover:underline"
+//               >
+//                 {item.label}
+//               </NavLink>
+//             ) : (
+//               <span className="text-xs sm:text-sm cursor-default">
+//                 {item.label}
+//               </span>
+//             )}
+//             {index < breadcrumbs.length - 1 && (
+//               <FaCircle className="text-[6px] text-gray-500" />
+//             )}
+//           </div>
+//         ))}
+//       </div>
+
+//       <div className="bg-white p-6 rounded-xl shadow-sm space-y-6">
+//         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+//           <div>
+//             <label className="font-semibold block mb-1">
+//               Select Work Instruction
+//             </label>
+//             <Select
+//               options={workInstructions.map((item) => ({
+//                 value: item.id,
+//                 label: item.title,
+//               }))}
+//               onChange={(opt) => handleSelectChange(opt, "workInstructionId")}
+//               isClearable
+//             />
+//           </div>
+
+//           <div>
+//             <label className="font-semibold block mb-1">Select Process</label>
+//             <Select
+//               options={processData.map((item) => ({
+//                 value: item.id,
+//                 label: item.name,
+//               }))}
+//               onChange={(opt) => handleSelectChange(opt, "processId")}
+//               isClearable
+//             />
+//           </div>
+
+//           <div>
+//             <label className="font-semibold block mb-1">
+//               Search Product by Number or Description
+//             </label>
+//             <AsyncSelect
+//               cacheOptions
+//               defaultOptions
+//               value={selectedProduct}
+//               loadOptions={loadProductOptions}
+//               onChange={handleProductChange}
+//               placeholder="Type 2+ characters to search..."
+//               isClearable
+//               loadingMessage={() => "Searching..."}
+//               noOptionsMessage={({ inputValue }) =>
+//                 inputValue.length < 2
+//                   ? "Please enter 2 or more characters"
+//                   : "No products found"
+//               }
+//             />
+//           </div>
+//         </div>
+
+//         <div>
+//           <button
+//             onClick={handleSubmit}
+//             className="bg-brand text-white px-5 py-3 rounded-lg"
+//           >
+//             Apply Work Instruction
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ApplyWorkInstruction;
+// import { useEffect, useState } from "react";
+// import { FaCircle } from "react-icons/fa";
+// import { NavLink, useNavigate } from "react-router-dom";
+// import Select from "react-select";
+// import {
+//   selectProcessApi,
+//   getAllWorkInstructionApi,
+//   applyWorkInstructionApi,
+//   selectProductInfoApi,
+// } from "./https/workInstructionApi";
+// import AsyncSelect from "react-select/async";
+
+// interface Option {
+//   value: string;
+//   label: string;
+// }
+
+// interface ProcessItem {
+//   id: string;
+//   name: string;
+//   machineName: string;
+// }
+
+// interface WorkInstructionItem {
+//   id: string;
+//   title: string;
+// }
+
+// interface ProductItem {
+//   id: string;
+//   partNumber: string;
+//   partDescription: string;
+// }
+
+// const ApplyWorkInstruction = () => {
+//   const navigate = useNavigate();
+//   const [workInstructions, setWorkInstructions] = useState<WorkInstructionItem[]>([]);
+//   const [processData, setProcessData] = useState<ProcessItem[]>([]);
+//   const [formData, setFormData] = useState({
+//     workInstructionId: "",
+//     processId: "",
+//     productId: "",
+//   });
+//   const [selectedProduct, setSelectedProduct] = useState(null);
+//   useEffect(() => {
+//     fetchProcess();
+//     fetchWorkInstructions();
+//   }, []);
+//   const fetchProcess = async () => {
+//     const res = await selectProcessApi();
+//     setProcessData(res || []);
+//   };
+//   const fetchWorkInstructions = async () => {
+//     const res = await getAllWorkInstructionApi();
+//     setWorkInstructions(res?.data || []);
+//   };
+
+//   const handleSelectChange = (selectedOption: Option | null, field: string) => {
+//     setFormData((prev) => ({
+//       ...prev,
+//       [field]: selectedOption?.value || "",
+//     }));
+//   };
+
+//   const handleSubmit = async () => {
+//     try {
+//       const payload = {
+//         workInstructionId: formData.workInstructionId,
+//         processId: formData.processId,
+//         productId: formData.productId,
+//       };
+
+//       await applyWorkInstructionApi(payload);
+//       navigate("/work-instructions-list");
+//     } catch (error) {
+//       console.error("Error submitting:", error);
+//     }
+//   };
+
+//   const breadcrumbs = [
+//     { path: "/dashboardDetailes", label: "Dashboard" },
+//     { label: "Work Instruction" },
+//     { label: "Apply work instruction to different product/process" },
+//   ];
+//   const loadProductOptions = async (inputValue: string): Promise<Option[]> => {
+//     if (!inputValue || inputValue.length < 2) {
+//       return [];
+//     }
+
+//     try {
+//       const response = await selectProductInfoApi(inputValue);
+//       return response.data.map((item: ProductItem) => ({
+//         value: item.id,
+//         label: `${item.partNumber} - ${item.partDescription}`,
+//       }));
+//     } catch (error) {
+//       console.error("Failed to load product options:", error);
+//       return [];
+//     }
+//   };
+//   const handleProductChange = (selectedOption: Option | null) => {
+//     setSelectedProduct(selectedOption);
+//     setFormData((prev) => ({
+//       ...prev,
+//       productId: selectedOption ? selectedOption.value : "",
+//     }));
+//   };
+
+//   return (
+//     <div className="p-4 sm:p-6 mt-6">
+//       <h1 className="font-bold text-xl sm:text-2xl text-black mb-2">
+//         Apply Work Instruction
+//       </h1>
+//       <div className="flex items-center gap-2 mb-4">
+//         {breadcrumbs.map((item, index) => (
+//           <div key={index} className="flex items-center gap-2">
+//             {item.path ? (
+//               <NavLink
+//                 to={item.path}
+//                 className="text-xs sm:text-sm text-black hover:underline"
+//               >
+//                 {item.label}
+//               </NavLink>
+//             ) : (
+//               <span className="text-xs sm:text-sm cursor-default">
+//                 {item.label}
+//               </span>
+//             )}
+//             {index < breadcrumbs.length - 1 && (
+//               <FaCircle className="text-[6px] text-gray-500" />
+//             )}
+//           </div>
+//         ))}
+//       </div>
+
+//       <div className="bg-white p-6 rounded-xl shadow-sm space-y-6">
+//         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+//           <div>
+//             <label className="font-semibold block mb-1">
+//               Select Work Instruction
+//             </label>
+//             <Select
+//               options={workInstructions.map((item: WorkInstructionItem) => ({
+//                 value: item.id,
+//                 label: item.title,
+//               }))}
+//               onChange={(opt) => handleSelectChange(opt, "workInstructionId")}
+//               isClearable
+//             />
+//           </div>
+
+//           <div>
+//             <label className="font-semibold block mb-1">Select Process</label>
+//             <Select
+//               options={processData.map((item: ProcessItem) => ({
+//                 value: item.id,
+//                 label: `${item.name} (${item.machineName})`,
+//               }))}
+//               onChange={(opt) => handleSelectChange(opt, "processId")}
+//               isClearable
+//             />
+//           </div>
+
+//           <div>
+//             <label className="font-semibold block mb-1">
+//               Search Product by Number or Description
+//             </label>
+//             <AsyncSelect
+//               cacheOptions
+//               defaultOptions
+//               value={selectedProduct}
+//               loadOptions={loadProductOptions}
+//               onChange={handleProductChange}
+//               placeholder="Type 2+ characters to search..."
+//               isClearable
+//               loadingMessage={() => "Searching..."}
+//               noOptionsMessage={({ inputValue }) =>
+//                 inputValue.length < 2
+//                   ? "Please enter 2 or more characters"
+//                   : "No products found"
+//               }
+//             />
+//           </div>
+//         </div>
+
+//         <div>
+//           <button
+//             onClick={handleSubmit}
+//             className="bg-brand text-white px-5 py-3 rounded-lg"
+//           >
+//             Apply Work Instruction
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ApplyWorkInstruction;
+
+import React, { useEffect, useState } from "react";
 import { FaCircle } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
-import Select from "react-select";
+import { NavLink, useNavigate } from "react-router-dom";
+import Select, { SingleValue } from "react-select";
 import {
   selectProcessApi,
   getAllWorkInstructionApi,
@@ -10,29 +384,81 @@ import {
 } from "./https/workInstructionApi";
 import AsyncSelect from "react-select/async";
 
-const ApplyWorkInstruction = () => {
-  const [workInstructions, setWorkInstructions] = useState([]);
-  const [processData, setProcessData] = useState([]);
-  const [formData, setFormData] = useState({
+// --- Interfaces ---
+
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface ProcessItem {
+  id: string;
+  name: string;
+  machineName: string;
+}
+
+interface WorkInstructionItem {
+  id: string;
+  instructionTitle: string; // Changed from 'title' to match logic below if needed, or keep 'title'
+}
+
+interface ProductItem {
+  id: string;
+  partNumber: string;
+  partDescription: string;
+}
+
+interface FormDataState {
+  workInstructionId: string;
+  processId: string;
+  productId: string;
+}
+
+const ApplyWorkInstruction: React.FC = () => {
+  const navigate = useNavigate();
+
+  const [workInstructions, setWorkInstructions] = useState<
+    WorkInstructionItem[]
+  >([]);
+  const [processData, setProcessData] = useState<ProcessItem[]>([]);
+  const [formData, setFormData] = useState<FormDataState>({
     workInstructionId: "",
     processId: "",
     productId: "",
   });
-  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // Fixed: Defined state type for selectedProduct
+  const [selectedProduct, setSelectedProduct] = useState<Option | null>(null);
+
   useEffect(() => {
     fetchProcess();
     fetchWorkInstructions();
   }, []);
+
   const fetchProcess = async () => {
-    const res = await selectProcessApi();
-    setProcessData(res || []);
-  };
-  const fetchWorkInstructions = async () => {
-    const res = await getAllWorkInstructionApi();
-    setWorkInstructions(res?.data || []);
+    try {
+      const res = await selectProcessApi();
+      setProcessData(res || []);
+    } catch (error) {
+      console.error("Error fetching processes:", error);
+    }
   };
 
-  const handleSelectChange = (selectedOption, field) => {
+  const fetchWorkInstructions = async () => {
+    try {
+      const res = await getAllWorkInstructionApi();
+      // Ensure we map based on what your API actually returns (title vs instructionTitle)
+      setWorkInstructions(res?.data || []);
+    } catch (error) {
+      console.error("Error fetching work instructions:", error);
+    }
+  };
+
+  // Fixed: Correctly typed SingleValue for react-select
+  const handleSelectChange = (
+    selectedOption: SingleValue<Option>,
+    field: keyof FormDataState,
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: selectedOption?.value || "",
@@ -40,40 +466,42 @@ const ApplyWorkInstruction = () => {
   };
 
   const handleSubmit = async () => {
-    try {
-      const payload = {
-        workInstructionId: formData.workInstructionId,
-        processId: formData.processId,
-        productId: formData.productId,
-      };
+    if (
+      !formData.workInstructionId ||
+      !formData.processId ||
+      !formData.productId
+    ) {
+      alert("Please select all fields");
+      return;
+    }
 
-      await applyWorkInstructionApi(payload);
+    try {
+      await applyWorkInstructionApi(formData);
+      navigate("/work-instructions-list");
     } catch (error) {
-      throw error;
+      console.error("Error submitting:", error);
     }
   };
 
-  const breadcrumbs = [
-    { path: "/dashboardDetailes", label: "Dashboard" },
-    { label: "Work Instruction" },
-    { label: "Apply work instruction to different product/process" },
-  ];
-  const loadProductOptions = async (inputValue) => {
+  // Fixed: loadProductOptions return type
+  const loadProductOptions = async (inputValue: string): Promise<Option[]> => {
     if (!inputValue || inputValue.length < 2) {
       return [];
     }
 
     try {
       const response = await selectProductInfoApi(inputValue);
-      return response.data.map((item) => ({
+      return response.data.map((item: ProductItem) => ({
         value: item.id,
         label: `${item.partNumber} - ${item.partDescription}`,
       }));
     } catch (error) {
-      throw error;
+      console.error("Failed to load product options:", error);
+      return [];
     }
   };
-  const handleProductChange = (selectedOption) => {
+
+  const handleProductChange = (selectedOption: SingleValue<Option>) => {
     setSelectedProduct(selectedOption);
     setFormData((prev) => ({
       ...prev,
@@ -81,11 +509,18 @@ const ApplyWorkInstruction = () => {
     }));
   };
 
+  const breadcrumbs = [
+    { path: "/dashboardDetailes", label: "Dashboard" },
+    { label: "Work Instruction" },
+    { label: "Apply work instruction" },
+  ];
+
   return (
     <div className="p-4 sm:p-6 mt-6">
       <h1 className="font-bold text-xl sm:text-2xl text-black mb-2">
         Apply Work Instruction
       </h1>
+
       <div className="flex items-center gap-2 mb-4">
         {breadcrumbs.map((item, index) => (
           <div key={index} className="flex items-center gap-2">
@@ -97,7 +532,7 @@ const ApplyWorkInstruction = () => {
                 {item.label}
               </NavLink>
             ) : (
-              <span className="text-xs sm:text-sm cursor-default">
+              <span className="text-xs sm:text-sm cursor-default text-gray-400">
                 {item.label}
               </span>
             )}
@@ -114,33 +549,35 @@ const ApplyWorkInstruction = () => {
             <label className="font-semibold block mb-1">
               Select Work Instruction
             </label>
-            <Select
+            <Select<Option>
               options={workInstructions.map((item) => ({
                 value: item.id,
-                label: item.title,
+                label: item.instructionTitle, // Updated to match interface
               }))}
               onChange={(opt) => handleSelectChange(opt, "workInstructionId")}
               isClearable
+              placeholder="Select Instruction..."
             />
           </div>
 
           <div>
             <label className="font-semibold block mb-1">Select Process</label>
-            <Select
+            <Select<Option>
               options={processData.map((item) => ({
                 value: item.id,
-                label: item.name,
+                label: `${item.name} (${item.machineName})`,
               }))}
               onChange={(opt) => handleSelectChange(opt, "processId")}
               isClearable
+              placeholder="Select Process..."
             />
           </div>
 
-          <div>
+          <div className="sm:col-span-2">
             <label className="font-semibold block mb-1">
               Search Product by Number or Description
             </label>
-            <AsyncSelect
+            <AsyncSelect<Option>
               cacheOptions
               defaultOptions
               value={selectedProduct}
@@ -158,10 +595,10 @@ const ApplyWorkInstruction = () => {
           </div>
         </div>
 
-        <div>
+        <div className="pt-4">
           <button
             onClick={handleSubmit}
-            className="bg-brand text-white px-5 py-3 rounded-lg"
+            className="bg-brand text-white px-8 py-3 rounded-lg font-bold hover:bg-opacity-90 transition shadow-md"
           >
             Apply Work Instruction
           </button>

@@ -9,11 +9,19 @@ export const workInstructionApi = async () => {
     throw error;
   }
 };
-
 export const addWorkInstruction = async (data: object) => {
   try {
     const response = await axiosInstance.post("/create-work-instruction", data);
-    localStorage.setItem("instructionId", response);
+
+    // 1. Agar aapko sirf ID store karni hai (Maan lijiye response.data.id mein hai)
+    if (response.data && response.data.id) {
+      // String mein convert karke store karein
+      localStorage.setItem("instructionId", String(response.data.id));
+    }
+
+    // Ya agar poora object stringify karke store karna hai (Not recommended for just ID)
+    // localStorage.setItem("instructionId", JSON.stringify(response.data));
+
     if (response.status === 201) {
       toast.success(response.data.message);
     }
@@ -26,7 +34,6 @@ export const addWorkInstruction = async (data: object) => {
     }
   }
 };
-
 export const addWorkinstructionInfo = async (data: object) => {
   try {
     const response = await axiosInstance.post(
@@ -175,7 +182,7 @@ export const selectProductApi = async () => {
   }
 };
 
-export const selectProductInfoApi = async () => {
+export const selectProductInfoApi = async (inputValue: string) => {
   try {
     const response = await axiosInstance.get(`/select-product-info`);
     if (response.status === 200) {

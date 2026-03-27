@@ -33,9 +33,7 @@ interface ScrapBarProps {
 
 const ScrapBar = ({ qualityData }: ScrapBarProps) => {
   const chartDataEntries = qualityData.filter((item) => item.scrapQuantity > 0);
-
   const legendPosition = window.innerWidth < 768 ? "bottom" : "top";
-
   const data = {
     labels: chartDataEntries.map((item) =>
       item.partNumber ? item.partDescription : item.partNumber,

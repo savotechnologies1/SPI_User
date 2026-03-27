@@ -1,24 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import img from "../assets/pofile_img.jpg";
 import cross from "../assets/cross.png";
 import home from "../assets/home.png";
 import { Link, useNavigate } from "react-router-dom";
-const BASE_URL = import.meta.env.VITE_SERVER_URL;
+import upgrade from "../assets/upgrade.png";
+import { getProfile } from "../pages/settings/https/profileApi";
 import { FiHome, FiUser } from "react-icons/fi";
+const BASE_URL = import.meta.env.VITE_SERVER_URL;
 interface AccountProps {
   onClose: () => void;
+  profileDetail?: {
+    employeeProfileImg?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+  };
 }
 
 interface Profile {
-  firstName: string;
-  lastName: string;
-  email: string;
+  name?: string;
+  email?: string;
+  profileImg?: string;
   employeeProfileImg?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
-function Account({ onClose, profileDetail }: AccountProps) {
+const Account = ({
+  onClose,
+  profileDetail: externalProfileDetail,
+}: AccountProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("Dashboard");
+  const [profileDetail, setProfileDetail] = useState<Profile | null>(
+    externalProfileDetail || null,
+  );
   const navigate = useNavigate();
   const section = [
     {
@@ -39,12 +55,42 @@ function Account({ onClose, profileDetail }: AccountProps) {
     localStorage.removeItem("auth_token");
     navigate("/sign-in");
   };
-  console.log("profileDetailprofileDetail", profileDetail);
+
+  // Use external profile detail if provided, otherwise use internal state
+  const displayProfile: Profile = externalProfileDetail
+    ? {
+        name: externalProfileDetail.firstName
+          ? `${externalProfileDetail.firstName} ${externalProfileDetail.lastName || ""}`
+          : externalProfileDetail.email || "",
+        email: externalProfileDetail.email || "",
+        employeeProfileImg: externalProfileDetail.employeeProfileImg,
+      }
+    : profileDetail || { name: "", email: "" };
+
+  // Create a combined profile object for display
+  const displayName = displayProfile?.name || "User";
+  const displayImg =
+    displayProfile?.profileImg || displayProfile?.employeeProfileImg;
+
+  const getProfileApi = async () => {
+    try {
+      const response = await getProfile();
+      setProfileDetail(response.data);
+    } catch (error) {
+      console.error("Failed to fetch profile", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!externalProfileDetail) {
+      getProfileApi();
+    }
+  }, [externalProfileDetail]);
 
   return (
     <div>
       <div className="fixed overflow-y-auto right-0 top-0 z-60 w-[320px] h-full bg-white shadow-lg">
-        <div className="p-4">
+        <div className="p-4 mt-5">
           <div>
             <img
               src={cross}
@@ -58,8 +104,8 @@ function Account({ onClose, profileDetail }: AccountProps) {
             <div>
               <img
                 src={
-                  profileDetail?.employeeProfileImg
-                    ? `${BASE_URL}/uploads/employeeProfileImg/${profileDetail.employeeProfileImg}`
+                  displayImg
+                    ? `${BASE_URL}/uploads/profileImg/${displayImg}`
                     : img
                 }
                 alt="Profile"
@@ -69,11 +115,9 @@ function Account({ onClose, profileDetail }: AccountProps) {
             </div>
             <div className="ml-3">
               <p className="font-semibold text-center">
-                {profileDetail?.firstName && profileDetail?.lastName
-                  ? `${profileDetail.firstName} ${profileDetail.lastName}`
-                  : "Loading..."}
+                {displayName || "Loading..."}
               </p>
-              <p className="text-sm text-gray-500">{profileDetail?.email}</p>
+              <p className="text-sm text-gray-500">{displayProfile?.email}</p>
             </div>
           </div>
 
@@ -119,6 +163,6 @@ function Account({ onClose, profileDetail }: AccountProps) {
       </div>
     </div>
   );
-}
+};
 
 export default Account;

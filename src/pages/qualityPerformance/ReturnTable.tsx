@@ -18,7 +18,6 @@ const ReturnTable = ({ title, data, nameLabel }: ReturnTableProps) => {
       <div className="flex justify-between items-center p-4">
         <h2 className="text-xl font-bold text-[#1a1a1a]">{title}</h2>
       </div>
-
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>

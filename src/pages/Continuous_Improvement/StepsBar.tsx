@@ -79,7 +79,6 @@ const StepsBar = ({ partId }: { partId: string }) => {
         setChartData(null);
       }
     } catch (error) {
-      console.error("Error fetching cycle time data:", error);
       setChartData(null);
     } finally {
       setLoading(false);

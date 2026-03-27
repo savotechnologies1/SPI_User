@@ -24,7 +24,7 @@ const ContinuousImprovement = () => {
       setParts(res.data);
       if (res.data.length > 0) setSelected(res.data[0].part_id);
     } catch (error) {
-      console.error("Error fetching parts:", error);
+      throw error;
     } finally {
       setLoadingParts(false);
     }

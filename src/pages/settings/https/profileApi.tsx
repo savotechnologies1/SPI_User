@@ -3,16 +3,34 @@ import axiosInstance from "../../../utils/axiosInstance";
 
 export const updateProfile = async (
   data: object,
-  employeeProfileImg: string,
-  file: boolean
+  employeeProfileImg: File | string | null,
+  file: boolean,
 ) => {
   try {
+    let payload: any;
+
+    if (file === true && employeeProfileImg) {
+      // Handle file upload with FormData
+      const formData = new FormData();
+      formData.append("data", JSON.stringify(data));
+      if (employeeProfileImg instanceof File) {
+        formData.append("employeeProfileImg", employeeProfileImg);
+      } else if (typeof employeeProfileImg === "string") {
+        formData.append("employeeProfileImg", employeeProfileImg);
+      }
+      payload = formData;
+    } else {
+      // Handle regular data update without file
+      payload = {
+        ...data,
+        employeeProfileImg:
+          typeof employeeProfileImg === "string" ? employeeProfileImg : "",
+      };
+    }
+
     const response = await axiosInstance.put(
       "/profile-update",
-      {
-        ...data,
-        employeeProfileImg,
-      },
+      payload,
       file === true
         ? {
             headers: {
@@ -23,13 +41,13 @@ export const updateProfile = async (
             headers: {
               "Content-Type": "application/json",
             },
-          }
+          },
     );
     if (response.status === 200) {
       toast.success(response.data.message);
     }
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     toast.error(error.response.data.message);
   }
 };
@@ -51,7 +69,7 @@ export const deleteProfile = async () => {
       toast.success(response.data.message);
     }
     return response.data;
-  } catch (error) {
+  } catch (error:any) {
     toast.error(error.response.data.message);
   }
 };

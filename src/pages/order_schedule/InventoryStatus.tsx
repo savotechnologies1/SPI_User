@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { FaCheck, FaCircle, FaEdit, FaSearch, FaTimes } from "react-icons/fa";
+import { FaCheck, FaEdit, FaSearch, FaTimes } from "react-icons/fa";
 import React, { useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -155,7 +155,6 @@ const InventoryStatus = () => {
                   )}
                 </td>
 
-                {/* Actions */}
                 <td className="py-3 px-4 text-center">
                   {editRowId === row.partNumber ? (
                     <div className="flex gap-2 justify-center">

@@ -77,7 +77,6 @@ const BusinessAnalysis = () => {
                   <img className="w-[40px]" src={item.scrap_img} alt="" />
                 </div>
                 <div className="">
-                  {" "}
                   <p className="text-sm text-gray-600">{item.text}</p>
                   <p className="font-bold text-xl">{item.num}</p>
                 </div>
@@ -86,13 +85,12 @@ const BusinessAnalysis = () => {
                 <img src={item.scrap} alt="" />
               </div>
               <div className="text-sm text-gray-600">
-                Increase by{" "}
+                Increase by
                 <span
                   className={`font-semibold rounded-md text-xs  ${item.textColor} ${item.bgColor}`}
                 >
-                  {" "}
                   {item.increase}
-                </span>{" "}
+                </span>
                 this week
               </div>
             </div>
@@ -103,9 +101,7 @@ const BusinessAnalysis = () => {
       <div className="flex flex-col md:flex-row  mt-2 gap-4  ">
         {data_2.map((item) => (
           <div className="flex justify-between items-center bg-white  rounded-md  w-full">
-            {" "}
             <div className="p-2">
-              {" "}
               <p className="font-bold text-2xl">{item.num}</p>
               <p>{item.text}</p>
             </div>

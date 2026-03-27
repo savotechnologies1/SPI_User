@@ -1,9 +1,3 @@
-import img1 from "../../assets/green.png";
-import img3 from "../../assets/orange.png";
-import scrap_1 from "../../assets/scrap_1.png";
-import scrap_3 from "../../assets/scrap_3.png";
-import scrap_cost from "../../assets/scrap_cost.png";
-import supplier_return from "../../assets/supplier_return.png";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Line } from "react-chartjs-2";

@@ -21,7 +21,7 @@ import {
   workInstructionDetail,
 } from "./https/workInstructionApi";
 
-type Process = { id: string; name: string };
+type Process = { id: string; name: string; machineName: string };
 type Product = { id: string; partNumber: string };
 type SelectOption = { value: string; label: string };
 
