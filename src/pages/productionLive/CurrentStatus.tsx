@@ -23,12 +23,10 @@ const CurrentStatus = () => {
     return target > 0 ? 60 / target : 0;
   };
 
-  const aggregateData = (data: any[]) => {
+    const aggregateData = (data: any[]) => {
     const map = new Map();
 
     data.forEach((item) => {
-      console.log("itemitemitemitemitem", item);
-
       if (!map.has(item.processName)) {
         map.set(item.processName, {
           processName: item.processName,
@@ -53,17 +51,20 @@ const CurrentStatus = () => {
     });
 
     return Array.from(map.values()).map((entry) => {
-      const efficiency =
-        entry.targetPerHour > 0
-          ? ((entry.actual / entry.targetPerHour) * 100).toFixed(1) + "%"
-          : "0%";
-
-      const productivity =
+      // 1. Efficiency: (Actual + Scrap) / Scheduled
+      // Agar scheduled 0 hai to backend logic follow karein
+      const effVal =
         entry.scheduled > 0
-          ? (((entry.actual - entry.scrap) / entry.scheduled) * 100).toFixed(
-              1,
-            ) + "%"
-          : "0%";
+          ? ((entry.actual + entry.scrap) / entry.scheduled) * 100
+          : 0;
+
+      // 2. Productivity: Actual / Scheduled
+      const prodVal =
+        entry.scheduled > 0 ? (entry.actual / entry.scheduled) * 100 : 0;
+
+      // Math.min(..., 100) ensures value stays within 100%
+      const efficiency = Math.min(effVal, 100).toFixed(1) + "%";
+      const productivity = Math.min(prodVal, 100).toFixed(1) + "%";
 
       return {
         ...entry,
@@ -73,7 +74,6 @@ const CurrentStatus = () => {
       };
     });
   };
-
   useEffect(() => {
     const fetchData = async () => {
       try {

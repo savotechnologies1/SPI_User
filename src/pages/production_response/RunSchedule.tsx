@@ -685,23 +685,39 @@ const RunSchedule = () => {
     }
   };
 
+  
   const handleScrapOrder = async () => {
     if (!jobData) return;
     try {
-      await scrapOrder(
+      const response = await scrapOrder(
         jobData.productionId,
         jobData.order_id,
         jobData.order_type,
         jobData.part_id,
         jobData.employeeInfo.id,
       );
-      fetchJobDetails(id);
-    } catch (error: any) {
-      if (error?.response?.status === 400) {
-        fetchJobDetails(id);
+      if (response?.data?.isOrderFinished) {
+        alert("Order Finished!");
+        navigate("/station-process");
       } else {
-        console.error("Error scrapping order:", error);
+        // !!! FIX: Turant timer ko 0 karne ke liye state manually update karein !!!
+        setJobData((prev) =>
+          prev
+            ? {
+                ...prev,
+                // Naya time set kar do taaki calculation (Now - cycleTime) = 0 ho jaye
+                cycleTime: new Date().toISOString(),
+                employeeScrapQty: prev.employeeScrapQty + 1,
+                productionId: response.data.newProductionId, // Naya ID jo backend se aaya
+              }
+            : null,
+        );
+
+        await fetchJobDetails(id);
       }
+    } catch (error: any) {
+      console.error("Scrap Error:", error);
+      fetchJobDetails(id);
     }
   };
 
