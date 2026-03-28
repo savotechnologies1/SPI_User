@@ -59,6 +59,7 @@ import MonitorManagement from "./pages/productionLive/MonitorManagement";
 import AllScrapEntries from "./pages/production_response/AllScrapEntries";
 import EditPartScrapEntry from "./pages/production_response/EditPartScrapEntry";
 import EditProductScrapEntry from "./pages/production_response/EditProductScrapEntry";
+import TimeSheet from "./pages/timeClock/TimeSheet";
 
 const App = () => {
   const { isLoading, token } = useAuth();
@@ -174,6 +175,8 @@ const App = () => {
             <Route path="supplier-list" element={<SupplierPartList />} />
             <Route path="time-clock" element={<TimeClockList />} />
             <Route path="work-instruction" element={<WorkInstruction />} />
+            
+            <Route path="time-sheet" element={<TimeSheet />} />
             <Route
               path="add-work-instruction"
               element={<AddWorkInstruction />}

@@ -592,37 +592,6 @@ const formatDate = (dateString: string | undefined): string => {
   });
 };
 
-const formatCycleTime = (dateString: string | undefined | null) => {
-  if (!dateString) return "N/A";
-
-  try {
-    const startTime = new Date(dateString);
-    if (isNaN(startTime.getTime())) return "Invalid Time";
-
-    const now = new Date();
-    const diffMs = now.getTime() - startTime.getTime();
-    const totalMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
-
-    if (totalMinutes >= 1440) {
-      const days = Math.floor(totalMinutes / 1440);
-      const remainingMinutesAfterDays = totalMinutes % 1440;
-      const hours = Math.floor(remainingMinutesAfterDays / 60);
-      const mins = remainingMinutesAfterDays % 60;
-      let result = `${days} day${days > 1 ? "s" : ""}`;
-      if (hours > 0) result += ` ${hours} hr`;
-      if (mins > 0) result += ` ${mins} min`;
-      return result;
-    } else if (totalMinutes >= 60) {
-      const hours = Math.floor(totalMinutes / 60);
-      const mins = totalMinutes % 60;
-      return mins === 0 ? `${hours} hr` : `${hours} hr ${mins} min`;
-    } else {
-      return `${totalMinutes} min`;
-    }
-  } catch (error) {
-    return "N/A";
-  }
-};
 
 const RunSchedule = () => {
   const navigate = useNavigate();
@@ -631,7 +600,16 @@ const RunSchedule = () => {
   const [loading, setLoading] = useState(true);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [isCompleting, setIsCompleting] = useState(false);
+  
+  const [currentTime, setCurrentTime] = useState(new Date());
+ useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date()); // Har minute UI re-render hoga aur time update hoga
+    }, 60000); // 60 seconds
 
+    return () => clearInterval(timer);
+  }, []);
+  
   const fetchJobDetails = async (jobId: string | undefined) => {
     if (!jobId) {
       setLoading(false);
@@ -658,6 +636,37 @@ const RunSchedule = () => {
     fetchJobDetails(id);
   }, [id]);
 
+  const formatCycleTime = (dateString: string | undefined | null) => {
+    if (!dateString) return "N/A";
+
+    try {
+      const startTime = new Date(dateString);
+      if (isNaN(startTime.getTime())) return "Invalid Time";
+
+      const now = new Date();
+      const diffMs = now.getTime() - startTime.getTime();
+      const totalMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
+
+      if (totalMinutes >= 1440) {
+        const days = Math.floor(totalMinutes / 1440);
+        const remainingMinutesAfterDays = totalMinutes % 1440;
+        const hours = Math.floor(remainingMinutesAfterDays / 60);
+        const mins = remainingMinutesAfterDays % 60;
+        let result = `${days} day${days > 1 ? "s" : ""}`;
+        if (hours > 0) result += ` ${hours} hr`;
+        if (mins > 0) result += ` ${mins} min`;
+        return result;
+      } else if (totalMinutes >= 60) {
+        const hours = Math.floor(totalMinutes / 60);
+        const mins = totalMinutes % 60;
+        return mins === 0 ? `${hours} hr` : `${hours} hr ${mins} min`;
+      } else {
+        return `${totalMinutes} min`;
+      }
+    } catch (error) {
+      return "N/A";
+    }
+  };
   const handleCompleteOrder = async () => {
     if (!jobData || isCompleting) return;
     setIsCompleting(true);
@@ -686,6 +695,41 @@ const RunSchedule = () => {
   };
 
   
+  // const handleScrapOrder = async () => {
+  //   if (!jobData) return;
+  //   try {
+  //     const response = await scrapOrder(
+  //       jobData.productionId,
+  //       jobData.order_id,
+  //       jobData.order_type,
+  //       jobData.part_id,
+  //       jobData.employeeInfo.id,
+  //     );
+  //     if (response?.data?.isOrderFinished) {
+  //       alert("Order Finished!");
+  //       navigate("/station-process");
+  //     } else {
+  //       // !!! FIX: Turant timer ko 0 karne ke liye state manually update karein !!!
+  //       setJobData((prev) =>
+  //         prev
+  //           ? {
+  //               ...prev,
+  //               // Naya time set kar do taaki calculation (Now - cycleTime) = 0 ho jaye
+  //               cycleTime: new Date().toISOString(),
+  //               employeeScrapQty: prev.employeeScrapQty + 1,
+  //               productionId: response.data.newProductionId, // Naya ID jo backend se aaya
+  //             }
+  //           : null,
+  //       );
+
+  //       await fetchJobDetails(id);
+  //     }
+  //   } catch (error: any) {
+  //     console.error("Scrap Error:", error);
+  //     fetchJobDetails(id);
+  //   }
+  // };
+
   const handleScrapOrder = async () => {
     if (!jobData) return;
     try {
@@ -720,7 +764,6 @@ const RunSchedule = () => {
       fetchJobDetails(id);
     }
   };
-
   const stationLogout = async () => {
     if (!jobData) return;
     try {

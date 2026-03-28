@@ -322,6 +322,19 @@ const Sidebar = ({ activeMenu, clicked }: SidebarProps) => {
                   path: "/apply-work-instruction",
                 },
               ],
+            },  {
+              key: "Time Clock",
+              label: "Time Clock",
+              icon: time_clock,
+              hasSubmenu: true as true,
+              submenu: [
+               
+                {
+                  key: "Time_Sheet",
+                  label: "Time Sheet",
+                  path: "/time-sheet",
+                },
+              ],
             },
           ],
         },
