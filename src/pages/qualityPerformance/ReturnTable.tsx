@@ -18,6 +18,7 @@ const ReturnTable = ({ title, data, nameLabel }: ReturnTableProps) => {
       <div className="flex justify-between items-center p-4">
         <h2 className="text-xl font-bold text-[#1a1a1a]">{title}</h2>
       </div>
+
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -64,7 +65,7 @@ const ReturnTable = ({ title, data, nameLabel }: ReturnTableProps) => {
                   </td>
 
                   <td className="p-4 text-gray-600">Yes</td>
-                  <td className="p-4 text-gray-600">Broke</td>
+                  <td className="p-4 text-gray-600">{item.defectDesc}</td>
 
                   <td className="p-4 text-right font-medium text-gray-700">
                     {(item.quantity || 0).toFixed(2)}
