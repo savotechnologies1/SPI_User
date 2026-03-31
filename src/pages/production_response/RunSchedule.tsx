@@ -739,6 +739,7 @@ const RunSchedule = () => {
         jobData.order_type,
         jobData.part_id,
         jobData.employeeInfo.id,
+        jobData.employeeInfo.id,
       );
       if (response?.data?.isOrderFinished) {
         navigate("/station-login");
