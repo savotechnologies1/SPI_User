@@ -74,7 +74,7 @@ const App = () => {
   return (
     <PartProvider>
       <ToastContainer />
-      <Router basename="/Frontline">
+      <Router basename="/">
         <Routes>
           <Route path="sign-in" element={<SignIn />} />
           <Route path="sign-up" element={<SignUp />} />
